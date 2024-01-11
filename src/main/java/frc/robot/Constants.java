@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  private static final RobotType robot = RobotType.MAIN_2024;
+  private static final RobotType robot = RobotType.SIMBOT;
 
   public static enum RobotType {
     SIMBOT,
