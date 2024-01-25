@@ -64,28 +64,28 @@ public class ModuleIOSparkFlex implements ModuleIO {
         // front left
         driveSparkFlex = new CANSparkFlex(FrontLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontLeftTurnId, kBrushless);
-        cancoder = new CANcoder(0);
+        cancoder = new CANcoder(FrontLeftEncoderId);
         absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
         break;
       case 1:
         // front right
         driveSparkFlex = new CANSparkFlex(FrontRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontRightTurnId, kBrushless);
-        cancoder = new CANcoder(1);
+        cancoder = new CANcoder(FrontRightEncoderId);
         absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
         break;
       case 2:
         // back left
         driveSparkFlex = new CANSparkFlex(BackLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackLeftTurnId, kBrushless);
-        cancoder = new CANcoder(2);
+        cancoder = new CANcoder(BackLeftEncoderId);
         absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
         break;
       case 3:
         // back right
         driveSparkFlex = new CANSparkFlex(BackRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackRightTurnId, kBrushless);
-        cancoder = new CANcoder(3);
+        cancoder = new CANcoder(BackRightEncoderId);
         absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
         break;
       default:
