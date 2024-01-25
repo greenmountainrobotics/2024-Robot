@@ -23,26 +23,26 @@ import java.util.function.DoubleSupplier;
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
  *
- * <p>This version is intended for devices like the SparkMax that require polling rather than a
+ * <p>This version is intended for devices like the SparkFlex that require polling rather than a
  * blocking thread. A Notifier thread is used to gather samples with consistent timing.
  */
-public class SparkMaxOdometryThread {
+public class SparkFlexOdometryThread {
   private List<DoubleSupplier> signals = new ArrayList<>();
   private List<Queue<Double>> queues = new ArrayList<>();
 
   private final Notifier notifier;
-  private static SparkMaxOdometryThread instance = null;
+  private static SparkFlexOdometryThread instance = null;
 
-  public static SparkMaxOdometryThread getInstance() {
+  public static SparkFlexOdometryThread getInstance() {
     if (instance == null) {
-      instance = new SparkMaxOdometryThread();
+      instance = new SparkFlexOdometryThread();
     }
     return instance;
   }
 
-  private SparkMaxOdometryThread() {
+  private SparkFlexOdometryThread() {
     notifier = new Notifier(this::periodic);
-    notifier.setName("SparkMaxOdometryThread");
+    notifier.setName("SparkFlexOdometryThread");
     notifier.startPeriodic(1.0 / Module.ODOMETRY_FREQUENCY);
   }
 

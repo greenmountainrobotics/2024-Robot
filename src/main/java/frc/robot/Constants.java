@@ -24,6 +24,17 @@ import edu.wpi.first.wpilibj.RobotBase;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class SwerveConstants {
+    public static final int FrontLeftDriveId = 1;
+    public static final int FrontLeftTurnId = 2;
+    public static final int FrontRightDriveId = 3;
+    public static final int FrontRightTurnId = 4;
+    public static final int BackLeftDriveId = 5;
+    public static final int BackLeftTurnId = 6;
+    public static final int BackRightDriveId = 7;
+    public static final int BackRightTurnId = 8;
+  }
+
   private static final RobotType robot = RobotType.SIMBOT;
 
   public static enum RobotType {
@@ -31,7 +42,7 @@ public final class Constants {
     MAIN_2024
   }
 
-  public static enum Mode {
+  public enum Mode {
     /** Running on a real robot. */
     REAL,
 
