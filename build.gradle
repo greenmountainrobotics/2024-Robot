@@ -136,7 +136,7 @@ tasks.withType(JavaCompile) {
 
 // Check selected robot when deploying
 task(checkRobot, dependsOn: "classes", type: JavaExec) {
-    mainClass = "org.frc.robot.Constants"
+    mainClass = "frc.robot.Constants"
     classpath = sourceSets.main.runtimeClasspath
 }
 deployroborio.dependsOn(checkRobot)
