@@ -74,8 +74,8 @@ public class Drive extends SubsystemBase {
         this::runVelocity,
         new HolonomicPathFollowerConfig(
             MAX_LINEAR_SPEED, DRIVE_BASE_RADIUS, new ReplanningConfig()),
-        // TODO: Write logic to decide whether PathPlanner Paths should be flipped
-        () -> true,
+        // TODO: verify that this works.
+        () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
