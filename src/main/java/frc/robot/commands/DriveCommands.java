@@ -57,12 +57,16 @@ public class DriveCommands {
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
 
+          double speedCoeff = 0.1;
+
           // Convert to field relative speeds & send command
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec(),
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * speedCoeff,
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * speedCoeff,
+                  omega
+                      * drive.getMaxAngularSpeedRadPerSec()
+                      * speedCoeff, // TODO: REVERT THESE THREE
                   drive.getRotation()));
         },
         drive);

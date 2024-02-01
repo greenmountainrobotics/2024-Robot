@@ -15,7 +15,7 @@ public class GyroIONaxX2 implements GyroIO {
   public GyroIONaxX2() {
     ahrs.reset();
 
-    yawQueue = SparkFlexOdometryThread.getInstance().registerSignal(ahrs::getYaw);
+    yawQueue = SparkFlexOdometryThread.getInstance().registerSignal(() -> -ahrs.getYaw());
   }
 
   @Override
@@ -23,8 +23,9 @@ public class GyroIONaxX2 implements GyroIO {
     inputs.connected = ahrs.isConnected();
 
     inputs.yawPosition =
-        Rotation2d.fromDegrees(ahrs.getYaw()); // TODO: check if this is degrees or radians
+        Rotation2d.fromDegrees(-ahrs.getYaw()); // TODO: check if this is degrees or radians
     inputs.odometryYawPositions =
         yawQueue.stream().map(Rotation2d::fromDegrees).toArray(Rotation2d[]::new);
+    yawQueue.clear();
   }
 }

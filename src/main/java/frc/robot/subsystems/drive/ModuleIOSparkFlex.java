@@ -67,7 +67,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(FrontLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontLeftTurnId, kBrushless);
         cancoder = new CANcoder(FrontLeftEncoderId);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(1.723); // MUST BE CALIBRATED
         positionName = "FrontLeft";
         break;
       case 1:
@@ -75,7 +75,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(FrontRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontRightTurnId, kBrushless);
         cancoder = new CANcoder(FrontRightEncoderId);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(-0.693); // MUST BE CALIBRATED
         positionName = "FrontRight";
         break;
       case 2:
@@ -83,7 +83,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(BackLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackLeftTurnId, kBrushless);
         cancoder = new CANcoder(BackLeftEncoderId);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(0.674); // MUST BE CALIBRATED
         positionName = "BackLeft";
         break;
       case 3:
@@ -91,7 +91,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(BackRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackRightTurnId, kBrushless);
         cancoder = new CANcoder(BackRightEncoderId);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(-0.766); // MUST BE CALIBRATED
         positionName = "BackRight";
         break;
       default:
@@ -173,7 +173,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
 
     inputs.driveMotorTemperature = driveSparkFlex.getMotorTemperature();
     inputs.turnMotorTemperature = turnSparkFlex.getMotorTemperature();
-    
+
     drivePositionQueue.clear();
     turnPositionQueue.clear();
   }
