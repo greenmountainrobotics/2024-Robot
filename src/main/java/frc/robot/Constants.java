@@ -44,7 +44,7 @@ public final class Constants {
 
   public static final int PigeonId = 13;
 
-  private static final RobotType robot = RobotType.MAIN_2024;
+  private static final RobotType robot = RobotType.SIMBOT;
 
   public static enum RobotType {
     SIMBOT,
