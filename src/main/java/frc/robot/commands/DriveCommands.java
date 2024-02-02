@@ -72,9 +72,9 @@ public class DriveCommands {
                   omega
                       * drive.getMaxAngularSpeedRadPerSec()
                       * speedCoeff, // TODO: REVERT THESE THREE
-                      isFlipped
-                              ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                              : drive.getRotation()));
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
         },
         drive);
   }
