@@ -23,8 +23,7 @@ public class GyroIONaxX2 implements GyroIO {
 
     inputs.yawVelocityRadPerSec = Rotation2d.fromDegrees(ahrs.getRate()).getRadians();
 
-    inputs.yawPosition =
-        Rotation2d.fromDegrees(-ahrs.getYaw());
+    inputs.yawPosition = Rotation2d.fromDegrees(-ahrs.getYaw());
     inputs.odometryYawPositions =
         yawQueue.stream().map(Rotation2d::fromDegrees).toArray(Rotation2d[]::new);
     yawQueue.clear();
