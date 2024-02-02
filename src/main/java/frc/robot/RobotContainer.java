@@ -29,6 +29,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.imu.GyroIO;
 import frc.robot.subsystems.imu.GyroIONaxX2;
+import frc.robot.subsystems.imu.GyroIOPigeon2;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 

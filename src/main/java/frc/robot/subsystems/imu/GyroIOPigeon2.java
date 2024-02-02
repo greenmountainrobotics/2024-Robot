@@ -13,6 +13,8 @@
 
 package frc.robot.subsystems.imu;
 
+import static frc.robot.Constants.PigeonId;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
@@ -26,13 +28,13 @@ import java.util.Queue;
 
 /** IO implementation for Pigeon2 */
 public class GyroIOPigeon2 implements GyroIO {
-  private final Pigeon2 pigeon = new Pigeon2(20);
+  private final Pigeon2 pigeon = new Pigeon2(PigeonId);
   private final StatusSignal<Double> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;
   private final StatusSignal<Double> yawVelocity = pigeon.getAngularVelocityZWorld();
   private final Queue<Double> yawTimestampQueue;
 
-  public GyroIOPigeon2(boolean phoenixDrive) {
+  public GyroIOPigeon2() {
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
     pigeon.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(Module.ODOMETRY_FREQUENCY);

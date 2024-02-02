@@ -10,9 +10,12 @@ public class GyroIONaxX2 implements GyroIO {
 
   private final AHRS ahrs = new AHRS(SPI.Port.kMXP);
   private final Queue<Double> yawQueue;
+  private final Queue<Double> yawTimestampQueue;
 
   public GyroIONaxX2() {
     ahrs.reset();
+
+    yawTimestampQueue = SparkFlexOdometryThread.getInstance().makeTimestampQueue();
 
     yawQueue = SparkFlexOdometryThread.getInstance().registerSignal(() -> -ahrs.getYaw());
   }
@@ -26,6 +29,9 @@ public class GyroIONaxX2 implements GyroIO {
     inputs.yawPosition = Rotation2d.fromDegrees(-ahrs.getYaw());
     inputs.odometryYawPositions =
         yawQueue.stream().map(Rotation2d::fromDegrees).toArray(Rotation2d[]::new);
+    inputs.odometryYawTimestamps =
+        yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     yawQueue.clear();
+    yawTimestampQueue.clear();
   }
 }
