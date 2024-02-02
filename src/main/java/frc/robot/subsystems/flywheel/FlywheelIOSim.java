@@ -1,4 +1,4 @@
-// Copyright 2021-2023 FRC 6328
+// Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ public class FlywheelIOSim implements FlywheelIO {
   @Override
   public void setVoltage(double volts) {
     closedLoop = false;
-    appliedVolts = 0.0;
+    appliedVolts = volts;
     sim.setInputVoltage(volts);
   }
 
