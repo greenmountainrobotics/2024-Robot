@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.imu;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
@@ -20,6 +20,8 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.drive.Module;
+import frc.robot.subsystems.drive.SparkFlexOdometryThread;
 import java.util.Queue;
 
 /** IO implementation for Pigeon2 */
@@ -27,8 +29,8 @@ public class GyroIOPigeon2 implements GyroIO {
   private final Pigeon2 pigeon = new Pigeon2(20);
   private final StatusSignal<Double> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;
-  private final Queue<Double> yawTimestampQueue;
   private final StatusSignal<Double> yawVelocity = pigeon.getAngularVelocityZWorld();
+  private final Queue<Double> yawTimestampQueue;
 
   public GyroIOPigeon2(boolean phoenixDrive) {
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
@@ -36,16 +38,11 @@ public class GyroIOPigeon2 implements GyroIO {
     yaw.setUpdateFrequency(Module.ODOMETRY_FREQUENCY);
     yawVelocity.setUpdateFrequency(100.0);
     pigeon.optimizeBusUtilization();
-    if (phoenixDrive) {
-      yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
+
+      yawTimestampQueue = SparkFlexOdometryThread.getInstance().makeTimestampQueue();
       yawPositionQueue =
-          PhoenixOdometryThread.getInstance().registerSignal(pigeon, pigeon.getYaw());
-    } else {
-      yawTimestampQueue = SparkMaxOdometryThread.getInstance().makeTimestampQueue();
-      yawPositionQueue =
-          SparkMaxOdometryThread.getInstance()
+          SparkFlexOdometryThread.getInstance()
               .registerSignal(() -> pigeon.getYaw().getValueAsDouble());
-    }
   }
 
   @Override
@@ -57,9 +54,7 @@ public class GyroIOPigeon2 implements GyroIO {
     inputs.odometryYawTimestamps =
         yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions =
-        yawPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromDegrees(value))
-            .toArray(Rotation2d[]::new);
+        yawPositionQueue.stream().map(Rotation2d::fromDegrees).toArray(Rotation2d[]::new);
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
   }

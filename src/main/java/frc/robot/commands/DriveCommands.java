@@ -59,18 +59,22 @@ public class DriveCommands {
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
 
+          double speedCoeff = 0.1;
+
           // Convert to field relative speeds & send command
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec(),
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * speedCoeff,
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * speedCoeff,
+                  omega
+                      * drive.getMaxAngularSpeedRadPerSec()
+                      * speedCoeff, // TODO: REVERT THESE THREE
+                      isFlipped
+                              ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                              : drive.getRotation()));
         },
         drive);
   }
