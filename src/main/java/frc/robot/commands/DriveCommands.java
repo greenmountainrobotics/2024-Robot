@@ -1,4 +1,4 @@
-// Copyright 2021-2023 FRC 6328
+// Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -19,6 +19,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
@@ -57,13 +59,22 @@ public class DriveCommands {
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
 
+          double speedCoeff = 0.1;
+
           // Convert to field relative speeds & send command
+          boolean isFlipped =
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == Alliance.Red;
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec(),
-                  drive.getRotation()));
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * speedCoeff,
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * speedCoeff,
+                  omega
+                      * drive.getMaxAngularSpeedRadPerSec()
+                      * speedCoeff, // TODO: REVERT THESE THREE
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
         },
         drive);
   }

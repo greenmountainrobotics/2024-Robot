@@ -1,4 +1,4 @@
-// Copyright 2021-2023 FRC 6328
+// Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -41,6 +41,8 @@ public final class Constants {
     public static final int BackRightTurnId = 4;
     public static final int BackRightEncoderId = 5;
   }
+
+  public static final int PigeonId = 13;
 
   private static final RobotType robot = RobotType.MAIN_2024;
 

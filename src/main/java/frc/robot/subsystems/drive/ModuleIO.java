@@ -1,4 +1,4 @@
-// Copyright 2021-2023 FRC 6328
+// Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -25,7 +25,6 @@ public interface ModuleIO {
     public double[] driveCurrentAmps = new double[] {};
     public double driveMotorTemperature = 0;
 
-
     public Rotation2d turnAbsolutePosition = new Rotation2d();
     public Rotation2d turnPosition = new Rotation2d();
     public double turnVelocityRadPerSec = 0.0;
@@ -33,6 +32,7 @@ public interface ModuleIO {
     public double[] turnCurrentAmps = new double[] {};
     public double turnMotorTemperature = 0;
 
+    public double[] odometryTimestamps = new double[] {};
     public double[] odometryDrivePositionsRad = new double[] {};
     public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
   }

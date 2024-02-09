@@ -1,4 +1,4 @@
-// Copyright 2021-2023 FRC 6328
+// Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -21,14 +21,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.imu.GyroIO;
 import frc.robot.subsystems.imu.GyroIONaxX2;
+import frc.robot.subsystems.imu.GyroIOPigeon2;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -90,11 +91,17 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // Set up FF characterization routines
+    // Set up SysId routines
     autoChooser.addOption(
-        "Drive FF Characterization",
-        new FeedForwardCharacterization(
-            drive, drive::runCharacterizationVolts, drive::getCharacterizationVelocity));
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
