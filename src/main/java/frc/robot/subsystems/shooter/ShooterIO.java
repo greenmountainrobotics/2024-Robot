@@ -7,10 +7,10 @@ public interface ShooterIO {
 
     @AutoLog
     class ShooterIOInputs {
-        public Rotation2d pivotPosition = new Rotation2d();
+/*        public Rotation2d pivotPosition = new Rotation2d();
         public double pivotVelocityRadPerSec = 0.0;
         public double pivotAppliedVolts = 0.0;
-        public double[] pivotCurrentAmps = new double[] {};
+        public double[] pivotCurrentAmps = new double[] {};*/
 
         public double bottomPositionRad = 0.0;
         public double bottomVelocityRadPerSec = 0.0;
@@ -25,7 +25,9 @@ public interface ShooterIO {
     }
     public default void updateInputs(ShooterIOInputs inputs) {}
 
+/*
     public default void setPivotVoltage(double volts) {}
+*/
 
     public default void setTopVoltage(double volts) {}
     public default void setBottomVoltage(double volts) {}

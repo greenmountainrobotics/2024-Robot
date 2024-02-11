@@ -37,10 +37,10 @@ public class ShooterIOSparkMax implements ShooterIO {
         // inputs.pivotAppliedVolts = pivotMotor.getAppliedOutput() * pivotMotor.getBusVoltage();
     }
 
-    @Override
+/*    @Override
     public void setPivotVoltage(double volts) {
         pivotMotor.setVoltage(volts);
-    }
+    }*/
 
     @Override
     public void setTopVoltage(double volts) {
