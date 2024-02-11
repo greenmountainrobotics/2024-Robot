@@ -42,15 +42,18 @@ public class ShooterIOSim implements ShooterIO {
     @Override
     public void setPivotVoltage(double volts) {
         pivotAppliedVolts = volts;
+        pivotMotor.setInputVoltage(volts);
     }
 
     @Override
     public void setTopVoltage(double volts) {
         topAppliedVolts = volts;
+        topSpinMotor.setInputVoltage(volts);
     }
 
     @Override
     public void setBottomVoltage(double volts) {
         bottomAppliedVolts = volts;
+        topSpinMotor.setInputVoltage(volts);
     }
 }
