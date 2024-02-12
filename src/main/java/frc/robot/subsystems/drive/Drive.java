@@ -31,7 +31,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.imu.GyroIO;
@@ -299,10 +298,9 @@ public class Drive extends SubsystemBase {
 
   public Command runToPose(Pose2d pose) {
     return AutoBuilder.pathfindToPose(
-            pose,
-            new PathConstraints(
-                    3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-            0.0,
-            0.0);
+        pose,
+        new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+        0.0,
+        0.0);
   }
 }
