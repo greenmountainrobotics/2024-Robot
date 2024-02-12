@@ -52,6 +52,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
   private final CANcoder cancoder;
   private final Queue<Double> drivePositionQueue;
   private final Queue<Double> turnPositionQueue;
+  private final Queue<Double> timestampQueue;
 
   private final StatusSignal<Double> turnAbsolutePosition;
 
@@ -67,7 +68,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(FrontLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontLeftTurnId, kBrushless);
         cancoder = new CANcoder(FrontLeftEncoderId);
-        absoluteEncoderOffset = new Rotation2d(1.723); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(-4.5345926536); // CALIBRATED
         positionName = "FrontLeft";
         break;
       case 1:
@@ -75,7 +76,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(FrontRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontRightTurnId, kBrushless);
         cancoder = new CANcoder(FrontRightEncoderId);
-        absoluteEncoderOffset = new Rotation2d(-0.693); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(-2.326); // CALIBRATED
         positionName = "FrontRight";
         break;
       case 2:
@@ -83,7 +84,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(BackLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackLeftTurnId, kBrushless);
         cancoder = new CANcoder(BackLeftEncoderId);
-        absoluteEncoderOffset = new Rotation2d(0.674); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(-3.8085926536); // CALIBRATED
         positionName = "BackLeft";
         break;
       case 3:
@@ -91,7 +92,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(BackRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackRightTurnId, kBrushless);
         cancoder = new CANcoder(BackRightEncoderId);
-        absoluteEncoderOffset = new Rotation2d(-0.766); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(-0.907); // CALIBRATED
         positionName = "BackRight";
         break;
       default:
@@ -138,6 +139,8 @@ public class ModuleIOSparkFlex implements ModuleIO {
 
     driveSparkFlex.burnFlash();
     turnSparkFlex.burnFlash();
+
+    timestampQueue = SparkFlexOdometryThread.getInstance().makeTimestampQueue();
   }
 
   @Override
@@ -170,12 +173,15 @@ public class ModuleIOSparkFlex implements ModuleIO {
         turnPositionQueue.stream()
             .map((Double value) -> Rotation2d.fromRotations(value / TURN_GEAR_RATIO))
             .toArray(Rotation2d[]::new);
+    inputs.odometryTimestamps =
+        timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
 
     inputs.driveMotorTemperature = driveSparkFlex.getMotorTemperature();
     inputs.turnMotorTemperature = turnSparkFlex.getMotorTemperature();
 
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+    timestampQueue.clear();
   }
 
   @Override
