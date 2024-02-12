@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final class SwerveConstants {
+  public static final class CANIdConstants {
     public static final int FrontLeftDriveId = 1;
     public static final int FrontLeftTurnId = 2;
     public static final int FrontLeftEncoderId = 3;
@@ -40,10 +40,10 @@ public final class Constants {
     public static final int BackRightDriveId = 10;
     public static final int BackRightTurnId = 11;
     public static final int BackRightEncoderId = 12;
-  }
 
-  public static final int PigeonId = 31;
-  public static final int RevPDHId = 32;
+    public static final int PigeonId = 31;
+    public static final int RevPDHId = 32;
+  }
 
   private static final RobotType robot = RobotType.MAIN_2024;
 
