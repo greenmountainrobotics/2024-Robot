@@ -14,8 +14,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +30,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.imu.GyroIO;
-import frc.robot.subsystems.imu.GyroIONaxX2;
 import frc.robot.subsystems.imu.GyroIOPigeon2;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -58,7 +59,7 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
-                new GyroIONaxX2(),
+                new GyroIOPigeon2(),
                 new ModuleIOSparkFlex(0),
                 new ModuleIOSparkFlex(1),
                 new ModuleIOSparkFlex(2),
@@ -116,10 +117,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            drive, controller::getLeftY, controller::getLeftX, () -> -controller.getRightX()));
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     controller
         .b()
@@ -130,6 +128,15 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    controller
+        .y()
+        .whileTrue(
+            AutoBuilder.pathfindToPose(
+                new Pose2d(.5, .5, new Rotation2d()),
+                new PathConstraints(
+                    3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+                0.0,
+                0.0));
   }
 
   /**
