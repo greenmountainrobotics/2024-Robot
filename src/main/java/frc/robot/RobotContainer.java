@@ -31,6 +31,9 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.imu.GyroIO;
 import frc.robot.subsystems.imu.GyroIOPigeon2;
+import frc.robot.subsystems.photonvision.PhotonVision;
+import frc.robot.subsystems.photonvision.PhotonVisionIO;
+import frc.robot.subsystems.photonvision.PhotonVisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -43,6 +46,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final PhotonVision photonVision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -64,6 +68,9 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(1),
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
+        photonVision = new PhotonVision(
+                new PhotonVisionIOPhotonVision("camera1")
+        );
         break;
 
       case SIM:
@@ -75,6 +82,9 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
+        photonVision = new PhotonVision(
+                new PhotonVisionIOPhotonVision("camera1")
+        );
         break;
 
       default:
@@ -86,8 +96,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        photonVision = new PhotonVision(
+                new PhotonVisionIO() {}
+        );
         break;
     }
+
+    photonVision.setDataInterface(drive::addVisionMeasurement);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
