@@ -45,6 +45,8 @@ public final class Constants {
     public static final int RevPDHId = 32;
   }
 
+  public static final class FieldConstants {}
+
   private static final RobotType robot = RobotType.MAIN_2024;
 
   public static enum RobotType {

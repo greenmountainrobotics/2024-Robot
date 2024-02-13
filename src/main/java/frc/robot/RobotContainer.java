@@ -25,16 +25,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.apriltagvision.AprilTagVision;
+import frc.robot.subsystems.apriltagvision.PhotonVision;
+import frc.robot.subsystems.apriltagvision.PhotonVisionIO;
+import frc.robot.subsystems.apriltagvision.PhotonVisionIOPhotonVision;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.imu.GyroIO;
 import frc.robot.subsystems.imu.GyroIOPigeon2;
-import frc.robot.subsystems.apriltagvision.AprilTagVision;
-import frc.robot.subsystems.apriltagvision.PhotonVision;
-import frc.robot.subsystems.apriltagvision.PhotonVisionIO;
-import frc.robot.subsystems.apriltagvision.PhotonVisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -69,9 +69,7 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(1),
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
-        aprilTagVision = new PhotonVision(
-                new PhotonVisionIOPhotonVision("camera1")
-        );
+        aprilTagVision = new PhotonVision(new PhotonVisionIOPhotonVision("camera1"));
         break;
 
       case SIM:
@@ -83,9 +81,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        aprilTagVision = new PhotonVision(
-                new PhotonVisionIOPhotonVision("camera1")
-        );
+        aprilTagVision = new PhotonVision(new PhotonVisionIOPhotonVision("camera1"));
         break;
 
       default:
@@ -97,9 +93,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        aprilTagVision = new PhotonVision(
-                new PhotonVisionIO() {}
-        );
+        aprilTagVision = new PhotonVision(new PhotonVisionIO() {});
         break;
     }
 
