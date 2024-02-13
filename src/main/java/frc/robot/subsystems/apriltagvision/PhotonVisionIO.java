@@ -8,9 +8,9 @@ public interface PhotonVisionIO {
   @AutoLog
   public static class AprilTagIOInputs {
     public boolean isConnected;
-    public Pose3d estimatedPose;
+    public Pose3d estimatedPose = new Pose3d();
     public double latestTimestamp;
-    public Transform3d[] robotToTargetList;
+    public Transform3d[] robotToTargetList = new Transform3d[0];
   }
 
   public default void updateInputs(AprilTagIOInputs inputs) {}

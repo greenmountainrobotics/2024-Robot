@@ -18,7 +18,8 @@ public class PhotonVision extends AprilTagVision {
     io.updateInputs(inputs);
     Logger.processInputs("PhotonVision", inputs);
 
-    poseConsumer.accept(inputs.estimatedPose.toPose2d(), inputs.latestTimestamp);
+    if (inputs.latestTimestamp != 0.0)
+      poseConsumer.accept(inputs.estimatedPose.toPose2d(), inputs.latestTimestamp);
   }
 
   public void setDataInterface(BiConsumer<Pose2d, Double> poseConsumer) {
