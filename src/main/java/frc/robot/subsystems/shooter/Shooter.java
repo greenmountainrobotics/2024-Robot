@@ -13,7 +13,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
   private ShooterIO io;
-  private ShooterIOInputsAutoLogged inputs;
+  private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
   private PIDController topPID;
   private PIDController bottomPID;
 
