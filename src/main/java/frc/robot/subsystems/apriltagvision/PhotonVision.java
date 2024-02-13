@@ -1,12 +1,11 @@
-package frc.robot.subsystems.photonvision;
+package frc.robot.subsystems.apriltagvision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.function.BiConsumer;
 
-public class PhotonVision extends SubsystemBase {
+public class PhotonVision extends AprilTagVision {
     private PhotonVisionIO io;
     private AprilTagIOInputsAutoLogged inputs = new AprilTagIOInputsAutoLogged();
     private BiConsumer<Pose2d, Double> poseConsumer = (x,y) -> {};
