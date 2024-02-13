@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -45,9 +47,45 @@ public final class Constants {
     public static final int RevPDHId = 32;
   }
 
-  public static final class FieldConstants {}
+  public static final class FieldConstants {
+    public static Translation2d AmpCenter = new Translation2d(Units.inchesToMeters(72.5),Units.inchesToMeters(323.00));
+    public static Translation2d SourceCloseSideCorner = new Translation2d(
+            76.1 // width of amp
+                    + 250.50 * 2, // 2 * width betweeen centerline and source
+            0.0 // on bottom edge of field
+    );
+    public static Translation2d SourceFarSideCorner = new Translation2d(
+            76.1 * 2 // 2 * width of amp
+                    + 250.50 * 2, // 2 * width between centerline and source
+            60.75 - 18.0
+    );
+  }
 
-  private static final RobotType robot = RobotType.MAIN_2024;
+  public static final class RobotConstants {
+    public static final double TrackWidthY;
+    public static final double TrackWidthX;
+    public static final double WidthWithBumpersY;
+    public static final double WidthWithBumpersX;
+
+    static {
+      switch (robot) {
+        case MAIN_2024, SIMBOT -> {
+          TrackWidthY = 22.75;
+          TrackWidthX = 22.75;
+          WidthWithBumpersY = 30.75;
+          WidthWithBumpersX = 30.75;
+        }
+        default -> {
+          TrackWidthY = 0;
+          TrackWidthX = 0;
+          WidthWithBumpersY = 0;
+          WidthWithBumpersX = 0;
+        }
+      }
+    }
+  }
+
+  private static final RobotType robot = RobotType.SIMBOT;
 
   public static enum RobotType {
     SIMBOT,
