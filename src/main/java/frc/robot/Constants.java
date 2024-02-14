@@ -13,8 +13,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.math.util.Units.inchesToMeters;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -48,17 +50,28 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static Translation2d AmpCenter = new Translation2d(Units.inchesToMeters(72.5),Units.inchesToMeters(323.00));
-    public static Translation2d SourceCloseSideCorner = new Translation2d(
-            76.1 // width of amp
-                    + 250.50 * 2, // 2 * width betweeen centerline and source
+    public static Translation2d AmpCenter =
+        new Translation2d(inchesToMeters(72.5), inchesToMeters(323.00));
+
+    // facing out
+    public static Rotation2d AmpRotation = Rotation2d.fromDegrees(-90);
+
+    public static Translation2d SourceCloseSideCorner =
+        new Translation2d(
+            inchesToMeters(
+                76.1 // width of amp
+                    + 250.50 * 2), // 2 * width betweeen centerline and source
             0.0 // on bottom edge of field
-    );
-    public static Translation2d SourceFarSideCorner = new Translation2d(
-            76.1 * 2 // 2 * width of amp
-                    + 250.50 * 2, // 2 * width between centerline and source
-            60.75 - 18.0
-    );
+            );
+    public static Translation2d SourceFarSideCorner =
+        new Translation2d(
+            inchesToMeters(
+                76.1 * 2 // 2 * width of amp
+                    + 250.50 * 2), // 2 * width between centerline and source
+            inchesToMeters(60.75 - 18.0));
+
+    // facing out
+    public static Rotation2d SourceRotation = Rotation2d.fromDegrees(120);
   }
 
   public static final class RobotConstants {
@@ -70,10 +83,10 @@ public final class Constants {
     static {
       switch (robot) {
         case MAIN_2024, SIMBOT -> {
-          TrackWidthY = 22.75;
-          TrackWidthX = 22.75;
-          WidthWithBumpersY = 30.75;
-          WidthWithBumpersX = 30.75;
+          TrackWidthY = inchesToMeters(22.75);
+          TrackWidthX = inchesToMeters(22.75);
+          WidthWithBumpersY = inchesToMeters(30.75);
+          WidthWithBumpersX = inchesToMeters(30.75);
         }
         default -> {
           TrackWidthY = 0;
