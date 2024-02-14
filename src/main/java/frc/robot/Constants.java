@@ -50,25 +50,25 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static Translation2d AmpCenter =
-        new Translation2d(inchesToMeters(72.5), inchesToMeters(323.00));
+    public static double FieldWidth =
+        inchesToMeters(
+            76.1 * 2 // 2 * width of amp
+                + 250.50 * 2); // 2 * width between centerline and source
+    public static double FieldHeight = inchesToMeters(323.00);
+
+    public static Translation2d AmpCenter = new Translation2d(inchesToMeters(72.5), FieldHeight);
 
     // facing out
     public static Rotation2d AmpRotation = Rotation2d.fromDegrees(-90);
 
     public static Translation2d SourceCloseSideCorner =
         new Translation2d(
-            inchesToMeters(
-                76.1 // width of amp
-                    + 250.50 * 2), // 2 * width betweeen centerline and source
+            FieldWidth - inchesToMeters(76.1), // field width - width of amp
             0.0 // on bottom edge of field
             );
     public static Translation2d SourceFarSideCorner =
         new Translation2d(
-            inchesToMeters(
-                76.1 * 2 // 2 * width of amp
-                    + 250.50 * 2), // 2 * width between centerline and source
-            inchesToMeters(60.75 - 18.0));
+            FieldWidth, inchesToMeters(60.75 - 18.0)); // height from edge - height of wall
 
     // facing out
     public static Rotation2d SourceRotation = Rotation2d.fromDegrees(120);
