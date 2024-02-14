@@ -13,6 +13,9 @@
 
 package frc.robot.commands;
 
+import static frc.robot.Constants.FieldConstants.*;
+import static frc.robot.Constants.RobotConstants.WidthWithBumpersX;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,7 +26,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import frc.robot.subsystems.drive.Drive;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 public class DriveCommands {
@@ -73,5 +78,41 @@ public class DriveCommands {
                       : drive.getRotation()));
         },
         drive);
+  }
+
+  public static Command alignToAmp() {
+    return new DeferredCommand(
+        () -> {
+          Pose2d pose =
+              new Pose2d(
+                  AmpCenter.minus(
+                      new Translation2d(WidthWithBumpersX, 0)
+                          .times(0.5)
+                          .rotateBy(Rotation2d.fromDegrees(90))),
+                  AmpRotation.plus(Rotation2d.fromDegrees(180)));
+          if (DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == Alliance.Red) pose = Drive.flipPose(pose);
+          return Drive.runToPose(pose);
+        },
+        Set.of());
+  }
+
+  public static Command alignToSource() {
+    return new DeferredCommand(
+        () -> {
+          Pose2d pose =
+              new Pose2d(
+                  SourceCloseSideCorner.plus(SourceFarSideCorner)
+                      .div(2)
+                      .plus(
+                          new Translation2d(WidthWithBumpersX, 0)
+                              .times(0.5)
+                              .rotateBy(SourceRotation)),
+                  SourceRotation.plus(Rotation2d.fromDegrees(180)));
+          if (DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == Alliance.Red) pose = Drive.flipPose(pose);
+          return Drive.runToPose(pose);
+        },
+        Set.of());
   }
 }

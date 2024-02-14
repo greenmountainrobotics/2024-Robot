@@ -14,6 +14,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.FieldConstants.FieldWidth;
 import static frc.robot.Constants.RobotConstants.TrackWidthX;
 import static frc.robot.Constants.RobotConstants.TrackWidthY;
 
@@ -45,8 +46,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
-  private static final double DRIVE_BASE_RADIUS =
-      Math.hypot(TrackWidthX / 2.0, TrackWidthY / 2.0);
+  private static final double DRIVE_BASE_RADIUS = Math.hypot(TrackWidthX / 2.0, TrackWidthY / 2.0);
   private static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
 
   static final Lock odometryLock = new ReentrantLock();
@@ -296,11 +296,18 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  public Command runToPose(Pose2d pose) {
+  public static Command runToPose(Pose2d pose) {
     return AutoBuilder.pathfindToPose(
         pose,
         new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
         0.0,
         0.0);
+  }
+
+  public static Pose2d flipPose(Pose2d pose) {
+    return new Pose2d(
+        FieldWidth - pose.getX(),
+        pose.getY(),
+        pose.getRotation().plus(Rotation2d.fromDegrees(180)).times(-1));
   }
 }

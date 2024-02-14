@@ -14,10 +14,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -138,15 +136,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    controller
-        .y()
-        .whileTrue(
-            AutoBuilder.pathfindToPose(
-                new Pose2d(.5, .5, new Rotation2d()),
-                new PathConstraints(
-                    3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-                0.0,
-                0.0));
+    controller.y().whileTrue(DriveCommands.alignToSource());
+    controller.a().whileTrue(DriveCommands.alignToAmp());
   }
 
   /**
