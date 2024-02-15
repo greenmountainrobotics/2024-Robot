@@ -15,6 +15,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Battery;
+import frc.robot.util.BatteryTracker;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -45,6 +47,10 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+
+    Battery battery = BatteryTracker.scanBatteryQR();
+    Logger.recordMetadata("Battery", battery.year + "_" + battery);
+
     switch (BuildConstants.DIRTY) {
       case 0:
         Logger.recordMetadata("GitDirty", "All changes committed");

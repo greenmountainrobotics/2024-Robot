@@ -53,6 +53,22 @@ public final class Constants {
     public static final int LedsId = 0;
   }
 
+  // TODO: set year numbers
+  public enum Battery {
+    CIABATTA(0),
+    CLUNKY_NOISES(0),
+    SOURDOUGH(0),
+    CHALLAH(0),
+    RYE(0),
+    NONE(0);
+
+    public final int year;
+
+    Battery(int year) {
+      this.year = year;
+    }
+  }
+
   public static final class FieldConstants {
     public static double FieldWidth =
         inchesToMeters(
