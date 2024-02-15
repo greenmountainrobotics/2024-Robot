@@ -27,11 +27,11 @@ import frc.robot.subsystems.apriltagvision.PhotonVision;
 import frc.robot.subsystems.apriltagvision.PhotonVisionIO;
 import frc.robot.subsystems.apriltagvision.PhotonVisionIOPhotonVision;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.imu.GyroIO;
+import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
 import frc.robot.subsystems.drive.module.ModuleIO;
 import frc.robot.subsystems.drive.module.ModuleIOSim;
 import frc.robot.subsystems.drive.module.ModuleIOSparkFlex;
-import frc.robot.subsystems.drive.imu.GyroIO;
-import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 

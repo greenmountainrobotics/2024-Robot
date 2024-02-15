@@ -14,13 +14,12 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.wpilibj.Notifier;
+import frc.robot.subsystems.drive.module.Module;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
-
-import frc.robot.subsystems.drive.module.Module;
 import org.littletonrobotics.junction.Logger;
 
 /**

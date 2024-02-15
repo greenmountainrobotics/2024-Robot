@@ -26,7 +26,6 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.drive.SparkFlexOdometryThread;
-
 import java.util.Queue;
 
 /**
