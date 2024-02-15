@@ -14,12 +14,10 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.FieldConstants.FieldWidth;
 import static frc.robot.Constants.RobotConstants.TrackWidthX;
 import static frc.robot.Constants.RobotConstants.TrackWidthY;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -313,20 +311,5 @@ public class Drive extends SubsystemBase {
       new Translation2d(-TrackWidthX / 2.0, TrackWidthY / 2.0),
       new Translation2d(-TrackWidthX / 2.0, -TrackWidthY / 2.0)
     };
-  }
-
-  public static Command runToPose(Pose2d pose) {
-    return AutoBuilder.pathfindToPose(
-        pose,
-        new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-        0.0,
-        0.0);
-  }
-
-  public static Pose2d flipPose(Pose2d pose) {
-    return new Pose2d(
-        FieldWidth - pose.getX(),
-        pose.getY(),
-        pose.getRotation().plus(Rotation2d.fromDegrees(180)).times(-1));
   }
 }
