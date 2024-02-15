@@ -131,8 +131,8 @@ public class RobotContainer {
     controller
         .b()
         .onTrue(Commands.runOnce(() -> drive.setPose(new Pose2d()), drive).ignoringDisable(true));
-    controller.y().whileTrue(DriveCommands.alignToSource());
-    controller.a().whileTrue(DriveCommands.alignToAmp());
+    controller.y().whileTrue(DriveCommands.alignToSource(drive));
+    controller.a().whileTrue(DriveCommands.alignToAmp(drive));
   }
 
   /**

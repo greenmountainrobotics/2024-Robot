@@ -67,6 +67,8 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -186,6 +188,8 @@ public class Drive extends SubsystemBase {
    * @param speeds Speeds in meters/sec
    */
   public void runVelocity(ChassisSpeeds speeds) {
+    chassisSpeeds = speeds;
+
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
@@ -201,6 +205,19 @@ public class Drive extends SubsystemBase {
     // Log setpoint states
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
+  }
+
+  public Twist2d getFieldVelocity() {
+    Translation2d translationVelocity =
+        new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
+            .rotateBy(getRotation());
+    return new Twist2d(translationVelocity.getX(), translationVelocity.getY(), getYawVelocity());
+  }
+
+  public double getYawVelocity() {
+    return gyroInputs.connected
+        ? gyroInputs.yawVelocityRadPerSec
+        : chassisSpeeds.omegaRadiansPerSecond;
   }
 
   /** Stops the drive. */

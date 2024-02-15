@@ -80,7 +80,7 @@ public class DriveCommands {
         drive);
   }
 
-  public static Command alignToAmp() {
+  public static Command alignToAmp(Drive drive) {
     return new DeferredCommand(
         () -> {
           Pose2d pose =
@@ -92,12 +92,12 @@ public class DriveCommands {
                   AmpRotation.plus(Rotation2d.fromDegrees(180)));
           if (DriverStation.getAlliance().isPresent()
               && DriverStation.getAlliance().get() == Alliance.Red) pose = Drive.flipPose(pose);
-          return Drive.runToPose(pose);
+          return new DriveToPose(drive, pose);
         },
-        Set.of());
+        Set.of(drive));
   }
 
-  public static Command alignToSource() {
+  public static Command alignToSource(Drive drive) {
     return new DeferredCommand(
         () -> {
           Pose2d pose =
@@ -111,8 +111,8 @@ public class DriveCommands {
                   SourceRotation.plus(Rotation2d.fromDegrees(180)));
           if (DriverStation.getAlliance().isPresent()
               && DriverStation.getAlliance().get() == Alliance.Red) pose = Drive.flipPose(pose);
-          return Drive.runToPose(pose);
+          return new DriveToPose(drive, pose);
         },
-        Set.of());
+        Set.of(drive));
   }
 }
