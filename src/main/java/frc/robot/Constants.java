@@ -49,6 +49,10 @@ public final class Constants {
     public static final int RevPDHId = 32;
   }
 
+  public static final class PWMIdConstants {
+    public static final int LedsId = 0;
+  }
+
   public static final class FieldConstants {
     public static double FieldWidth =
         inchesToMeters(
@@ -98,7 +102,7 @@ public final class Constants {
     }
   }
 
-  private static final RobotType robot = RobotType.MAIN_2024;
+  private static final RobotType robot = RobotType.SIMBOT;
 
   public static enum RobotType {
     SIMBOT,
