@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
+
+import frc.robot.subsystems.drive.module.Module;
 import org.littletonrobotics.junction.Logger;
 
 /**

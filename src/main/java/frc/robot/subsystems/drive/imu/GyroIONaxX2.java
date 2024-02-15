@@ -1,4 +1,4 @@
-package frc.robot.subsystems.imu;
+package frc.robot.subsystems.drive.imu;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
