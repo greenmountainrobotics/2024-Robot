@@ -22,8 +22,8 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
         PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     switch (cameraName) {
-      case "camera1":
-        camera = new PhotonCamera("camera1");
+      case "Arducam_OV2311_USB_Camera":
+        camera = new PhotonCamera(cameraName);
         robotToCam =
             new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0));
         photonPoseEstimator =

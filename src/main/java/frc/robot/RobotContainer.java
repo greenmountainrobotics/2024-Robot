@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -67,7 +66,8 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(1),
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
-        aprilTagVision = new PhotonVision(new PhotonVisionIOPhotonVision("camera1"));
+        aprilTagVision =
+            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
         break;
 
       case SIM:
@@ -79,7 +79,8 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        aprilTagVision = new PhotonVision(new PhotonVisionIOPhotonVision("camera1"));
+        aprilTagVision =
+            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
         break;
 
       default:
@@ -129,13 +130,7 @@ public class RobotContainer {
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     controller
         .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+        .onTrue(Commands.runOnce(() -> drive.setPose(new Pose2d()), drive).ignoringDisable(true));
     controller.y().whileTrue(DriveCommands.alignToSource());
     controller.a().whileTrue(DriveCommands.alignToAmp());
   }

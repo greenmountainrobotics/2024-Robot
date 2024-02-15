@@ -17,6 +17,7 @@ public class PhotonVision extends AprilTagVision {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("PhotonVision", inputs);
+    Logger.recordOutput("PhotonVision/Pose2d", inputs.estimatedPose.toPose2d());
 
     if (inputs.latestTimestamp != 0.0)
       poseConsumer.accept(inputs.estimatedPose.toPose2d(), inputs.latestTimestamp);
