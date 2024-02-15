@@ -45,7 +45,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-  private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
+  private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5) * 0.3;
   private static final double DRIVE_BASE_RADIUS = Math.hypot(TrackWidthX / 2.0, TrackWidthY / 2.0);
   private static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
 
