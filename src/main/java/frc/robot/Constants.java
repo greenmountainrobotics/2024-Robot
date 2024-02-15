@@ -53,13 +53,12 @@ public final class Constants {
     public static final int LedsId = 0;
   }
 
-  // TODO: set year numbers
   public enum Battery {
-    CIABATTA(0),
-    CLUNKY_NOISES(0),
-    SOURDOUGH(0),
-    CHALLAH(0),
-    RYE(0),
+    CIABATTA(2023),
+    CLUNKY_NOISES(2023),
+    SOURDOUGH(2024),
+    CHALLAH(2023),
+    RYE(2023),
     NONE(0);
 
     public final int year;
