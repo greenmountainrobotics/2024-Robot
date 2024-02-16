@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.Battery;
@@ -48,7 +49,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
 
-    Battery battery = BatteryTracker.scanBatteryQR();
+    Battery battery = RobotBase.isReal() ? BatteryTracker.scanBatteryQR() : Battery.NONE;
     Logger.recordMetadata("Battery", battery.year + "_" + battery);
 
     switch (BuildConstants.DIRTY) {
