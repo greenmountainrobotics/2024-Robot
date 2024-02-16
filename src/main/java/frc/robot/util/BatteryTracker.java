@@ -10,6 +10,7 @@ import org.opencv.objdetect.QRCodeDetector;
 
 public class BatteryTracker {
   private static Battery battery;
+
   public static Battery scanBatteryQR() {
     UsbCamera camera = CameraServer.startAutomaticCapture();
     CvSink sink = CameraServer.getVideo();
@@ -27,14 +28,15 @@ public class BatteryTracker {
     String result = detector.detectAndDecode(mat);
     sink.close();
     camera.close();
-    battery = switch (result) {
-      case "1" -> Battery.CIABATTA;
-      case "2" -> Battery.CLUNKY_NOISES;
-      case "3" -> Battery.SOURDOUGH;
-      case "4" -> Battery.CHALLAH;
-      case "5" -> Battery.RYE;
-      default -> Battery.NONE;
-    };
+    battery =
+        switch (result) {
+          case "1" -> Battery.CIABATTA;
+          case "2" -> Battery.CLUNKY_NOISES;
+          case "3" -> Battery.SOURDOUGH;
+          case "4" -> Battery.CHALLAH;
+          case "5" -> Battery.RYE;
+          default -> Battery.NONE;
+        };
     return battery;
   }
 
