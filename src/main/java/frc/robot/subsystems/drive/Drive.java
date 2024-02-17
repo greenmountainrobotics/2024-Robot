@@ -17,11 +17,6 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.RobotConstants.TrackWidthX;
 import static frc.robot.Constants.RobotConstants.TrackWidthY;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.pathfinding.Pathfinding;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -37,15 +32,13 @@ import frc.robot.subsystems.drive.imu.GyroIO;
 import frc.robot.subsystems.drive.imu.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drive.module.Module;
 import frc.robot.subsystems.drive.module.ModuleIO;
-import frc.robot.util.Alliance;
-import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-  private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5) * 0.3;
+  private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
   private static final double DRIVE_BASE_RADIUS = Math.hypot(TrackWidthX / 2.0, TrackWidthY / 2.0);
   private static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
 
@@ -83,27 +76,6 @@ public class Drive extends SubsystemBase {
 
     // Start threads (no-op for each if no signals have been created)
     SparkFlexOdometryThread.getInstance().start();
-
-    // Configure AutoBuilder for PathPlanner
-    AutoBuilder.configureHolonomic(
-        this::getPose,
-        (pose) -> {},
-        () -> kinematics.toChassisSpeeds(getModuleStates()),
-        this::runVelocity,
-        new HolonomicPathFollowerConfig(
-            MAX_LINEAR_SPEED, DRIVE_BASE_RADIUS, new ReplanningConfig()),
-        Alliance::isRed,
-        this);
-    Pathfinding.setPathfinder(new LocalADStarAK());
-    PathPlannerLogging.setLogActivePathCallback(
-        (activePath) -> {
-          Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-        });
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (targetPose) -> {
-          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-        });
 
     // Configure SysId
     sysId =

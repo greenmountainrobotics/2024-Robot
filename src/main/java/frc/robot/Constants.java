@@ -117,6 +117,13 @@ public final class Constants {
     }
   }
 
+  public static final class DrivePIDConstants {
+    public static final double KpX = 5.0;
+    public static final double KpY = 5.0;
+    public static final double KpTranslation = 5.0;
+    public static final double KpTheta = 5.0;
+  }
+
   private static final RobotType robot = RobotType.SIMBOT;
 
   public static enum RobotType {

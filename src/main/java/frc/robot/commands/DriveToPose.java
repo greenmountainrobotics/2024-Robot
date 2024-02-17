@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.Logger;
 
@@ -25,10 +26,10 @@ public class DriveToPose extends Command {
     addRequirements(drive);
 
     translationController =
-        new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+        new ProfiledPIDController(Constants.DrivePIDConstants.KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
     translationController.setTolerance(driveTolerance);
 
-    thetaController = new ProfiledPIDController(5.0, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+    thetaController = new ProfiledPIDController(Constants.DrivePIDConstants.KpTheta, 0, 0, new TrapezoidProfile.Constraints(5, 5));
     thetaController.setTolerance(thetaTolerance);
   }
 
