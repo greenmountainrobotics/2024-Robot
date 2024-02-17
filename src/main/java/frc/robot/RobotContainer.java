@@ -146,12 +146,10 @@ public class RobotContainer {
             () -> -controller1.getLeftY(),
             () -> -controller1.getLeftX(),
             () -> -controller1.getRightX()));
+
     controller1.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller1
-        .b()
-        .onTrue(Commands.runOnce(() -> drive.setPose(new Pose2d()), drive).ignoringDisable(true));
-    controller1.y().whileTrue(DriveCommands.alignToSource(drive));
     controller1.a().whileTrue(DriveCommands.alignToAmp(drive));
+    controller1.b().whileTrue(DriveCommands.alignToSource(drive));
 
     shooter.setDefaultCommand(
         new RunCommand(
