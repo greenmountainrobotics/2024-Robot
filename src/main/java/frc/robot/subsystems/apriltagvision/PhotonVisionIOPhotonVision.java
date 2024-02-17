@@ -6,13 +6,12 @@ import static org.photonvision.PhotonPoseEstimator.PoseStrategy.*;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Pose2d;
 import java.util.ArrayList;
 import java.util.function.Supplier;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 
@@ -35,7 +34,8 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
                 new Translation3d(0, inchesToMeters(-1.260), inchesToMeters(7.940)),
                 new Rotation3d(0, degreesToRadians(180 + 65 + 90), Math.PI));
         photonPoseEstimator =
-            new PhotonPoseEstimator(aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
+            new PhotonPoseEstimator(
+                aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
         photonPoseEstimator.setMultiTagFallbackStrategy(CLOSEST_TO_REFERENCE_POSE);
         break;
       default:
@@ -43,7 +43,8 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
         robotToCam =
             new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0));
         photonPoseEstimator =
-            new PhotonPoseEstimator(aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
+            new PhotonPoseEstimator(
+                aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
     }
   }
 

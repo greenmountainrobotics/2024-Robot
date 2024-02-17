@@ -11,4 +11,4 @@ exit 1
 esac
 
 git add .
-git commit -m "updates @ $(date -Iseconds)" &> /dev/null
+git commit -m "updates @ $(date -Iseconds)" 2> /dev/null
