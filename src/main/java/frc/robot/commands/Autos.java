@@ -15,9 +15,21 @@ import frc.robot.util.FieldPoseUtils;
 import java.util.Set;
 
 public class Autos {
+  enum Trajectory {
+    AmpToMiddle("Amp to Middle"),
+    AmpToSource("Amp to Source"),
+    FarSideToAmp("Far side to Amp"),
+    FarSideToSource("Far side to Source");
 
-  private static Command followPath(Drive drive, String pathName) {
-    ChoreoTrajectory trajectory = Choreo.getTrajectory(pathName);
+    private final String fileName;
+
+    Trajectory(String fileName) {
+      this.fileName = fileName;
+    }
+  }
+
+  private static Command followPath(Drive drive, Trajectory traj) {
+    ChoreoTrajectory trajectory = Choreo.getTrajectory(traj.fileName);
 
     return new SequentialCommandGroup(
         new DriveToPose(
@@ -35,22 +47,78 @@ public class Autos {
             Alliance::isRed));
   }
 
-  public static Command ScoreInAmpThenSource(Drive drive, ShooterSimple shooter) {
+  public static Command CloseSideToAmp(Drive drive, ShooterSimple shooter) {
     return new DeferredCommand(
         () ->
             new SequentialCommandGroup(
-                ScoreInAmp(drive, shooter),
-                followPath(drive, "Amp to Source"),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()), ShootInAmp(shooter)),
         Set.of(drive));
   }
 
-  public static Command ScoreInAmp(Drive drive, ShooterSimple shooter) {
+  public static Command FarSideToAmp(Drive drive, ShooterSimple shooter) {
+    return new DeferredCommand(
+        () ->
+            new SequentialCommandGroup(
+                followPath(drive, Trajectory.FarSideToAmp),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
+                ShootInAmp(shooter)),
+        Set.of(drive));
+  }
+
+  public static Command CloseSideToAmpToSource(Drive drive, ShooterSimple shooter) {
     return new DeferredCommand(
         () ->
             new SequentialCommandGroup(
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                new RunCommand(() -> shooter.setFlywheels(0.3, -0.3)).withTimeout(2)),
+                ShootInAmp(shooter),
+                followPath(drive, Trajectory.AmpToSource),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
         Set.of(drive));
+  }
+
+  public static Command FarSideToAmpToSource(Drive drive, ShooterSimple shooter) {
+    return new DeferredCommand(
+        () ->
+            new SequentialCommandGroup(
+                followPath(drive, Trajectory.FarSideToAmp),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
+                ShootInAmp(shooter),
+                followPath(drive, Trajectory.AmpToSource),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
+        Set.of(drive));
+  }
+
+  public static Command CloseSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
+    return new DeferredCommand(
+        () ->
+            new SequentialCommandGroup(
+                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
+                ShootInAmp(shooter),
+                followPath(drive, Trajectory.AmpToMiddle)),
+        Set.of(drive));
+  }
+
+  public static Command FarSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
+    return new DeferredCommand(
+        () ->
+            new SequentialCommandGroup(
+                followPath(drive, Trajectory.FarSideToAmp),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
+                ShootInAmp(shooter),
+                followPath(drive, Trajectory.AmpToMiddle)),
+        Set.of(drive));
+  }
+
+  public static Command FarSideToSource(Drive drive) {
+    return new DeferredCommand(
+        () ->
+            new SequentialCommandGroup(
+                followPath(drive, Trajectory.FarSideToSource),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
+        Set.of(drive));
+  }
+
+  public static Command ShootInAmp(ShooterSimple shooter) {
+    return new RunCommand(() -> shooter.setFlywheels(0.3, -0.3)).withTimeout(2);
   }
 }

@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -111,23 +110,7 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
-
-    autoChooser.addOption("None", new InstantCommand(() -> {}));
-
-    autoChooser.addOption("Score in Amp", Autos.ScoreInAmp(drive, shooter));
-    autoChooser.addOption("Score in Amp then Source", Autos.ScoreInAmpThenSource(drive, shooter));
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    configureAutos();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -158,6 +141,35 @@ public class RobotContainer {
               shooter.setFlywheels(amt, -amt);
             },
             shooter));
+  }
+
+  private void configureAutos() {
+    // No-op
+    autoChooser.addOption("None", new InstantCommand(() -> {}));
+
+    // Autos
+    autoChooser.addOption("Close side to Amp", Autos.CloseSideToAmp(drive, shooter));
+    autoChooser.addOption("Far side to Amp", Autos.FarSideToAmp(drive, shooter));
+    autoChooser.addOption(
+        "Close side to Amp to Source", Autos.CloseSideToAmpToSource(drive, shooter));
+    autoChooser.addOption("Far side to Amp to Source", Autos.FarSideToAmpToSource(drive, shooter));
+    autoChooser.addOption(
+        "Close side to Amp to Middle", Autos.CloseSideToAmpToMiddle(drive, shooter));
+    autoChooser.addOption("Far side to Amp to Middle", Autos.FarSideToAmpToMiddle(drive, shooter));
+    autoChooser.addOption("Far side to Source", Autos.FarSideToSource(drive));
+    autoChooser.addOption("Shoot in Amp", Autos.ShootInAmp(shooter));
+
+    // SysId Routines
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   /**
