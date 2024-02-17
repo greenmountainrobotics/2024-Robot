@@ -29,8 +29,8 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
         camera = new PhotonCamera(cameraName);
         robotToCam =
             new Transform3d(
-                new Translation3d(0.005, 1.260, inchesToMeters(7.940)),
-                new Rotation3d(0.0, degreesToRadians(65), 0.0));
+                new Translation3d(0, inchesToMeters(-1.260), inchesToMeters(7.940)),
+                new Rotation3d(0.0, degreesToRadians(180 - 65), 0.0));
         photonPoseEstimator =
             new PhotonPoseEstimator(aprilTagFieldLayout, poseStrategy, camera, robotToCam);
         break;
