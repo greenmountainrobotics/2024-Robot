@@ -72,28 +72,48 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static double FieldWidth =
+    public static final double FieldWidth =
         inchesToMeters(
             76.1 * 2 // 2 * width of amp
                 + 250.50 * 2); // 2 * width between centerline and source
-    public static double FieldHeight = inchesToMeters(323.00);
+    public static final double FieldHeight = inchesToMeters(323.00);
 
-    public static Translation2d AmpCenter = new Translation2d(inchesToMeters(72.5), FieldHeight);
+    public static final Translation2d AmpCenter =
+        new Translation2d(inchesToMeters(72.5), FieldHeight);
 
     // facing out
-    public static Rotation2d AmpRotation = Rotation2d.fromDegrees(-90);
+    public static final Rotation2d AmpRotation = Rotation2d.fromDegrees(-90);
 
-    public static Translation2d SourceCloseSideCorner =
+    public static final Translation2d SourceCloseSideCorner =
         new Translation2d(
             FieldWidth - inchesToMeters(76.1), // field width - width of amp
             0.0 // on bottom edge of field
             );
-    public static Translation2d SourceFarSideCorner =
+    public static final Translation2d SourceFarSideCorner =
         new Translation2d(
             FieldWidth, inchesToMeters(60.75 - 18.0)); // height from edge - height of wall
 
     // facing out
-    public static Rotation2d SourceRotation = Rotation2d.fromDegrees(120);
+    public static final Rotation2d SourceRotation = Rotation2d.fromDegrees(120);
+
+    public static final Translation2d SpeakerBottomCloseSideCorner =
+        new Translation2d(0, SourceFarSideCorner.getY() + inchesToMeters(133.677));
+
+    public static final Translation2d SpeakerTopCloseSideCorner =
+        new Translation2d(0, SpeakerBottomCloseSideCorner.getY() + inchesToMeters(82.400));
+
+    private static final Translation2d SpeakerCloseCornerToFarCorner =
+        new Translation2d(inchesToMeters(35.694542), inchesToMeters(20.824760));
+
+    public static final Translation2d SpeakerBottomFarSideCorner =
+        SpeakerBottomCloseSideCorner.plus(SpeakerCloseCornerToFarCorner);
+
+    public static final Translation2d SpeakerTopFarSideCorner =
+        SpeakerTopCloseSideCorner.plus(
+            new Translation2d(
+                -SpeakerCloseCornerToFarCorner.getX(), SpeakerCloseCornerToFarCorner.getY()));
+
+    public static final Rotation2d SpeakerRotation = new Rotation2d();
   }
 
   public static final class RobotConstants {
