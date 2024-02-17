@@ -121,9 +121,9 @@ public final class Constants {
   }
 
   public static final class DrivePIDConstants {
-    public static final double KpX = 5.0;
-    public static final double KpY = 5.0;
-    public static final double KpTranslation = 5.0;
+    public static final double KpX = 3.0;
+    public static final double KpY = 3.0;
+    public static final double KpTranslation = 3.0;
     public static final double KpTheta = 5.0;
   }
 

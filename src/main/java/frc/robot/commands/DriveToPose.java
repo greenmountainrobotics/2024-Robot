@@ -76,6 +76,11 @@ public class DriveToPose extends Command {
   }
 
   @Override
+  public void end(boolean interrupted) {
+    drive.stop();
+  }
+
+  @Override
   public boolean isFinished() {
     var currentPose = drive.getPose();
     return (Math.abs(currentPose.getTranslation().getDistance(targetPose.getTranslation()))
