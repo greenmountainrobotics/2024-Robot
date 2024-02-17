@@ -51,8 +51,7 @@ public class Autos {
     return new DeferredCommand(
         () ->
             new SequentialCommandGroup(
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                ShootInAmp(shooter)),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()), ShootInAmp(shooter)),
         Set.of(drive));
   }
 
