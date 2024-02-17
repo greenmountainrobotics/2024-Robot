@@ -147,7 +147,7 @@ public final class Constants {
     public static final double KpTheta = 5.0;
   }
 
-  private static final RobotType robot = RobotType.SIMBOT;
+  private static final RobotType robot = RobotType.MAIN_2024;
 
   public static enum RobotType {
     SIMBOT,
