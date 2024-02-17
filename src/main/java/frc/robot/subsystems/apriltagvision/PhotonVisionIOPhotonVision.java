@@ -30,7 +30,7 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
         robotToCam =
             new Transform3d(
                 new Translation3d(0, inchesToMeters(-1.260), inchesToMeters(7.940)),
-                new Rotation3d(0, degreesToRadians(-180 - 65), Math.PI));
+                new Rotation3d(0, degreesToRadians(180 + 65), Math.PI));
         photonPoseEstimator =
             new PhotonPoseEstimator(aprilTagFieldLayout, poseStrategy, camera, robotToCam);
         break;
