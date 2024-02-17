@@ -1,17 +1,17 @@
 package frc.robot.subsystems.apriltagvision;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import org.littletonrobotics.junction.AutoLog;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 public interface PhotonVisionIO {
   @AutoLog
-  public static class AprilTagIOInputs {
+  class AprilTagIOInputs {
     public boolean isConnected;
-    public Pose3d estimatedPose = new Pose3d();
-    public double latestTimestamp;
-    public Transform3d[] robotToTargetList = new Transform3d[0];
+    public PhotonPipelineResult latestResult = new PhotonPipelineResult();
+    public String cameraName = "";
   }
 
-  public default void updateInputs(AprilTagIOInputs inputs) {}
+  default void updateInputs(AprilTagIOInputs inputs) {}
+
+  default void updateCameraName(AprilTagIOInputs inputs) {}
 }
