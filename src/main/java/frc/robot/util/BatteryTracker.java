@@ -3,8 +3,8 @@ package frc.robot.util;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.Battery;
+import java.time.Instant;
 import org.opencv.core.Mat;
 import org.opencv.objdetect.QRCodeDetector;
 
@@ -17,11 +17,11 @@ public class BatteryTracker {
     QRCodeDetector detector = new QRCodeDetector();
 
     Mat mat = new Mat();
-    double startTime = Timer.getFPGATimestamp();
+    long startTime = Instant.now().toEpochMilli();
     while (sink.grabFrame(mat) == 0) {
       System.out.println(sink.getError());
       if (!sink.getError().equals("timed out getting frame")
-          || Timer.getFPGATimestamp() - startTime > 4) {
+          || Instant.now().toEpochMilli() - startTime > 4000) {
         return Battery.NONE;
       }
     }

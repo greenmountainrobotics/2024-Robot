@@ -26,10 +26,16 @@ public class DriveToPose extends Command {
     addRequirements(drive);
 
     translationController =
-        new ProfiledPIDController(Constants.DrivePIDConstants.KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+        new ProfiledPIDController(
+            Constants.DrivePIDConstants.KpTranslation,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(5, 5));
     translationController.setTolerance(driveTolerance);
 
-    thetaController = new ProfiledPIDController(Constants.DrivePIDConstants.KpTheta, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+    thetaController =
+        new ProfiledPIDController(
+            Constants.DrivePIDConstants.KpTheta, 0, 0, new TrapezoidProfile.Constraints(5, 5));
     thetaController.setTolerance(thetaTolerance);
   }
 

@@ -13,14 +13,15 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import frc.robot.subsystems.apriltagvision.PhotonVision;
@@ -32,6 +33,10 @@ import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
 import frc.robot.subsystems.drive.module.ModuleIO;
 import frc.robot.subsystems.drive.module.ModuleIOSim;
 import frc.robot.subsystems.drive.module.ModuleIOSparkFlex;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOSim;
+import frc.robot.subsystems.shooter.ShooterIOSparkMax;
+import frc.robot.subsystems.shooter.ShooterSimple;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -45,9 +50,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final AprilTagVision aprilTagVision;
+  private final ShooterSimple shooter;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controller1 = new CommandXboxController(0);
+  private final CommandXboxController controller2 = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -68,6 +75,7 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(3));
         aprilTagVision =
             new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+        shooter = new ShooterSimple(new ShooterIOSparkMax());
         break;
 
       case SIM:
@@ -81,6 +89,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         aprilTagVision =
             new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+        shooter = new ShooterSimple(new ShooterIOSim());
         break;
 
       default:
@@ -93,13 +102,16 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         aprilTagVision = new PhotonVision(new PhotonVisionIO() {});
+        shooter = new ShooterSimple(new ShooterIO() {});
         break;
     }
 
     aprilTagVision.setDataInterface(drive::addVisionMeasurement);
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+
+    autoChooser.addOption("Score in Amp then Source", Autos.ScoreInAmpThenSource(drive));
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -126,13 +138,24 @@ public class RobotContainer {
   private void configureButtonBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, controller::getLeftY, controller::getLeftX, () -> -controller.getRightX()));
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller
+            drive,
+            () -> -controller1.getLeftY(),
+            () -> -controller1.getLeftX(),
+            () -> -controller1.getRightX()));
+    controller1.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller1
         .b()
         .onTrue(Commands.runOnce(() -> drive.setPose(new Pose2d()), drive).ignoringDisable(true));
-    controller.y().whileTrue(DriveCommands.alignToSource(drive));
-    controller.a().whileTrue(DriveCommands.alignToAmp(drive));
+    controller1.y().whileTrue(DriveCommands.alignToSource(drive));
+    controller1.a().whileTrue(DriveCommands.alignToAmp(drive));
+
+    shooter.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              double amt = Math.abs(controller2.getLeftY()) > 0.2 ? controller2.getLeftY() : 0;
+              shooter.setFlywheels(amt, -amt);
+            },
+            shooter));
   }
 
   /**

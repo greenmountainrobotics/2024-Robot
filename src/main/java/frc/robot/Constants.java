@@ -45,6 +45,9 @@ public final class Constants {
     public static final int BackRightTurnId = 11;
     public static final int BackRightEncoderId = 12;
 
+    public static final int TopSpinMotorId = 21;
+    public static final int BottomSpinMotorId = 22;
+
     public static final int PigeonId = 31;
     public static final int RevPDHId = 32;
   }
@@ -124,7 +127,7 @@ public final class Constants {
     public static final double KpTheta = 5.0;
   }
 
-  private static final RobotType robot = RobotType.SIMBOT;
+  private static final RobotType robot = RobotType.MAIN_2024;
 
   public static enum RobotType {
     SIMBOT,

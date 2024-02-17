@@ -8,8 +8,8 @@ public class ShooterIOSim implements ShooterIO {
   private static final double LOOP_PERIOD_SECS = 0.02;
 
   // TODO: set constants
-  private DCMotorSim topSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.025);
-  private DCMotorSim bottomSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.025);
+  private DCMotorSim topSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.001);
+  private DCMotorSim bottomSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.001);
   /*
       private DCMotorSim pivotMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.025);
   */
@@ -62,6 +62,6 @@ public class ShooterIOSim implements ShooterIO {
   @Override
   public void setBottomVoltage(double volts) {
     bottomAppliedVolts = volts;
-    topSpinMotor.setInputVoltage(volts);
+    bottomSpinMotor.setInputVoltage(volts);
   }
 }
