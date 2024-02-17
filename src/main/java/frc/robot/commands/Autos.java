@@ -44,9 +44,7 @@ public class Autos {
             drive::runVelocity,
             Alliance::isRed));
   }
-
-  private static double WAIT_DURATION = 9;
-
+  
   public static Command CloseSideToAmp(Drive drive, ShooterSimple shooter) {
     return new DeferredCommand(
         () ->
@@ -92,7 +90,6 @@ public class Autos {
     return new DeferredCommand(
         () ->
             new SequentialCommandGroup(
-                new WaitCommand(WAIT_DURATION),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToMiddle)),
