@@ -1,5 +1,8 @@
 package frc.robot.subsystems.apriltagvision;
 
+import static edu.wpi.first.math.util.Units.degreesToRadians;
+import static edu.wpi.first.math.util.Units.inchesToMeters;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -25,7 +28,9 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
       case "Arducam_OV2311_USB_Camera":
         camera = new PhotonCamera(cameraName);
         robotToCam =
-            new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0));
+            new Transform3d(
+                new Translation3d(0.005, 1.260, inchesToMeters(7.940)),
+                new Rotation3d(0.0, degreesToRadians(65), 0.0));
         photonPoseEstimator =
             new PhotonPoseEstimator(aprilTagFieldLayout, poseStrategy, camera, robotToCam);
         break;
