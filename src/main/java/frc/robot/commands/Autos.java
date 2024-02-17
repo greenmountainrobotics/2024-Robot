@@ -44,7 +44,7 @@ public class Autos {
             drive::runVelocity,
             Alliance::isRed));
   }
-  
+
   public static Command CloseSideToAmp(Drive drive, ShooterSimple shooter) {
     return new DeferredCommand(
         () ->
