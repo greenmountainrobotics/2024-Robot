@@ -74,7 +74,7 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
         aprilTagVision =
-            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera", drive::getPose));
         shooter = new ShooterSimple(new ShooterIOSparkMax());
         break;
 
@@ -88,7 +88,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         aprilTagVision =
-            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera", drive::getPose));
         shooter = new ShooterSimple(new ShooterIOSim());
         break;
 
