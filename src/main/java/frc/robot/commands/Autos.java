@@ -5,9 +5,11 @@ import com.choreo.lib.ChoreoTrajectory;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.shooter.ShooterSimple;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
 import java.util.Set;
@@ -33,14 +35,22 @@ public class Autos {
             Alliance::isRed));
   }
 
-  public static Command ScoreInAmpThenSource(Drive drive) {
+  public static Command ScoreInAmpThenSource(Drive drive, ShooterSimple shooter) {
+    return new DeferredCommand(
+        () ->
+            new SequentialCommandGroup(
+                ScoreInAmp(drive, shooter),
+                followPath(drive, "Amp to Source"),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
+        Set.of(drive));
+  }
+
+  public static Command ScoreInAmp(Drive drive, ShooterSimple shooter) {
     return new DeferredCommand(
         () ->
             new SequentialCommandGroup(
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                // TODO: actually score
-                followPath(drive, "Amp to Source"),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
+                new RunCommand(() -> shooter.setFlywheels(0.3, -0.3)).withTimeout(2)),
         Set.of(drive));
   }
 }
