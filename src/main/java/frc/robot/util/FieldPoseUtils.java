@@ -27,7 +27,7 @@ public class FieldPoseUtils {
             SourceCloseSideCorner.plus(SourceFarSideCorner)
                 .div(2)
                 .plus(new Translation2d(WidthWithBumpersX, 0).times(0.5).rotateBy(SourceRotation)),
-            SourceRotation.plus(Rotation2d.fromDegrees(180)));
+            SourceRotation);
     if (Alliance.isRed()) pose = FieldPoseUtils.flipPose(pose);
     return pose;
   }
@@ -39,7 +39,7 @@ public class FieldPoseUtils {
                 new Translation2d(WidthWithBumpersX, 0)
                     .times(0.5)
                     .rotateBy(Rotation2d.fromDegrees(90))),
-            AmpRotation.plus(Rotation2d.fromDegrees(180)));
+            AmpRotation);
     if (Alliance.isRed()) pose = FieldPoseUtils.flipPose(pose);
     return pose;
   }
