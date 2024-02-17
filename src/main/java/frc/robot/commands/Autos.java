@@ -45,7 +45,7 @@ public class Autos {
             Alliance::isRed));
   }
 
-  private static double WAIT_DURATION = 5;
+  private static double WAIT_DURATION = 9;
 
   public static Command CloseSideToAmp(Drive drive, ShooterSimple shooter) {
     return new DeferredCommand(
