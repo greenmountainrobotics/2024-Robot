@@ -14,7 +14,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   enum Trajectory {
-    AmpToMiddle("Amp to Middle"),
+    AmpToMiddle("Amp to Middle (Week 0)"),
     AmpToSource("Amp to Source"),
     FarSideToAmp("Far side to Amp"),
     FarSideToSource("Far side to Source");
@@ -50,7 +50,7 @@ public class Autos {
         () ->
             new SequentialCommandGroup(
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()), ShootInAmp(shooter)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToAmp(Drive drive, ShooterSimple shooter) {
@@ -60,7 +60,7 @@ public class Autos {
                 followPath(drive, Trajectory.FarSideToAmp),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command CloseSideToAmpToSource(Drive drive, ShooterSimple shooter) {
@@ -71,7 +71,7 @@ public class Autos {
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToSource),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToAmpToSource(Drive drive, ShooterSimple shooter) {
@@ -83,7 +83,7 @@ public class Autos {
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToSource),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command CloseSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
@@ -93,7 +93,7 @@ public class Autos {
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToMiddle)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
@@ -104,7 +104,7 @@ public class Autos {
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToMiddle)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToSource(Drive drive) {
@@ -117,6 +117,8 @@ public class Autos {
   }
 
   public static Command ShootInAmp(ShooterSimple shooter) {
-    return new RunCommand(() -> shooter.setFlywheels(0.3, -0.3)).withTimeout(2);
+    return new RunCommand(() -> shooter.setFlywheels(-0.3, 0.3), shooter)
+        .withTimeout(0.5)
+        .andThen(() -> shooter.setFlywheels(0, 0));
   }
 }

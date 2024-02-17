@@ -11,4 +11,4 @@ exit 1
 esac
 
 git add .
-git commit -m "updates @ $(date -Iseconds -u)"
+git commit -m "updates @ $(date -Iseconds)" || true

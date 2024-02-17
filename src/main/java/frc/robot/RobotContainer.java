@@ -74,7 +74,8 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
         aprilTagVision =
-            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+            new PhotonVision(
+                new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera", drive::getPose));
         shooter = new ShooterSimple(new ShooterIOSparkMax());
         break;
 
@@ -88,7 +89,8 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         aprilTagVision =
-            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+            new PhotonVision(
+                new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera", drive::getPose));
         shooter = new ShooterSimple(new ShooterIOSim());
         break;
 
@@ -138,6 +140,7 @@ public class RobotContainer {
         new RunCommand(
             () -> {
               double amt = Math.abs(controller2.getLeftY()) > 0.2 ? controller2.getLeftY() : 0;
+              amt = amt > 0 ? amt * 0.1 : amt;
               shooter.setFlywheels(amt, -amt);
             },
             shooter));

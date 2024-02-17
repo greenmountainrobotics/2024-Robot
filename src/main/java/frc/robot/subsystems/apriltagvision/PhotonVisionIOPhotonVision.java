@@ -2,13 +2,16 @@ package frc.robot.subsystems.apriltagvision;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 import static edu.wpi.first.math.util.Units.inchesToMeters;
+import static org.photonvision.PhotonPoseEstimator.PoseStrategy.*;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 
@@ -17,12 +20,11 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
   private final PhotonCamera camera;
   private final PhotonPoseEstimator photonPoseEstimator;
   private final Transform3d robotToCam;
+  private final Supplier<Pose2d> referencePoseSupplier;
 
-  public PhotonVisionIOPhotonVision(String cameraName) {
+  public PhotonVisionIOPhotonVision(String cameraName, Supplier<Pose2d> poseSupplier) {
     aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-
-    PhotonPoseEstimator.PoseStrategy poseStrategy =
-        PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    referencePoseSupplier = poseSupplier;
 
     switch (cameraName) {
       case "Arducam_OV2311_USB_Camera":
@@ -30,22 +32,26 @@ public class PhotonVisionIOPhotonVision implements PhotonVisionIO {
         robotToCam =
             new Transform3d(
                 new Translation3d(0, inchesToMeters(-1.260), inchesToMeters(7.940)),
-                new Rotation3d(0.0, degreesToRadians(180 - 65), Math.PI));
+                new Rotation3d(0, degreesToRadians(180 + 65 + 90), Math.PI));
         photonPoseEstimator =
-            new PhotonPoseEstimator(aprilTagFieldLayout, poseStrategy, camera, robotToCam);
+            new PhotonPoseEstimator(
+                aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
+        photonPoseEstimator.setMultiTagFallbackStrategy(CLOSEST_TO_REFERENCE_POSE);
         break;
       default:
         camera = new PhotonCamera("photonCamera");
         robotToCam =
             new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0));
         photonPoseEstimator =
-            new PhotonPoseEstimator(aprilTagFieldLayout, poseStrategy, camera, robotToCam);
+            new PhotonPoseEstimator(
+                aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
     }
   }
 
   @Override
   public void updateInputs(AprilTagIOInputs inputs) {
     inputs.isConnected = camera.isConnected();
+    photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 
     photonPoseEstimator
         .update()
