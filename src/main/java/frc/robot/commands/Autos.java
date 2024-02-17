@@ -14,7 +14,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   enum Trajectory {
-    AmpToMiddle("Amp to Middle"),
+    AmpToMiddle("Amp to Middle (Week 0)"),
     AmpToSource("Amp to Source"),
     FarSideToAmp("Far side to Amp"),
     FarSideToSource("Far side to Source");
@@ -45,11 +45,14 @@ public class Autos {
             Alliance::isRed));
   }
 
+  private static double WAIT_DURATION = 5;
+
   public static Command CloseSideToAmp(Drive drive, ShooterSimple shooter) {
     return new DeferredCommand(
         () ->
             new SequentialCommandGroup(
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()), ShootInAmp(shooter)),
+                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
+                ShootInAmp(shooter)),
         Set.of(drive));
   }
 
@@ -90,6 +93,7 @@ public class Autos {
     return new DeferredCommand(
         () ->
             new SequentialCommandGroup(
+                new WaitCommand(WAIT_DURATION),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToMiddle)),
