@@ -138,7 +138,7 @@ public class RobotContainer {
         new RunCommand(
             () -> {
               double amt = Math.abs(controller2.getLeftY()) > 0.2 ? controller2.getLeftY() : 0;
-              amt = amt > 0 ? amt * 0.07 : amt;
+              amt = amt > 0 ? amt * 0.1 : amt;
               shooter.setFlywheels(amt, -amt);
             },
             shooter));

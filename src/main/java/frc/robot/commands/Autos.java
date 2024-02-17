@@ -117,7 +117,8 @@ public class Autos {
   }
 
   public static Command ShootInAmp(ShooterSimple shooter) {
-    return new RunCommand(() -> shooter.setFlywheels(0.3, -0.3)).withTimeout(2)
-            .andThen(() -> shooter.setFlywheels(0,0));
+    return new RunCommand(() -> shooter.setFlywheels(0.3, -0.3))
+        .withTimeout(2)
+        .andThen(() -> shooter.setFlywheels(0, 0));
   }
 }
