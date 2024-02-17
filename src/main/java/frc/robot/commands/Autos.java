@@ -52,7 +52,7 @@ public class Autos {
         () ->
             new SequentialCommandGroup(
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()), ShootInAmp(shooter)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToAmp(Drive drive, ShooterSimple shooter) {
@@ -62,7 +62,7 @@ public class Autos {
                 followPath(drive, Trajectory.FarSideToAmp),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command CloseSideToAmpToSource(Drive drive, ShooterSimple shooter) {
@@ -73,7 +73,7 @@ public class Autos {
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToSource),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToAmpToSource(Drive drive, ShooterSimple shooter) {
@@ -85,7 +85,7 @@ public class Autos {
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToSource),
                 new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command CloseSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
@@ -96,7 +96,7 @@ public class Autos {
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToMiddle)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
@@ -107,7 +107,7 @@ public class Autos {
                 new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
                 ShootInAmp(shooter),
                 followPath(drive, Trajectory.AmpToMiddle)),
-        Set.of(drive));
+        Set.of(drive, shooter));
   }
 
   public static Command FarSideToSource(Drive drive) {

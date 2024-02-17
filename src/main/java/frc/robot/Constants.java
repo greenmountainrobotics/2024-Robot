@@ -149,7 +149,7 @@ public final class Constants {
 
   private static final RobotType robot = RobotType.MAIN_2024;
 
-  public static enum RobotType {
+  public enum RobotType {
     SIMBOT,
     MAIN_2024
   }
