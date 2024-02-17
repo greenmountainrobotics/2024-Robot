@@ -3,16 +3,14 @@ package frc.robot.commands;
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.ShooterSimple;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
 import java.util.Set;
+import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   enum Trajectory {
@@ -28,15 +26,15 @@ public class Autos {
     }
   }
 
-  private static Command followPath(Drive drive, Trajectory traj) {
-    ChoreoTrajectory trajectory = Choreo.getTrajectory(traj.fileName);
+  private static Command followPath(Drive drive, Trajectory trajectoryFile) {
+    ChoreoTrajectory trajectory = Choreo.getTrajectory(trajectoryFile.fileName);
 
     return new SequentialCommandGroup(
-        new DriveToPose(
-            drive,
-            Alliance.isRed()
-                ? FieldPoseUtils.flipPose(trajectory.getInitialPose())
-                : trajectory.getInitialPose()),
+        new DriveToPose(drive, FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose())),
+        new InstantCommand(
+            () ->
+                Logger.recordOutput(
+                    "Auto/TargetPose", FieldPoseUtils.flipPoseIfRed(trajectory.getFinalPose()))),
         Choreo.choreoSwerveCommand(
             trajectory,
             drive::getPose,

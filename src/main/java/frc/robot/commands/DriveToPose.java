@@ -41,7 +41,7 @@ public class DriveToPose extends Command {
 
   @Override
   public void initialize() {
-    Logger.recordOutput("DriveToPose/TargetPose", targetPose);
+    Logger.recordOutput("Auto/TargetPose", targetPose);
     var currentPose = drive.getPose();
     translationController.reset(
         currentPose.getTranslation().getDistance(targetPose.getTranslation()),

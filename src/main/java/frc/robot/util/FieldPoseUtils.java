@@ -16,6 +16,11 @@ public class FieldPoseUtils {
         pose.getRotation().plus(Rotation2d.fromDegrees(180)).times(-1));
   }
 
+  public static Pose2d flipPoseIfRed(Pose2d pose) {
+    if (Alliance.isRed()) return flipPose(pose);
+    else return pose;
+  }
+
   public static Pose2d alignedWithSourcePose() {
     Pose2d pose =
         new Pose2d(
