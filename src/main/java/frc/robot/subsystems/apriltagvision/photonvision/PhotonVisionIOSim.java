@@ -1,4 +1,4 @@
-package frc.robot.subsystems.apriltagvision;
+package frc.robot.subsystems.apriltagvision.photonvision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -38,14 +38,14 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
   }
 
   @Override
-  public void updateInputs(AprilTagIOInputs inputs) {
+  public void updateInputs(PhotonVisionIOInputs inputs) {
     visionSim.update(poseSupplier.get());
     inputs.isConnected = photonCamera.isConnected();
     inputs.latestResult = photonCamera.getLatestResult();
   }
 
   @Override
-  public void updateCamera(AprilTagIOInputs inputs) {
+  public void updateCamera(PhotonVisionIOInputs inputs) {
     inputs.camera = camera;
   }
 }

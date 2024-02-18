@@ -1,4 +1,4 @@
-package frc.robot.subsystems.apriltagvision;
+package frc.robot.subsystems.apriltagvision.photonvision;
 
 import static org.photonvision.PhotonPoseEstimator.PoseStrategy.CLOSEST_TO_REFERENCE_POSE;
 import static org.photonvision.PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
@@ -6,14 +6,15 @@ import static org.photonvision.PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
+import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonPoseEstimator;
 
-public class PhotonVision extends AprilTagVision {
+public class PhotonVision implements AprilTagVision {
   private PhotonVisionIO io;
-  private AprilTagIOInputsAutoLogged inputs = new AprilTagIOInputsAutoLogged();
+  private PhotonVisionIOInputsAutoLogged inputs = new PhotonVisionIOInputsAutoLogged();
   private BiConsumer<Pose2d, Double> poseConsumer = (x, y) -> {};
   private Supplier<Pose2d> referencePoseSupplier = () -> new Pose2d();
   private final AprilTagFieldLayout aprilTagFieldLayout;
@@ -44,8 +45,8 @@ public class PhotonVision extends AprilTagVision {
   public void periodic() {
     io.updateInputs(inputs);
     processInputs();
-    Logger.recordOutput("PhotonVision/Pose2d", estimatedPose.toPose2d());
-    Logger.recordOutput("PhotonVision/Pose3d", estimatedPose);
+    Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose2d", estimatedPose.toPose2d());
+    Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose3d", estimatedPose);
 
     photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 
@@ -58,6 +59,7 @@ public class PhotonVision extends AprilTagVision {
             });
   }
 
+  @Override
   public void setDataInterface(
       BiConsumer<Pose2d, Double> poseConsumer, Supplier<Pose2d> referencePoseSupplier) {
     this.poseConsumer = poseConsumer;

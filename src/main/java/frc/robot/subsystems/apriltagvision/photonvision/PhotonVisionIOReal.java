@@ -1,4 +1,4 @@
-package frc.robot.subsystems.apriltagvision;
+package frc.robot.subsystems.apriltagvision.photonvision;
 
 import frc.robot.Constants;
 import org.photonvision.PhotonCamera;
@@ -13,14 +13,14 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
   }
 
   @Override
-  public void updateInputs(AprilTagIOInputs inputs) {
+  public void updateInputs(PhotonVisionIOInputs inputs) {
     inputs.isConnected = photonCamera.isConnected();
     inputs.latestResult = photonCamera.getLatestResult();
     inputs.camera = camera;
   }
 
   @Override
-  public void updateCamera(AprilTagIOInputs inputs) {
+  public void updateCamera(PhotonVisionIOInputs inputs) {
     inputs.camera = camera;
   }
 }
