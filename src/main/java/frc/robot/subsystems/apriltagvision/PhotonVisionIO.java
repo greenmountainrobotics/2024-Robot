@@ -1,5 +1,6 @@
 package frc.robot.subsystems.apriltagvision;
 
+import frc.robot.Constants;
 import org.littletonrobotics.junction.AutoLog;
 import org.photonvision.targeting.PhotonPipelineResult;
 
@@ -8,10 +9,10 @@ public interface PhotonVisionIO {
   class AprilTagIOInputs {
     public boolean isConnected;
     public PhotonPipelineResult latestResult = new PhotonPipelineResult();
-    public String cameraName = "";
+    public Constants.Camera camera;
   }
 
   default void updateInputs(AprilTagIOInputs inputs) {}
 
-  default void updateCameraName(AprilTagIOInputs inputs) {}
+  default void updateCamera(AprilTagIOInputs inputs) {}
 }

@@ -23,10 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommands;
-import frc.robot.subsystems.apriltagvision.AprilTagVision;
-import frc.robot.subsystems.apriltagvision.PhotonVision;
-import frc.robot.subsystems.apriltagvision.PhotonVisionIO;
-import frc.robot.subsystems.apriltagvision.PhotonVisionIOPhotonVision;
+import frc.robot.subsystems.apriltagvision.*;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.imu.GyroIO;
 import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
@@ -73,8 +70,7 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(1),
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
-        aprilTagVision =
-            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+        aprilTagVision = new PhotonVision(new PhotonVisionIOReal(Constants.Camera.BackCamera));
         shooter = new ShooterSimple(new ShooterIOSparkMax());
         break;
 
@@ -88,7 +84,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         aprilTagVision =
-            new PhotonVision(new PhotonVisionIOPhotonVision("Arducam_OV2311_USB_Camera"));
+            new PhotonVision(new PhotonVisionIOSim(Constants.Camera.BackCamera, drive::getPose));
         shooter = new ShooterSimple(new ShooterIOSim());
         break;
 

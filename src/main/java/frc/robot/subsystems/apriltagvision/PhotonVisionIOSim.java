@@ -1,0 +1,51 @@
+package frc.robot.subsystems.apriltagvision;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.Constants;
+import java.io.IOException;
+import java.util.function.Supplier;
+import org.photonvision.PhotonCamera;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+
+public class PhotonVisionIOSim implements PhotonVisionIO {
+  private final PhotonCamera photonCamera;
+  private final Constants.Camera camera;
+  private final VisionSystemSim visionSim;
+  private final Supplier<Pose2d> poseSupplier;
+
+  public PhotonVisionIOSim(Constants.Camera camera, Supplier<Pose2d> poseSupplier) {
+    photonCamera = new PhotonCamera(camera.name);
+    this.camera = camera;
+    this.poseSupplier = poseSupplier;
+
+    visionSim = new VisionSystemSim("main");
+    try {
+      visionSim.addAprilTags(
+          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile));
+    } catch (IOException error) {
+      throw new Error(error);
+    }
+
+    SimCameraProperties cameraProp = new SimCameraProperties();
+
+    PhotonCameraSim cameraSim = new PhotonCameraSim(photonCamera, cameraProp);
+
+    visionSim.addCamera(cameraSim, camera.robotToCam);
+  }
+
+  @Override
+  public void updateInputs(AprilTagIOInputs inputs) {
+    visionSim.update(poseSupplier.get());
+    inputs.isConnected = photonCamera.isConnected();
+    inputs.latestResult = photonCamera.getLatestResult();
+  }
+
+  @Override
+  public void updateCamera(AprilTagIOInputs inputs) {
+    inputs.camera = camera;
+  }
+}

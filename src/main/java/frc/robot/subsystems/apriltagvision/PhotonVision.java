@@ -1,7 +1,5 @@
 package frc.robot.subsystems.apriltagvision;
 
-import static edu.wpi.first.math.util.Units.degreesToRadians;
-import static edu.wpi.first.math.util.Units.inchesToMeters;
 import static org.photonvision.PhotonPoseEstimator.PoseStrategy.CLOSEST_TO_REFERENCE_POSE;
 import static org.photonvision.PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
@@ -31,17 +29,10 @@ public class PhotonVision extends AprilTagVision {
 
   public PhotonVision(PhotonVisionIO io) {
     this.io = io;
-    io.updateCameraName(inputs);
+    io.updateCamera(inputs);
     processInputs();
 
-    switch (inputs.cameraName) {
-      case "Arducam_OV2311_USB_Camera" -> robotToCam =
-          new Transform3d(
-              new Translation3d(0, inchesToMeters(-1.260), inchesToMeters(7.940)),
-              new Rotation3d(0, degreesToRadians(180 + 65 + 90), Math.PI));
-      default -> robotToCam =
-          new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0));
-    }
+    robotToCam = inputs.camera.robotToCam;
 
     aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     photonPoseEstimator =
@@ -59,7 +50,7 @@ public class PhotonVision extends AprilTagVision {
     photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 
     photonPoseEstimator
-        .update()
+        .update(inputs.latestResult)
         .ifPresent(
             estimated -> {
               estimatedPose = estimated.estimatedPose;
