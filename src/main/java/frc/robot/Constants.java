@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj.RobotBase;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  private static final RobotType robot = RobotType.MAIN_2024;
+
   public static final class CANIdConstants {
     public static final int FrontLeftDriveId = 1;
     public static final int FrontLeftTurnId = 2;
@@ -162,8 +164,6 @@ public final class Constants {
     public static final double KpTranslation = 3.0;
     public static final double KpTheta = 5.0;
   }
-
-  private static final RobotType robot = RobotType.SIMBOT;
 
   public enum RobotType {
     SIMBOT,
