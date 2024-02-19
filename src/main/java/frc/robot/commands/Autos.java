@@ -4,6 +4,7 @@ import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.constants.Trajectory;
 import frc.robot.constants.TunableConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.ShooterSimple;
@@ -13,18 +14,6 @@ import java.util.Set;
 import org.littletonrobotics.junction.Logger;
 
 public class Autos {
-  enum Trajectory {
-    AmpToMiddle("Amp to Middle (Week 0)"),
-    AmpToSource("Amp to Source"),
-    FarSideToAmp("Far side to Amp"),
-    FarSideToSource("Far side to Source");
-
-    private final String fileName;
-
-    Trajectory(String fileName) {
-      this.fileName = fileName;
-    }
-  }
 
   private static Command followPath(Drive drive, Trajectory trajectoryFile) {
     ChoreoTrajectory trajectory = Choreo.getTrajectory(trajectoryFile.fileName);
