@@ -3,7 +3,7 @@ package frc.robot.subsystems.apriltagvision.photonvision;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.Constants;
+import frc.robot.constants.Camera;
 import java.io.IOException;
 import java.util.function.Supplier;
 import org.photonvision.PhotonCamera;
@@ -13,11 +13,11 @@ import org.photonvision.simulation.VisionSystemSim;
 
 public class PhotonVisionIOSim implements PhotonVisionIO {
   private final PhotonCamera photonCamera;
-  private final Constants.Camera camera;
+  private final Camera camera;
   private final VisionSystemSim visionSim;
   private final Supplier<Pose2d> poseSupplier;
 
-  public PhotonVisionIOSim(Constants.Camera camera, Supplier<Pose2d> poseSupplier) {
+  public PhotonVisionIOSim(Camera camera, Supplier<Pose2d> poseSupplier) {
     photonCamera = new PhotonCamera(camera.name);
     this.camera = camera;
     this.poseSupplier = poseSupplier;

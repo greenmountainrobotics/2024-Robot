@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommands;
+import frc.robot.constants.Camera;
 import frc.robot.subsystems.apriltagvision.*;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVision;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIO;
@@ -38,6 +39,7 @@ import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterSimple;
+import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -64,7 +66,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    switch (Constants.getMode()) {
+    switch (RunMode.getMode()) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
         drive =
@@ -74,7 +76,7 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(1),
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
-        aprilTagVision = new PhotonVision(new PhotonVisionIOReal(Constants.Camera.BackCamera));
+        aprilTagVision = new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera));
         shooter = new ShooterSimple(new ShooterIOSparkMax());
         break;
 
@@ -87,8 +89,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        aprilTagVision =
-            new PhotonVision(new PhotonVisionIOSim(Constants.Camera.BackCamera, drive::getPose));
+        aprilTagVision = new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose));
         shooter = new ShooterSimple(new ShooterIOSim());
         break;
 

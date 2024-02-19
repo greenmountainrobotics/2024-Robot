@@ -1,6 +1,6 @@
 package frc.robot.subsystems.leds;
 
-import static frc.robot.Constants.PWMIdConstants.LedsId;
+import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;

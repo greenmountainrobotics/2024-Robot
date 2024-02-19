@@ -13,7 +13,7 @@
 
 package frc.robot.subsystems.drive.imu;
 
-import static frc.robot.Constants.CANIdConstants.PigeonId;
+import static frc.robot.constants.IdConstants.CANId.PigeonId;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;

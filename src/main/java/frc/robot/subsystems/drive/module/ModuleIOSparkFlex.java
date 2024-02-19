@@ -14,7 +14,7 @@
 package frc.robot.subsystems.drive.module;
 
 import static com.revrobotics.CANSparkLowLevel.MotorType.kBrushless;
-import static frc.robot.Constants.CANIdConstants.*;
+import static frc.robot.constants.IdConstants.CANId.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;

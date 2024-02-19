@@ -1,13 +1,13 @@
 package frc.robot.subsystems.apriltagvision.photonvision;
 
-import frc.robot.Constants;
+import frc.robot.constants.Camera;
 import org.photonvision.PhotonCamera;
 
 public class PhotonVisionIOReal implements PhotonVisionIO {
   private final PhotonCamera photonCamera;
-  private final Constants.Camera camera;
+  private final Camera camera;
 
-  public PhotonVisionIOReal(Constants.Camera camera) {
+  public PhotonVisionIOReal(Camera camera) {
     photonCamera = new PhotonCamera(camera.name);
     this.camera = camera;
   }

@@ -3,7 +3,7 @@ package frc.robot.util;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.UsbCamera;
-import frc.robot.Constants.Battery;
+import frc.robot.constants.Battery;
 import java.time.Instant;
 import org.opencv.core.Mat;
 import org.opencv.objdetect.QRCodeDetector;

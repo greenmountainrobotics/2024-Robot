@@ -4,7 +4,7 @@ import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.Constants;
+import frc.robot.constants.TunableConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.ShooterSimple;
 import frc.robot.util.Alliance;
@@ -38,9 +38,9 @@ public class Autos {
         Choreo.choreoSwerveCommand(
             trajectory,
             drive::getPose,
-            new PIDController(Constants.DrivePIDConstants.KpX, 0, 0),
-            new PIDController(Constants.DrivePIDConstants.KpY, 0, 0),
-            new PIDController(Constants.DrivePIDConstants.KpTheta, 0, 0),
+            new PIDController(TunableConstants.KpX, 0, 0),
+            new PIDController(TunableConstants.KpY, 0, 0),
+            new PIDController(TunableConstants.KpTheta, 0, 0),
             drive::runVelocity,
             Alliance::isRed));
   }
