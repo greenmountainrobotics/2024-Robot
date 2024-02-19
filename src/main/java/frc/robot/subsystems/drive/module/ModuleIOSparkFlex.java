@@ -153,7 +153,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
     inputs.driveVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.getVelocity()) / DRIVE_GEAR_RATIO;
     inputs.driveAppliedVolts = driveSparkFlex.getAppliedOutput() * driveSparkFlex.getBusVoltage();
-    inputs.driveCurrentAmps = new double[] {driveSparkFlex.getOutputCurrent()};
+    inputs.driveCurrentAmps = driveSparkFlex.getOutputCurrent();
 
     inputs.turnAbsolutePosition =
         Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
@@ -164,7 +164,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         Units.rotationsPerMinuteToRadiansPerSecond(turnRelativeEncoder.getVelocity())
             / TURN_GEAR_RATIO;
     inputs.turnAppliedVolts = turnSparkFlex.getAppliedOutput() * turnSparkFlex.getBusVoltage();
-    inputs.turnCurrentAmps = new double[] {turnSparkFlex.getOutputCurrent()};
+    inputs.turnCurrentAmps = turnSparkFlex.getOutputCurrent();
 
     inputs.odometryDrivePositionsRad =
         drivePositionQueue.stream()
