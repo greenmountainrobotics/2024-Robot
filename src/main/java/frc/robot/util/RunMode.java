@@ -14,15 +14,7 @@ public enum RunMode {
   REPLAY;
 
   public static RunMode getMode() {
-    if (Config.SIMULATION) return RunMode.SIM;
-    return RobotBase.isReal() ? RunMode.REAL : RunMode.REPLAY;
-  }
-
-  /** Checks whether the robot the correct robot is selected when deploying. */
-  public static void main(String... args) {
-    if (Config.SIMULATION) {
-      System.err.println("Cannot deploy; Simulation mode enabled.");
-      System.exit(1);
-    }
+    if (RobotBase.isReal()) return RunMode.REAL;
+    return Config.REPLAY ? RunMode.REPLAY : RunMode.SIM;
   }
 }
