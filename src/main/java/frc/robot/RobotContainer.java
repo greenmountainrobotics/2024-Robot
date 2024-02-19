@@ -89,7 +89,13 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        aprilTagVision = new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose));
+
+        if (Config.SIMULATE_CAMERAS) {
+          aprilTagVision = new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose));
+        } else {
+          aprilTagVision = new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera));
+        }
+
         shooter = new ShooterSimple(new ShooterIOSim());
         break;
 
