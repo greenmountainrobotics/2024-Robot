@@ -23,9 +23,18 @@ public final class IdConstants {
 
     public static final int PigeonId = 31;
     public static final int RevPDHId = 32;
+
+    public static final int RightIntakeExtensionMotorId = 41;
+    public static final int LeftIntakeExtensionMotorId = 42;
+    public static final int IntakeArticulationMotorId = 43;
+    public static final int IntakeSpinMotorId = 44;
   }
 
   public static final class PWMId {
     public static final int LedsId = 0;
+  }
+
+  public static final class DIOId {
+    public static final int IntakeArticulationEncoderId = 0;
   }
 }

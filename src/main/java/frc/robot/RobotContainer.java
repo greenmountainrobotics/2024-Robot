@@ -32,6 +32,10 @@ import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
 import frc.robot.subsystems.drive.module.ModuleIO;
 import frc.robot.subsystems.drive.module.ModuleIOSim;
 import frc.robot.subsystems.drive.module.ModuleIOSparkFlex;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOVictorSPX;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
@@ -51,6 +55,7 @@ public class RobotContainer {
   private final Drive drive;
   private final AprilTagVision aprilTagVision;
   private final ShooterSimple shooter;
+  private final Intake intake;
 
   // Controller
   private final CommandXboxController controller1 = new CommandXboxController(0);
@@ -78,6 +83,7 @@ public class RobotContainer {
         aprilTagVision =
             new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
         shooter = new ShooterSimple(new ShooterIOSparkMax());
+        intake = new Intake(new IntakeIOVictorSPX());
         break;
 
       case SIM:
@@ -100,6 +106,7 @@ public class RobotContainer {
         }
 
         shooter = new ShooterSimple(new ShooterIOSim());
+        intake = new Intake(new IntakeIOSim());
         break;
 
       default:
@@ -113,6 +120,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
         shooter = new ShooterSimple(new ShooterIO() {});
+        intake = new Intake(new IntakeIO() {});
         break;
     }
 
