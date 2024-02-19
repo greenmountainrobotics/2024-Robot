@@ -10,7 +10,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.ShooterSimple;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
-import java.util.Set;
 import org.littletonrobotics.junction.Logger;
 
 public class Autos {
@@ -19,7 +18,7 @@ public class Autos {
     ChoreoTrajectory trajectory = Choreo.getTrajectory(trajectoryFile.fileName);
 
     return new SequentialCommandGroup(
-        new DriveToPose(drive, FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose())),
+        new DriveToPose(drive, () -> FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose())),
         new InstantCommand(
             () ->
                 Logger.recordOutput(
@@ -35,74 +34,54 @@ public class Autos {
   }
 
   public static Command CloseSideToAmp(Drive drive, ShooterSimple shooter) {
-    return new DeferredCommand(
-        () ->
-            new SequentialCommandGroup(
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()), ShootInAmp(shooter)),
-        Set.of(drive, shooter));
+
+    return new SequentialCommandGroup(
+        new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose), ShootInAmp(shooter));
   }
 
   public static Command FarSideToAmp(Drive drive, ShooterSimple shooter) {
-    return new DeferredCommand(
-        () ->
-            new SequentialCommandGroup(
-                followPath(drive, Trajectory.FarSideToAmp),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                ShootInAmp(shooter)),
-        Set.of(drive, shooter));
+    return new SequentialCommandGroup(
+        followPath(drive, Trajectory.FarSideToAmp),
+        new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
+        ShootInAmp(shooter));
   }
 
   public static Command CloseSideToAmpToSource(Drive drive, ShooterSimple shooter) {
-    return new DeferredCommand(
-        () ->
-            new SequentialCommandGroup(
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                ShootInAmp(shooter),
-                followPath(drive, Trajectory.AmpToSource),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
-        Set.of(drive, shooter));
+    return new SequentialCommandGroup(
+        new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
+        ShootInAmp(shooter),
+        followPath(drive, Trajectory.AmpToSource),
+        new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose));
   }
 
   public static Command FarSideToAmpToSource(Drive drive, ShooterSimple shooter) {
-    return new DeferredCommand(
-        () ->
-            new SequentialCommandGroup(
-                followPath(drive, Trajectory.FarSideToAmp),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                ShootInAmp(shooter),
-                followPath(drive, Trajectory.AmpToSource),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
-        Set.of(drive, shooter));
+    return new SequentialCommandGroup(
+        followPath(drive, Trajectory.FarSideToAmp),
+        new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
+        ShootInAmp(shooter),
+        followPath(drive, Trajectory.AmpToSource),
+        new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose));
   }
 
   public static Command CloseSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
-    return new DeferredCommand(
-        () ->
-            new SequentialCommandGroup(
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                ShootInAmp(shooter),
-                followPath(drive, Trajectory.AmpToMiddle)),
-        Set.of(drive, shooter));
+    return new SequentialCommandGroup(
+        new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
+        ShootInAmp(shooter),
+        followPath(drive, Trajectory.AmpToMiddle));
   }
 
   public static Command FarSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
-    return new DeferredCommand(
-        () ->
-            new SequentialCommandGroup(
-                followPath(drive, Trajectory.FarSideToAmp),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()),
-                ShootInAmp(shooter),
-                followPath(drive, Trajectory.AmpToMiddle)),
-        Set.of(drive, shooter));
+    return new SequentialCommandGroup(
+        followPath(drive, Trajectory.FarSideToAmp),
+        new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
+        ShootInAmp(shooter),
+        followPath(drive, Trajectory.AmpToMiddle));
   }
 
   public static Command FarSideToSource(Drive drive) {
-    return new DeferredCommand(
-        () ->
-            new SequentialCommandGroup(
-                followPath(drive, Trajectory.FarSideToSource),
-                new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose())),
-        Set.of(drive));
+    return new SequentialCommandGroup(
+        followPath(drive, Trajectory.FarSideToSource),
+        new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose));
   }
 
   public static Command ShootInAmp(ShooterSimple shooter) {

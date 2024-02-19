@@ -7,12 +7,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.TunableConstants;
 import frc.robot.subsystems.drive.Drive;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 // TODO: tune constants
 public class DriveToPose extends Command {
   private final Drive drive;
-  private final Pose2d targetPose;
+  private final Supplier<Pose2d> targetPoseSupplier;
 
   private final ProfiledPIDController translationController;
   private final ProfiledPIDController thetaController;
@@ -20,9 +21,9 @@ public class DriveToPose extends Command {
   private static final double driveTolerance = 0.02;
   private static final double thetaTolerance = 0.02;
 
-  public DriveToPose(Drive drive, Pose2d targetPose) {
+  public DriveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
     this.drive = drive;
-    this.targetPose = targetPose;
+    this.targetPoseSupplier = targetPoseSupplier;
     addRequirements(drive);
 
     translationController =
@@ -38,7 +39,7 @@ public class DriveToPose extends Command {
 
   @Override
   public void initialize() {
-    Logger.recordOutput("Auto/TargetPose", targetPose);
+    var targetPose = targetPoseSupplier.get();
     var currentPose = drive.getPose();
     translationController.reset(
         currentPose.getTranslation().getDistance(targetPose.getTranslation()),
@@ -51,6 +52,9 @@ public class DriveToPose extends Command {
 
   @Override
   public void execute() {
+    var targetPose = targetPoseSupplier.get();
+    Logger.recordOutput("Auto/TargetPose", targetPose);
+
     var currentPose = drive.getPose();
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
@@ -80,6 +84,7 @@ public class DriveToPose extends Command {
   @Override
   public boolean isFinished() {
     var currentPose = drive.getPose();
+    var targetPose = targetPoseSupplier.get();
     return (Math.abs(currentPose.getTranslation().getDistance(targetPose.getTranslation()))
             < driveTolerance
         && Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians())

@@ -21,11 +21,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 public class DriveCommands {
@@ -76,12 +74,10 @@ public class DriveCommands {
   }
 
   public static Command alignToAmp(Drive drive) {
-    return new DeferredCommand(
-        () -> new DriveToPose(drive, FieldPoseUtils.alignedWithAmpPose()), Set.of(drive));
+    return new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose);
   }
 
   public static Command alignToSource(Drive drive) {
-    return new DeferredCommand(
-        () -> new DriveToPose(drive, FieldPoseUtils.alignedWithSourcePose()), Set.of(drive));
+    return new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose);
   }
 }
