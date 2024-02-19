@@ -147,7 +147,7 @@ public class RobotContainer {
 
   private void configureAutos() {
     // No-op
-    autoChooser.addOption("None", new InstantCommand(() -> {}));
+    autoChooser.addDefaultOption("None", new InstantCommand(() -> {}));
 
     // Autos
     autoChooser.addOption("Close side to Amp", Autos.CloseSideToAmp(drive, shooter));
