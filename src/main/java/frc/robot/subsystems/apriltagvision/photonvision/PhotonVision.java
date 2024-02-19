@@ -6,13 +6,13 @@ import static org.photonvision.PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
-import frc.robot.subsystems.apriltagvision.AprilTagVision;
+import frc.robot.subsystems.apriltagvision.AprilTagProvider;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonPoseEstimator;
 
-public class PhotonVision implements AprilTagVision {
+public class PhotonVision implements AprilTagProvider {
   private PhotonVisionIO io;
   private PhotonVisionIOInputsAutoLogged inputs = new PhotonVisionIOInputsAutoLogged();
   private BiConsumer<Pose2d, Double> poseConsumer = (x, y) -> {};
