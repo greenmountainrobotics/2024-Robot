@@ -1,7 +1,6 @@
 package frc.robot.subsystems.apriltagvision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 

@@ -76,8 +76,8 @@ public class RobotContainer {
                 new ModuleIOSparkFlex(1),
                 new ModuleIOSparkFlex(2),
                 new ModuleIOSparkFlex(3));
-        aprilTagVision = new AprilTagVision(
-                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
+        aprilTagVision =
+            new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
         shooter = new ShooterSimple(new ShooterIOSparkMax());
         break;
 
@@ -94,12 +94,10 @@ public class RobotContainer {
         if (Config.SIMULATE_CAMERAS) {
           aprilTagVision =
               new AprilTagVision(
-                      new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose))
-              );
+                  new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose)));
         } else {
-          aprilTagVision = new AprilTagVision(
-                  new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera))
-          );
+          aprilTagVision =
+              new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
         }
 
         shooter = new ShooterSimple(new ShooterIOSim());
@@ -114,9 +112,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        aprilTagVision = new AprilTagVision(
-                new PhotonVision(new PhotonVisionIO() {})
-        );
+        aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
         shooter = new ShooterSimple(new ShooterIO() {});
         break;
     }

@@ -45,8 +45,20 @@ public class PhotonVision implements AprilTagProvider {
   public void periodic() {
     io.updateInputs(inputs);
     processInputs();
+
+    Pose2d referencePose = referencePoseSupplier.get();
+    Pose3d referencePose3d =
+        new Pose3d(
+            referencePose.getX(),
+            referencePose.getY(),
+            0,
+            new Rotation3d(0, 0, referencePose.getRotation().getRadians()));
+
     Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose2d", estimatedPose.toPose2d());
     Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose3d", estimatedPose);
+    Logger.recordOutput(
+        "PhotonVision/" + inputs.camera + "/CameraPose",
+        referencePose3d.plus(inputs.camera.robotToCam));
 
     photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 
@@ -56,6 +68,14 @@ public class PhotonVision implements AprilTagProvider {
             estimated -> {
               estimatedPose = estimated.estimatedPose;
               poseConsumer.accept(estimatedPose.toPose2d(), estimated.timestampSeconds);
+
+              Logger.recordOutput(
+                  "PhotonVision/" + inputs.camera + "/TargetPoses",
+                  estimated.targetsUsed.stream()
+                      .map(
+                          target ->
+                              referencePose3d.plus(robotToCam).plus(target.getBestCameraToTarget()))
+                      .toArray(Pose3d[]::new));
             });
   }
 
