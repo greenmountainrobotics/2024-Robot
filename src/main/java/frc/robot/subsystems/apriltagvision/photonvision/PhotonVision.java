@@ -24,6 +24,8 @@ public class PhotonVision implements AprilTagProvider {
 
   private final PhotonPoseEstimator photonPoseEstimator;
 
+  private Pose3d[] targetPoses = new Pose3d[] {};
+
   private void processInputs() {
     Logger.processInputs("PhotonVision", inputs);
   }
@@ -62,21 +64,25 @@ public class PhotonVision implements AprilTagProvider {
 
     photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 
-    photonPoseEstimator
-        .update(inputs.latestResult)
-        .ifPresent(
-            estimated -> {
-              estimatedPose = estimated.estimatedPose;
-              poseConsumer.accept(estimatedPose.toPose2d(), estimated.timestampSeconds);
+    var update = photonPoseEstimator.update(inputs.latestResult);
 
-              Logger.recordOutput(
-                  "PhotonVision/" + inputs.camera + "/TargetPoses",
-                  estimated.targetsUsed.stream()
-                      .map(
-                          target ->
-                              referencePose3d.plus(robotToCam).plus(target.getBestCameraToTarget()))
-                      .toArray(Pose3d[]::new));
-            });
+    if (update.isPresent()) {
+      estimatedPose = update.get().estimatedPose;
+      poseConsumer.accept(estimatedPose.toPose2d(), update.get().timestampSeconds);
+
+      targetPoses =
+          update.get().targetsUsed.stream()
+              .map(target -> referencePose3d.plus(robotToCam).plus(target.getBestCameraToTarget()))
+              .toArray(Pose3d[]::new);
+    } else {
+      targetPoses = new Pose3d[] {};
+    }
+
+    Logger.recordOutput("PhotonVision/" + inputs.camera + "/TargetPoses", targetPoses);
+  }
+
+  public Pose3d[] getTargetPoses() {
+    return targetPoses;
   }
 
   @Override

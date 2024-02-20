@@ -1,9 +1,13 @@
 package frc.robot.subsystems.apriltagvision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class AprilTagVision extends SubsystemBase {
   private final AprilTagProvider[] implementations;
@@ -14,9 +18,14 @@ public class AprilTagVision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    ArrayList<Pose3d> targetPoses = new ArrayList<>();
+
     for (AprilTagProvider implementation : implementations) {
       implementation.periodic();
+      targetPoses.addAll(Arrays.stream(implementation.getTargetPoses()).toList());
     }
+
+    Logger.recordOutput("AprilTagVision/TargetPoses", targetPoses.toArray(Pose3d[]::new));
   }
 
   public void setDataInterface(
