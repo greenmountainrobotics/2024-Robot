@@ -14,6 +14,7 @@
 package frc.robot.subsystems.drive.module;
 
 import static com.revrobotics.CANSparkLowLevel.MotorType.kBrushless;
+import static frc.robot.constants.DriveConstants.*;
 import static frc.robot.constants.IdConstants.CANId.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -25,6 +26,7 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.constants.DriveConstants;
 import frc.robot.subsystems.drive.SparkFlexOdometryThread;
 import java.util.Queue;
 
@@ -41,9 +43,6 @@ import java.util.Queue;
  * "/Drive/ModuleX/TurnAbsolutePositionRad"
  */
 public class ModuleIOSparkFlex implements ModuleIO {
-  // Gear ratios for SDS MK4i L3
-  private static final double DRIVE_GEAR_RATIO = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
-  private static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
   private final CANSparkFlex driveSparkFlex;
   private final CANSparkFlex turnSparkFlex;
@@ -69,7 +68,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(FrontLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontLeftTurnId, kBrushless);
         cancoder = new CANcoder(FrontLeftEncoderId);
-        absoluteEncoderOffset = new Rotation2d(-4.5345926536); // CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(FrontLeftEncoderOffset); // CALIBRATED
         positionName = "FrontLeft";
         break;
       case 1:
@@ -77,7 +76,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(FrontRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(FrontRightTurnId, kBrushless);
         cancoder = new CANcoder(FrontRightEncoderId);
-        absoluteEncoderOffset = new Rotation2d(-2.326); // CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(FrontRightEncoderOffset); // CALIBRATED
         positionName = "FrontRight";
         break;
       case 2:
@@ -85,7 +84,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(BackLeftDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackLeftTurnId, kBrushless);
         cancoder = new CANcoder(BackLeftEncoderId);
-        absoluteEncoderOffset = new Rotation2d(-3.8085926536); // CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(BackLeftEncoderOffset); // CALIBRATED
         positionName = "BackLeft";
         break;
       case 3:
@@ -93,7 +92,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         driveSparkFlex = new CANSparkFlex(BackRightDriveId, kBrushless);
         turnSparkFlex = new CANSparkFlex(BackRightTurnId, kBrushless);
         cancoder = new CANcoder(BackRightEncoderId);
-        absoluteEncoderOffset = new Rotation2d(-0.907); // CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(BackRightEncoderOffset); // CALIBRATED
         positionName = "BackRight";
         break;
       default:
@@ -149,9 +148,10 @@ public class ModuleIOSparkFlex implements ModuleIO {
     BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     inputs.drivePositionRad =
-        Units.rotationsToRadians(driveEncoder.getPosition()) / DRIVE_GEAR_RATIO;
+        Units.rotationsToRadians(driveEncoder.getPosition()) / DriveConstants.DriveGearRatio;
     inputs.driveVelocityRadPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.getVelocity()) / DRIVE_GEAR_RATIO;
+        Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.getVelocity())
+            / DriveConstants.DriveGearRatio;
     inputs.driveAppliedVolts = driveSparkFlex.getAppliedOutput() * driveSparkFlex.getBusVoltage();
     inputs.driveCurrentAmps = driveSparkFlex.getOutputCurrent();
 
@@ -159,20 +159,21 @@ public class ModuleIOSparkFlex implements ModuleIO {
         Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
             .minus(absoluteEncoderOffset);
     inputs.turnPosition =
-        Rotation2d.fromRotations(turnRelativeEncoder.getPosition() / TURN_GEAR_RATIO);
+        Rotation2d.fromRotations(turnRelativeEncoder.getPosition() / DriveConstants.TurnGearRatio);
     inputs.turnVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(turnRelativeEncoder.getVelocity())
-            / TURN_GEAR_RATIO;
+            / DriveConstants.TurnGearRatio;
     inputs.turnAppliedVolts = turnSparkFlex.getAppliedOutput() * turnSparkFlex.getBusVoltage();
     inputs.turnCurrentAmps = turnSparkFlex.getOutputCurrent();
 
     inputs.odometryDrivePositionsRad =
         drivePositionQueue.stream()
-            .mapToDouble((Double value) -> Units.rotationsToRadians(value) / DRIVE_GEAR_RATIO)
+            .mapToDouble(
+                (Double value) -> Units.rotationsToRadians(value) / DriveConstants.DriveGearRatio)
             .toArray();
     inputs.odometryTurnPositions =
         turnPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromRotations(value / TURN_GEAR_RATIO))
+            .map((Double value) -> Rotation2d.fromRotations(value / DriveConstants.TurnGearRatio))
             .toArray(Rotation2d[]::new);
     inputs.odometryTimestamps =
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
