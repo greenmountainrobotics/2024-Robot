@@ -31,6 +31,7 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
     }
 
     SimCameraProperties cameraProp = new SimCameraProperties();
+    cameraProp.setCalibration(camera.width, camera.height, camera.fov);
 
     PhotonCameraSim cameraSim = new PhotonCameraSim(photonCamera, cameraProp);
 
