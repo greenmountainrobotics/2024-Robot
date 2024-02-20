@@ -54,6 +54,7 @@ public class DriveToPose extends Command {
   public void execute() {
     var targetPose = targetPoseSupplier.get();
     Logger.recordOutput("Auto/TargetPose", targetPose);
+    Logger.recordOutput("Auto/Trajectory", drive.getPose(), targetPose);
 
     var currentPose = drive.getPose();
 

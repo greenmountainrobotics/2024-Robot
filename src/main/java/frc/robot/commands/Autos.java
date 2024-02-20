@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.constants.Trajectory;
 import frc.robot.constants.TunableConstants;
@@ -10,6 +11,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.ShooterSimple;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
+import java.util.Arrays;
 import org.littletonrobotics.junction.Logger;
 
 public class Autos {
@@ -20,9 +22,15 @@ public class Autos {
     return new SequentialCommandGroup(
         new DriveToPose(drive, () -> FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose())),
         new InstantCommand(
-            () ->
-                Logger.recordOutput(
-                    "Auto/TargetPose", FieldPoseUtils.flipPoseIfRed(trajectory.getFinalPose()))),
+            () -> {
+              Logger.recordOutput(
+                  "Auto/TargetPose", FieldPoseUtils.flipPoseIfRed(trajectory.getFinalPose()));
+              Logger.recordOutput(
+                  "Auto/Trajectory",
+                  Arrays.stream(trajectory.getPoses())
+                      .map(FieldPoseUtils::flipPoseIfRed)
+                      .toArray(Pose2d[]::new));
+            }),
         Choreo.choreoSwerveCommand(
             trajectory,
             drive::getPose,
