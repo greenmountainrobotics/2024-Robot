@@ -59,7 +59,6 @@ public class Intake extends SubsystemBase {
     var voltage = extensionPID.calculate(currentExtensionMeters);
     io.extensionRunVoltage(voltage, voltage);
 
-    Logger.recordOutput("Setpoint", extensionPID.getSetpoint());
     Logger.recordOutput(
         "Intake/RealMechanism", getMechanism(currentExtensionMeters, inputs.articulationPosition));
     Logger.recordOutput(
