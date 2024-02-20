@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.*;
@@ -124,7 +125,11 @@ public class RobotContainer {
         break;
     }
 
-    aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
+    if (RunMode.getMode() == RunMode.SIM && Config.SIMULATE_CAMERAS) {
+      aprilTagVision.setDataInterface((a,b) -> {}, drive::getPose);
+    } else {
+      aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
+    }
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
