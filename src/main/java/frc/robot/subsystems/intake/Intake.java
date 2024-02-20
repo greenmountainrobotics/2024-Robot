@@ -5,8 +5,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.RobotConstants;
+import frc.robot.constants.DriveConstants;
+import frc.robot.constants.IntakeConstants;
+import frc.robot.constants.TunableConstants;
 import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.Logger;
 
@@ -17,7 +21,7 @@ public class Intake extends SubsystemBase {
   private final PIDController extensionPID;
   private final PIDController articulationPID;
 
-  private double extensionSetpoint = 0.0;
+  private double extensionSetpointMeters = 0.0;
   private Rotation2d articulationSetpoint = Rotation2d.fromDegrees(90);
 
   public Intake(IntakeIO io) {
@@ -25,12 +29,16 @@ public class Intake extends SubsystemBase {
 
     switch (RunMode.getMode()) {
       case REAL, REPLAY -> {
-        extensionPID = new PIDController(1.1, 0, 0);
-        articulationPID = new PIDController(1.1, 0, 0);
+        extensionPID =
+            new PIDController(
+                TunableConstants.KpIntakeExtension, 0, TunableConstants.KdIntakeExtension);
+        articulationPID =
+            new PIDController(
+                TunableConstants.KpIntakeArticulation, 0, TunableConstants.KdIntakeArticulation);
       }
       default -> {
-        extensionPID = new PIDController(1, 0, 0);
-        articulationPID = new PIDController(1, 0, 0);
+        extensionPID = new PIDController(15, 0, 3);
+        articulationPID = new PIDController(5, 0, 0.8);
       }
     }
   }
@@ -41,23 +49,33 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
 
     io.articulationRunVoltage(articulationPID.calculate(inputs.articulationPosition.getRadians()));
-    io.extensionRunVoltage(
-        extensionPID.calculate(inputs.leftExtensionPositionRad),
-        extensionPID.calculate(inputs.leftExtensionPositionRad));
 
-    //Logger.recordOutput("Intake/RealMechanism", getMechanism(inputs.leftExtensionPositionRad));
+    double currentExtensionMeters =
+        IntakeConstants.IntakeMetersPerRotation
+            * Rotation2d.fromRadians(inputs.leftExtensionPositionRad).getRotations();
+    currentExtensionMeters =
+        currentExtensionMeters == Double.POSITIVE_INFINITY ? 0 : currentExtensionMeters;
+
+    var voltage = extensionPID.calculate(currentExtensionMeters);
+    io.extensionRunVoltage(voltage, voltage);
+
+    Logger.recordOutput("Setpoint", extensionPID.getSetpoint());
     Logger.recordOutput(
-        "Intake/TargetMechanism", getMechanism(extensionSetpoint, articulationSetpoint));
+        "Intake/RealMechanism", getMechanism(currentExtensionMeters, inputs.articulationPosition));
+    Logger.recordOutput(
+        "Intake/TargetMechanism", getMechanism(extensionSetpointMeters, articulationSetpoint));
   }
 
   private Mechanism2d getMechanism(double extension, Rotation2d articulation) {
-    // TODO: THIS DOES NOT WORK
-    Mechanism2d mechanism = new Mechanism2d(RobotConstants.WidthWithBumpersX, 1);
-    MechanismRoot2d mechRoot = mechanism.getRoot("intake", 0, 0);
+    Mechanism2d mechanism = new Mechanism2d(DriveConstants.WidthWithBumpersX, 1);
+    MechanismRoot2d mechRoot =
+        mechanism.getRoot("intake", DriveConstants.WidthWithBumpersX / 2, 0.5);
     MechanismLigament2d elevator =
-        mechRoot.append(new MechanismLigament2d("intake extension", 1, 90));
+        mechRoot.append(new MechanismLigament2d("intake extension", extension, 0));
     MechanismLigament2d wrist =
-        elevator.append(new MechanismLigament2d("wrist", 0.5, articulation.getDegrees()));
+        elevator.append(
+            new MechanismLigament2d(
+                "wrist", 0.1, articulation.getDegrees(), 10, new Color8Bit(Color.kGreen)));
     return mechanism;
   }
 
@@ -71,6 +89,9 @@ public class Intake extends SubsystemBase {
   }
 
   public void setExtension(double coeff) {
-    extensionSetpoint = coeff;
+    extensionSetpointMeters =
+        coeff * (IntakeConstants.IntakeMaxExtension - IntakeConstants.IntakeMinExtension)
+            + IntakeConstants.IntakeMinExtension;
+    extensionPID.setSetpoint(extensionSetpointMeters);
   }
 }

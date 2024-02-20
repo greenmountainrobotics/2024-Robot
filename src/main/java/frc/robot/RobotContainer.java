@@ -126,7 +126,7 @@ public class RobotContainer {
     }
 
     if (RunMode.getMode() == RunMode.SIM && Config.SIMULATE_CAMERAS) {
-      aprilTagVision.setDataInterface((a,b) -> {}, drive::getPose);
+      aprilTagVision.setDataInterface((a, b) -> {}, drive::getPose);
     } else {
       aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
     }
@@ -154,7 +154,18 @@ public class RobotContainer {
             () -> -controller1.getLeftX(),
             () -> -controller1.getRightX()));
 
-    controller1.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller1
+        .y()
+        .onTrue(
+            new SequentialCommandGroup(
+                Commands.runOnce(() -> intake.setArticulation(Rotation2d.fromDegrees(-90)), intake),
+                Commands.runOnce(() -> intake.setExtension(1), intake)));
+    controller1
+        .x()
+        .onTrue(
+            new SequentialCommandGroup(
+                Commands.runOnce(() -> intake.setArticulation(new Rotation2d()), intake),
+                Commands.runOnce(() -> intake.setExtension(0), intake)));
     controller1.a().whileTrue(DriveCommands.alignToAmp(drive));
     controller1.b().whileTrue(DriveCommands.alignToSource(drive));
 
