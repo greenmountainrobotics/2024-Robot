@@ -67,6 +67,7 @@ public class Intake extends SubsystemBase {
 
   private Mechanism2d getMechanism(double extension, Rotation2d articulation) {
     Mechanism2d mechanism = new Mechanism2d(DriveConstants.WidthWithBumpersX, 1);
+    // TODO: set position of mechanism on bot
     MechanismRoot2d mechRoot =
         mechanism.getRoot("intake", DriveConstants.WidthWithBumpersX / 2, 0.5);
     MechanismLigament2d elevator =

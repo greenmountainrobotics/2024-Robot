@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.constants.Trajectory;
 import frc.robot.constants.TunableConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.shooter.ShooterSimple;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
 import java.util.Arrays;
@@ -41,20 +41,20 @@ public class Autos {
             Alliance::isRed));
   }
 
-  public static Command CloseSideToAmp(Drive drive, ShooterSimple shooter) {
+  public static Command CloseSideToAmp(Drive drive, Shooter shooter) {
 
     return new SequentialCommandGroup(
         new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose), ShootInAmp(shooter));
   }
 
-  public static Command FarSideToAmp(Drive drive, ShooterSimple shooter) {
+  public static Command FarSideToAmp(Drive drive, Shooter shooter) {
     return new SequentialCommandGroup(
         followPath(drive, Trajectory.FarSideToAmp),
         new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
         ShootInAmp(shooter));
   }
 
-  public static Command CloseSideToAmpToSource(Drive drive, ShooterSimple shooter) {
+  public static Command CloseSideToAmpToSource(Drive drive, Shooter shooter) {
     return new SequentialCommandGroup(
         new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
         ShootInAmp(shooter),
@@ -62,7 +62,7 @@ public class Autos {
         new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose));
   }
 
-  public static Command FarSideToAmpToSource(Drive drive, ShooterSimple shooter) {
+  public static Command FarSideToAmpToSource(Drive drive, Shooter shooter) {
     return new SequentialCommandGroup(
         followPath(drive, Trajectory.FarSideToAmp),
         new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
@@ -71,14 +71,14 @@ public class Autos {
         new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose));
   }
 
-  public static Command CloseSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
+  public static Command CloseSideToAmpToMiddle(Drive drive, Shooter shooter) {
     return new SequentialCommandGroup(
         new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
         ShootInAmp(shooter),
         followPath(drive, Trajectory.AmpToMiddle));
   }
 
-  public static Command FarSideToAmpToMiddle(Drive drive, ShooterSimple shooter) {
+  public static Command FarSideToAmpToMiddle(Drive drive, Shooter shooter) {
     return new SequentialCommandGroup(
         followPath(drive, Trajectory.FarSideToAmp),
         new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose),
@@ -92,9 +92,8 @@ public class Autos {
         new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose));
   }
 
-  public static Command ShootInAmp(ShooterSimple shooter) {
-    return new RunCommand(() -> shooter.setFlywheels(-0.3, 0.3), shooter)
-        .withTimeout(0.5)
-        .andThen(() -> shooter.setFlywheels(0, 0));
+  public static Command ShootInAmp(Shooter shooter) {
+    // TODO: No-op for now.
+    return new RunCommand(() -> {});
   }
 }

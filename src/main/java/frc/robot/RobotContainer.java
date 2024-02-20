@@ -37,10 +37,10 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOReal;
-import frc.robot.subsystems.shooter.ShooterSimple;
 import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -55,8 +55,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final AprilTagVision aprilTagVision;
-  private final ShooterSimple shooter;
   private final Intake intake;
+  private final Shooter shooter;
 
   // Controller
   private final CommandXboxController controller1 = new CommandXboxController(0);
@@ -83,8 +83,8 @@ public class RobotContainer {
                 new ModuleIOReal(3));
         aprilTagVision =
             new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
-        shooter = new ShooterSimple(new ShooterIOReal());
         intake = new Intake(new IntakeIOReal());
+        shooter = new Shooter(new ShooterIOReal());
         break;
 
       case SIM:
@@ -106,8 +106,8 @@ public class RobotContainer {
               new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
         }
 
-        shooter = new ShooterSimple(new ShooterIOSim());
         intake = new Intake(new IntakeIOSim());
+        shooter = new Shooter(new ShooterIOSim());
         break;
 
       default:
@@ -120,8 +120,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
-        shooter = new ShooterSimple(new ShooterIO() {});
         intake = new Intake(new IntakeIO() {});
+        shooter = new Shooter(new ShooterIO() {});
         break;
     }
 
@@ -168,15 +168,6 @@ public class RobotContainer {
                 Commands.runOnce(() -> intake.setExtension(0), intake)));
     controller1.a().whileTrue(DriveCommands.alignToAmp(drive));
     controller1.b().whileTrue(DriveCommands.alignToSource(drive));
-
-    shooter.setDefaultCommand(
-        new RunCommand(
-            () -> {
-              double amt = Math.abs(controller2.getLeftY()) > 0.2 ? controller2.getLeftY() : 0;
-              amt = amt > 0 ? amt * 0.1 : amt;
-              shooter.setFlywheels(amt, -amt);
-            },
-            shooter));
   }
 
   private void configureAutos() {
