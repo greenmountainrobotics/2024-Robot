@@ -32,14 +32,14 @@ import frc.robot.subsystems.drive.imu.GyroIO;
 import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
 import frc.robot.subsystems.drive.module.ModuleIO;
 import frc.robot.subsystems.drive.module.ModuleIOSim;
-import frc.robot.subsystems.drive.module.ModuleIOSparkFlex;
+import frc.robot.subsystems.drive.module.ModuleIOReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOVictorSPX;
+import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
-import frc.robot.subsystems.shooter.ShooterIOSparkMax;
+import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.shooter.ShooterSimple;
 import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -77,14 +77,14 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOSparkFlex(0),
-                new ModuleIOSparkFlex(1),
-                new ModuleIOSparkFlex(2),
-                new ModuleIOSparkFlex(3));
+                new ModuleIOReal(0),
+                new ModuleIOReal(1),
+                new ModuleIOReal(2),
+                new ModuleIOReal(3));
         aprilTagVision =
             new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
-        shooter = new ShooterSimple(new ShooterIOSparkMax());
-        intake = new Intake(new IntakeIOVictorSPX());
+        shooter = new ShooterSimple(new ShooterIOReal());
+        intake = new Intake(new IntakeIOReal());
         break;
 
       case SIM:

@@ -6,7 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.IdConstants;
 
-public class ShooterIOSparkMax implements ShooterIO {
+public class ShooterIOReal implements ShooterIO {
   private CANSparkMax topSpinMotor =
       new CANSparkMax(IdConstants.CANId.TopSpinMotorId, CANSparkLowLevel.MotorType.kBrushless);
   private CANSparkMax bottomSpinMotor =
@@ -18,7 +18,7 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   // private final RelativeEncoder pivotEncoder;
 
-  public ShooterIOSparkMax() {
+  public ShooterIOReal() {
     topEncoder = topSpinMotor.getEncoder();
     bottomEncoder = bottomSpinMotor.getEncoder();
     topSpinMotor.setInverted(true);

@@ -42,7 +42,7 @@ import java.util.Queue;
  * absolute encoders using AdvantageScope. These values are logged under
  * "/Drive/ModuleX/TurnAbsolutePositionRad"
  */
-public class ModuleIOSparkFlex implements ModuleIO {
+public class ModuleIOReal implements ModuleIO {
 
   private final CANSparkFlex driveSparkFlex;
   private final CANSparkFlex turnSparkFlex;
@@ -61,7 +61,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
 
   private final String positionName;
 
-  public ModuleIOSparkFlex(int index) {
+  public ModuleIOReal(int index) {
     switch (index) {
       case 0:
         // front left

@@ -12,7 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.constants.IdConstants;
 
-public class IntakeIOVictorSPX implements IntakeIO {
+public class IntakeIOReal implements IntakeIO {
   private final CANSparkMax rightExtensionMotor =
       new CANSparkMax(RightIntakeExtensionMotorId, CANSparkMax.MotorType.kBrushless);
   private final CANSparkMax leftExtensionMotor =
@@ -24,7 +24,7 @@ public class IntakeIOVictorSPX implements IntakeIO {
   private final RelativeEncoder rightExtensionEncoder;
   private final RelativeEncoder leftExtensionEncoder;
 
-  public IntakeIOVictorSPX() {
+  public IntakeIOReal() {
     rightExtensionEncoder = rightExtensionMotor.getEncoder();
     leftExtensionEncoder = leftExtensionMotor.getEncoder();
     articulationEncoder = new DutyCycleEncoder(IdConstants.DIOId.IntakeArticulationEncoderId);
