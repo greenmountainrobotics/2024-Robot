@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.DriveConstants;
 import frc.robot.constants.TunableConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
@@ -18,9 +19,6 @@ public class DriveToPose extends Command {
   private final ProfiledPIDController translationController;
   private final ProfiledPIDController thetaController;
 
-  private static final double driveTolerance = 0.02;
-  private static final double thetaTolerance = 0.02;
-
   public DriveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
     this.drive = drive;
     this.targetPoseSupplier = targetPoseSupplier;
@@ -29,12 +27,12 @@ public class DriveToPose extends Command {
     translationController =
         new ProfiledPIDController(
             TunableConstants.KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
-    translationController.setTolerance(driveTolerance);
+    translationController.setTolerance(DriveConstants.DriveTolerance);
 
     thetaController =
         new ProfiledPIDController(
             TunableConstants.KpTheta, 0, 0, new TrapezoidProfile.Constraints(5, 5));
-    thetaController.setTolerance(thetaTolerance);
+    thetaController.setTolerance(DriveConstants.ThetaToleranceRad);
   }
 
   @Override
@@ -87,8 +85,8 @@ public class DriveToPose extends Command {
     var currentPose = drive.getPose();
     var targetPose = targetPoseSupplier.get();
     return (Math.abs(currentPose.getTranslation().getDistance(targetPose.getTranslation()))
-            < driveTolerance
+            < DriveConstants.DriveTolerance
         && Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians())
-            < thetaTolerance);
+            < DriveConstants.ThetaToleranceRad);
   }
 }
