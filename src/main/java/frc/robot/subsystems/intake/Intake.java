@@ -52,11 +52,10 @@ public class Intake extends SubsystemBase {
 
     double currentExtensionMeters =
         IntakeConstants.ExtensionMetersPerRotation
-            * Rotation2d.fromRadians(inputs.leftExtensionPositionRad).getRotations();
-    currentExtensionMeters =
-        currentExtensionMeters == Double.POSITIVE_INFINITY ? 0 : currentExtensionMeters;
+                * Rotation2d.fromRadians(inputs.leftExtensionPositionRad).getRotations()
+            + IntakeConstants.MinExtension;
 
-    var voltage = extensionPID.calculate(currentExtensionMeters);
+    var voltage = extensionPID.calculate(currentExtensionMeters - IntakeConstants.MinExtension);
     io.extensionRunVoltage(voltage, voltage);
 
     Logger.recordOutput(
@@ -94,6 +93,6 @@ public class Intake extends SubsystemBase {
     extensionSetpointMeters =
         coeff * (IntakeConstants.MaxExtension - IntakeConstants.MinExtension)
             + IntakeConstants.MinExtension;
-    extensionPID.setSetpoint(extensionSetpointMeters);
+    extensionPID.setSetpoint(extensionSetpointMeters - IntakeConstants.MinExtension);
   }
 }
