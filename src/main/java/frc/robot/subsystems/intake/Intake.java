@@ -87,6 +87,9 @@ public class Intake extends SubsystemBase {
     return mechanism;
   }
 
+  /**
+   * @param speed positive is outwards
+   */
   public void setIntakeSpeed(double speed) {
     io.spinRunVoltage(12.0 * speed);
   }
@@ -131,7 +134,8 @@ public class Intake extends SubsystemBase {
                                         (currentExtensionMeters - StartRotatingDownwardsExtension)
                                             / (TargetExtension
                                                 - StartRotatingDownwardsExtension))));
-                    }, this)
+                    },
+                    this)
                 .until(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
   }
 
@@ -139,5 +143,24 @@ public class Intake extends SubsystemBase {
     return new InstantCommand(() -> setExtension(MinExtension), this)
         .andThen(new InstantCommand(() -> setArticulation(RetractedArticulation), this))
         .andThen(new WaitUntilCommand(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
+  }
+
+  public Command pointIntoShooter() {
+    return new InstantCommand(() -> setExtension(MinExtension), this)
+        .andThen(new InstantCommand(() -> setArticulation(PointingAtShooterArticulation), this))
+        .andThen(new WaitUntilCommand(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
+  }
+
+  public Command pointUp() {
+    return new InstantCommand(() -> setExtension(MinExtension), this)
+        .andThen(new InstantCommand(() -> setArticulation(PointingUpArticulation), this))
+        .andThen(new WaitUntilCommand(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
+  }
+
+  /**
+   * @param speed positive is outwards
+   */
+  public Command shoot(double speed) {
+    return new RunCommand(() -> setIntakeSpeed(speed), this).finallyDo(() -> setIntakeSpeed(0));
   }
 }

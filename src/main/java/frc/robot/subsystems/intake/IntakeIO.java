@@ -29,5 +29,8 @@ public interface IntakeIO {
 
   default void articulationRunVoltage(double voltage) {}
 
+  /**
+   * @param voltage positive is outwards
+   */
   default void spinRunVoltage(double voltage) {}
 }

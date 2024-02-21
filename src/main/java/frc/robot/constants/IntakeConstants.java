@@ -16,9 +16,13 @@ public class IntakeConstants {
   public static final double PivotHeight = inchesToMeters(8.369);
   public static final double ExtensionStartX = inchesToMeters(10.618500);
 
+  // articulation is measured between extension and top side of end effector when retracted
   public static final Rotation2d TargetArticulation = Rotation2d.fromDegrees(-77);
   public static final Rotation2d RetractedArticulation = Rotation2d.fromDegrees(90 + 32.724839);
   public static final Rotation2d HalfwayArticulation = Rotation2d.fromDegrees(180 + 166.600512);
+  public static final Rotation2d PointingAtShooterArticulation =
+      Rotation2d.fromDegrees(180 - 52.993);
+  public static final Rotation2d PointingUpArticulation = Rotation2d.fromDegrees(180 - 100.405);
 
   public static final double ExtensionTolerance = Units.inchesToMeters(0.5);
   public static final double ArticulationToleranceRad = 0.02;
