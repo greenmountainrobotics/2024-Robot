@@ -1,9 +1,11 @@
 package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.constants.TunableConstants.*;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,14 +14,20 @@ import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
-  private ShooterIO io;
-  private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-  private PIDController topPID;
-  private PIDController bottomPID;
+  private final ShooterIO io;
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+  private final PIDController topPID;
+  private final PIDController bottomPID;
 
-  private SimpleMotorFeedforward topFF;
-  private SimpleMotorFeedforward bottomFF;
-  private SysIdRoutine flywheelSysId;
+  private final PIDController articulationPID;
+
+  private final SimpleMotorFeedforward topFF;
+  private final SimpleMotorFeedforward bottomFF;
+  private final SysIdRoutine flywheelSysId;
+
+  private double topSetpointRPM = 0.0;
+  private double bottomSetpointRPM = 0.0;
+  private Rotation2d articulationSetpoint = Rotation2d.fromRadians(Math.PI);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -27,16 +35,19 @@ public class Shooter extends SubsystemBase {
     switch (RunMode.getMode()) {
       case REAL:
       case REPLAY:
-        topFF = new SimpleMotorFeedforward(0, 0);
-        bottomFF = new SimpleMotorFeedforward(0, 0);
-        topPID = new PIDController(1, 0, 0);
-        bottomPID = new PIDController(1, 0, 0);
+        topFF = new SimpleMotorFeedforward(KsTopFlywheel, KvTopFlywheel);
+        bottomFF = new SimpleMotorFeedforward(KsBottomFlywheel, KvBottomFlywheel);
+        topPID = new PIDController(KpTopFlywheel, 0, KdTopFlywheel);
+        bottomPID = new PIDController(KpBottomFlywheel, 0, KdBottomFlywheel);
+        articulationPID = new PIDController(KpShooterArticulation, 0, KdShooterArticulation);
         break;
-      case SIM:
-        topFF = new SimpleMotorFeedforward(0, 0);
-        bottomFF = new SimpleMotorFeedforward(0, 0);
+      default:
+        // simulated
+        topFF = new SimpleMotorFeedforward(0, .005);
+        bottomFF = new SimpleMotorFeedforward(0, .005);
         topPID = new PIDController(1, 0, 0);
         bottomPID = new PIDController(1, 0, 0);
+        articulationPID = new PIDController(1, 0, 0);
         break;
     }
 
@@ -60,13 +71,43 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
+
+    io.setTopVoltage(
+        topPID.calculate(
+                Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
+                topSetpointRPM)
+            + topFF.calculate(topSetpointRPM));
+
+    io.setBottomVoltage(
+        bottomPID.calculate(
+                Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
+                bottomSetpointRPM)
+            + bottomFF.calculate(bottomSetpointRPM));
+
+    io.setArticulationVoltage(
+        articulationPID.calculate(
+            inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
+
+    Logger.recordOutput("Shooter/TopSetpointRPM", topSetpointRPM);
+    Logger.recordOutput(
+        "Shooter/TopRPM", Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec));
+
+    Logger.recordOutput("Shooter/BottomSetpointRPM", bottomSetpointRPM);
+    Logger.recordOutput(
+        "Shooter/BottomRPM",
+        Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec));
+
+    Logger.recordOutput("Shooter/ArticulationSetpoint", articulationSetpoint);
+    Logger.recordOutput("Shooter/Articulation", inputs.articulationPosition);
   }
 
   public void setFlywheelSetpointRPM(double top, double bottom) {
-    io.setTopVoltage(
-        topPID.calculate(
-                Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec), top)
-            + topFF.calculate(top));
+    topSetpointRPM = top;
+    bottomSetpointRPM = bottom;
+  }
+
+  public void setArticulation(Rotation2d articulation) {
+    articulationSetpoint = articulation;
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

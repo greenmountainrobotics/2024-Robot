@@ -11,4 +11,17 @@ public final class TunableConstants {
 
   public static final double KpIntakeArticulation = 1;
   public static final double KdIntakeArticulation = 1;
+
+  public static final double KsTopFlywheel = 0;
+  public static final double KvTopFlywheel = 0;
+  public static final double KpTopFlywheel = 1;
+  public static final double KdTopFlywheel = 0;
+
+  public static final double KsBottomFlywheel = 0;
+  public static final double KvBottomFlywheel = 0;
+  public static final double KpBottomFlywheel = 1;
+  public static final double KdBottomFlywheel = 0;
+
+  public static final double KpShooterArticulation = 1;
+  public static final double KdShooterArticulation = 0;
 }
