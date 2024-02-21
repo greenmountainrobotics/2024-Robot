@@ -51,7 +51,7 @@ public class Intake extends SubsystemBase {
     io.articulationRunVoltage(articulationPID.calculate(inputs.articulationPosition.getRadians()));
 
     double currentExtensionMeters =
-        IntakeConstants.IntakeMetersPerRotation
+        IntakeConstants.ExtensionMetersPerRotation
             * Rotation2d.fromRadians(inputs.leftExtensionPositionRad).getRotations();
     currentExtensionMeters =
         currentExtensionMeters == Double.POSITIVE_INFINITY ? 0 : currentExtensionMeters;
@@ -67,9 +67,11 @@ public class Intake extends SubsystemBase {
 
   private Mechanism2d getMechanism(double extension, Rotation2d articulation) {
     Mechanism2d mechanism = new Mechanism2d(DriveConstants.WidthWithBumpersX, 1);
-    // TODO: set position of mechanism on bot
     MechanismRoot2d mechRoot =
-        mechanism.getRoot("intake", DriveConstants.WidthWithBumpersX / 2, 0.5);
+        mechanism.getRoot(
+            "intake",
+            DriveConstants.WidthWithBumpersX / 2 + IntakeConstants.ExtensionStartX,
+            IntakeConstants.PivotHeight);
     MechanismLigament2d elevator =
         mechRoot.append(new MechanismLigament2d("intake extension", extension, 0));
     MechanismLigament2d wrist =
@@ -90,8 +92,8 @@ public class Intake extends SubsystemBase {
 
   public void setExtension(double coeff) {
     extensionSetpointMeters =
-        coeff * (IntakeConstants.IntakeMaxExtension - IntakeConstants.IntakeMinExtension)
-            + IntakeConstants.IntakeMinExtension;
+        coeff * (IntakeConstants.MaxExtension - IntakeConstants.MinExtension)
+            + IntakeConstants.MinExtension;
     extensionPID.setSetpoint(extensionSetpointMeters);
   }
 }
