@@ -7,9 +7,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.constants.DriveConstants;
+import frc.robot.constants.ShooterConstants;
 import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.Logger;
 
@@ -47,7 +52,7 @@ public class Shooter extends SubsystemBase {
         bottomFF = new SimpleMotorFeedforward(0, .005);
         topPID = new PIDController(1, 0, 0);
         bottomPID = new PIDController(1, 0, 0);
-        articulationPID = new PIDController(1, 0, 0);
+        articulationPID = new PIDController(0.1, 0, 0);
         break;
     }
 
@@ -99,6 +104,21 @@ public class Shooter extends SubsystemBase {
 
     Logger.recordOutput("Shooter/ArticulationSetpoint", articulationSetpoint);
     Logger.recordOutput("Shooter/Articulation", inputs.articulationPosition);
+
+    Logger.recordOutput("Shooter/RealMechanism", getMechanism(inputs.articulationPosition));
+    Logger.recordOutput("Shooter/TargetMechanism", getMechanism(articulationSetpoint));
+  }
+
+  private Mechanism2d getMechanism(Rotation2d articulation) {
+    Mechanism2d mechanism = new Mechanism2d(DriveConstants.WidthWithBumpersX, 1);
+    MechanismRoot2d mechRoot =
+        mechanism.getRoot(
+            "shooter",
+            DriveConstants.WidthWithBumpersX / 2 + ShooterConstants.PivotX,
+            ShooterConstants.PivotHeight);
+    MechanismLigament2d elevator =
+        mechRoot.append(new MechanismLigament2d("shooter pivot", 0.3, articulation.getDegrees()));
+    return mechanism;
   }
 
   public void setFlywheelSetpointRPM(double top, double bottom) {
