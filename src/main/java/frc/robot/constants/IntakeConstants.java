@@ -26,4 +26,8 @@ public class IntakeConstants {
 
   public static final double ExtensionTolerance = Units.inchesToMeters(0.5);
   public static final double ArticulationToleranceRad = 0.02;
+
+  public static final double IntakeSpeed = -0.5;
+  public static final double FeedIntoShooterSpeed = 0.5;
+  public static final double ShootIntoAmpSpeed = 0.5;
 }
