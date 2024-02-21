@@ -10,8 +10,7 @@ public class IntakeConstants {
   public static final double MaxExtension = inchesToMeters(8.524);
   public static final double TargetExtension = inchesToMeters(7.693);
   public static final double MinExtension = inchesToMeters(2.625);
-  public static final double StartRotatingDownwardsExtension =
-      TargetExtension - inchesToMeters(6);
+  public static final double StartRotatingDownwardsExtension = TargetExtension - inchesToMeters(6);
 
   public static final double ExtensionMetersPerRotation = inchesToMeters(1);
   public static final double PivotHeight = inchesToMeters(8.369);

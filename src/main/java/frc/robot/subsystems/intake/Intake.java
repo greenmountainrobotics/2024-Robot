@@ -122,17 +122,17 @@ public class Intake extends SubsystemBase {
         .andThen(new InstantCommand(() -> setArticulation(HalfwayArticulation), this))
         .andThen(
             new RunCommand(
-                () -> {
-                  if (currentExtensionMeters > StartRotatingDownwardsExtension)
-                    setArticulation(
-                        HalfwayArticulation.plus(
-                            TargetArticulation.minus(HalfwayArticulation)
-                                .times(
-                                    (currentExtensionMeters - StartRotatingDownwardsExtension)
-                                        / (TargetExtension - StartRotatingDownwardsExtension))));
-                },
-                this))
-        .until(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint());
+                    () -> {
+                      if (currentExtensionMeters > StartRotatingDownwardsExtension)
+                        setArticulation(
+                            HalfwayArticulation.plus(
+                                TargetArticulation.minus(HalfwayArticulation)
+                                    .times(
+                                        (currentExtensionMeters - StartRotatingDownwardsExtension)
+                                            / (TargetExtension
+                                                - StartRotatingDownwardsExtension))));
+                    }, this)
+                .until(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
   }
 
   public Command retract() {
