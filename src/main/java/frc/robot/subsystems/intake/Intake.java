@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
       }
       default -> {
         extensionPID = new PIDController(15, 0, 3);
-        articulationPID = new PIDController(5, 0, 0.8);
+        articulationPID = new PIDController(1, 0, 0.2);
       }
     }
 
@@ -109,7 +109,8 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean articulationIsAtSetpoint() {
-    return Math.abs(extensionSetpointMeters - currentExtensionMeters) < ArticulationToleranceRad;
+    return Math.abs(getArticulation().minus(articulationSetpoint).getRadians())
+        < ArticulationToleranceRad;
   }
 
   public double getExtension() {
@@ -140,20 +141,17 @@ public class Intake extends SubsystemBase {
   }
 
   public Command retract() {
-    return new InstantCommand(() -> setExtension(MinExtension), this)
-        .andThen(new InstantCommand(() -> setArticulation(RetractedArticulation), this))
-        .andThen(new WaitUntilCommand(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
+    return retract(RetractedArticulation);
   }
 
-  public Command pointIntoShooter() {
-    return new InstantCommand(() -> setExtension(MinExtension), this)
-        .andThen(new InstantCommand(() -> setArticulation(PointingAtShooterArticulation), this))
-        .andThen(new WaitUntilCommand(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
-  }
-
-  public Command pointUp() {
-    return new InstantCommand(() -> setExtension(MinExtension), this)
-        .andThen(new InstantCommand(() -> setArticulation(PointingUpArticulation), this))
+  public Command retract(Rotation2d articulation) {
+    return new InstantCommand(() -> setArticulation(articulation), this)
+        .andThen(
+            new WaitUntilCommand(
+                () ->
+                    currentExtensionMeters < StartRotatingDownwardsExtension
+                        || getArticulation().minus(HalfwayArticulation).getRadians() > 0))
+        .andThen(new InstantCommand(() -> setExtension(MinExtension), this))
         .andThen(new WaitUntilCommand(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
   }
 
