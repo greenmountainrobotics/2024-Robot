@@ -1,17 +1,4 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
-package frc.robot.commands;
+package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,24 +8,39 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
 import java.util.function.DoubleSupplier;
 
-public class DriveCommands {
-  private static final double DEADBAND = 0.25;
+public class DriverControl {
+  private final CommandXboxController controller1 = new CommandXboxController(0);
+  private final CommandXboxController controller2 = new CommandXboxController(1);
 
-  private DriveCommands() {}
+  public DriverControl(Drive drive, Shooter shooter, Intake intake) {
+    drive.setDefaultCommand(
+        joystickDrive(
+            drive,
+            () -> -controller1.getLeftY(),
+            () -> -controller1.getLeftX(),
+            () -> -controller1.getRightX()));
 
-  /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
-   */
-  public static Command joystickDrive(
+    controller1.y().onTrue(intake.retract());
+    controller1.x().onTrue(intake.extend());
+    controller1.a().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithAmpPose));
+    controller1.b().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithSourcePose));
+  }
+
+  private Command joystickDrive(
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier) {
+    var DEADBAND = 0.25;
+
     return Commands.run(
         () -> {
           // Apply deadband
@@ -71,13 +73,5 @@ public class DriveCommands {
                       : drive.getRotation()));
         },
         drive);
-  }
-
-  public static Command alignToAmp(Drive drive) {
-    return drive.runToPose(FieldPoseUtils::alignedWithAmpPose);
-  }
-
-  public static Command alignToSource(Drive drive) {
-    return drive.runToPose(FieldPoseUtils::alignedWithSourcePose);
   }
 }

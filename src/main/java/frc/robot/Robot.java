@@ -14,8 +14,27 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.Camera;
+import frc.robot.subsystems.apriltagvision.AprilTagVision;
+import frc.robot.subsystems.apriltagvision.photonvision.PhotonVision;
+import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIO;
+import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOReal;
+import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOSim;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.imu.GyroIO;
+import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
+import frc.robot.subsystems.drive.module.ModuleIO;
+import frc.robot.subsystems.drive.module.ModuleIOReal;
+import frc.robot.subsystems.drive.module.ModuleIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOReal;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -32,8 +51,13 @@ import org.littletonrobotics.urcl.URCL;
  * project.
  */
 public class Robot extends LoggedRobot {
-  private Command autonomousCommand;
-  private RobotContainer robotContainer;
+  private Auto auto;
+  private DriverControl driverControl;
+
+  private Drive drive;
+  private AprilTagVision aprilTagVision;
+  private Intake intake;
+  private Shooter shooter;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -41,6 +65,73 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+    initLogging();
+
+    switch (RunMode.getMode()) {
+      case REAL:
+        // Real robot, instantiate hardware IO implementations
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOReal(0),
+                new ModuleIOReal(1),
+                new ModuleIOReal(2),
+                new ModuleIOReal(3));
+        aprilTagVision =
+            new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
+        intake = new Intake(new IntakeIOReal());
+        shooter = new Shooter(new ShooterIOReal());
+        break;
+
+      case SIM:
+        // Sim robot, instantiate physics sim IO implementations
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim());
+
+        if (Config.SIMULATE_CAMERAS) {
+          aprilTagVision =
+              new AprilTagVision(
+                  new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose)));
+        } else {
+          aprilTagVision =
+              new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
+        }
+
+        intake = new Intake(new IntakeIOSim());
+        shooter = new Shooter(new ShooterIOSim());
+        break;
+
+      default:
+        // Replayed robot, disable IO implementations
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+        aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
+        intake = new Intake(new IntakeIO() {});
+        shooter = new Shooter(new ShooterIO() {});
+        break;
+    }
+
+    if (RunMode.getMode() == RunMode.SIM && Config.SIMULATE_CAMERAS) {
+      aprilTagVision.setDataInterface((a, b) -> {}, drive::getPose);
+    } else {
+      aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
+    }
+
+    auto = new Auto(drive, shooter, intake);
+    driverControl = new DriverControl(drive, shooter, intake);
+  }
+
+  void initLogging() {
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -86,53 +177,28 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
-    // Logger.disableDeterministicTimestamps()
-
     // Start AdvantageKit logger
     Logger.registerURCL(URCL.startExternal());
     Logger.start();
-
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
-    robotContainer = new RobotContainer();
   }
 
-  /** This function is called periodically during all modes. */
+  // DO NOT modify anything below this line.
+  public static void main(String... args) {
+    RobotBase.startRobot(Robot::new);
+  }
+
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled commands, running already-scheduled commands, removing
-    // finished or interrupted commands, and running subsystem periodic() methods.
-    // This must be called from the robot's periodic block in order for anything in
-    // the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
-    if (autonomousCommand != null) {
-      autonomousCommand.schedule();
-    }
+    auto.schedule();
   }
 
-  /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
-  }
-
-  public static void main(String... args) {
-    RobotBase.startRobot(Robot::new);
+    auto.cancel();
   }
 }
