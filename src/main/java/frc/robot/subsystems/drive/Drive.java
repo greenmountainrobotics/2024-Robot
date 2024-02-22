@@ -306,11 +306,11 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  private ChassisSpeeds calculatePIDVelocity(Pose2d targetPose) {
+  public ChassisSpeeds calculatePIDVelocity(Pose2d targetPose) {
     return calculatePIDVelocity(targetPose, getPose(), 0, 0, 0);
   }
 
-  private ChassisSpeeds calculatePIDVelocity(
+  public ChassisSpeeds calculatePIDVelocity(
       Pose2d targetPose, Pose2d currentPose, double xFF, double yFF, double thetaFF) {
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
@@ -332,6 +332,10 @@ public class Drive extends SubsystemBase {
         driveVelocity.getY() + yFF,
         thetaVelocity + thetaFF,
         currentPose.getRotation());
+  }
+
+  public double calculatePIDThetaVelocity(double targetThetaRad, double currentThetaRad) {
+    return thetaController.calculate(currentThetaRad, targetThetaRad);
   }
 
   public boolean poseAtSetpoint(Pose2d setpoint) {
