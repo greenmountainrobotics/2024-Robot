@@ -6,9 +6,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.Trajectory;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.FieldPoseUtils;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -19,7 +16,9 @@ public class Auto {
 
   private Command currentCommand;
 
-  public Auto(Drive drive, Shooter shooter, Intake intake) {
+  public Auto(Robot robot) {
+    var drive = robot.drive;
+
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
     autoDelay = new LoggedDashboardNumber("Auto Delay", 0);
 

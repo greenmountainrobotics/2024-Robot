@@ -54,10 +54,10 @@ public class Robot extends LoggedRobot {
   private Auto auto;
   private DriverControl driverControl;
 
-  private Drive drive;
-  private AprilTagVision aprilTagVision;
-  private Intake intake;
-  private Shooter shooter;
+  public Drive drive;
+  public AprilTagVision aprilTagVision;
+  public Intake intake;
+  public Shooter shooter;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -127,8 +127,8 @@ public class Robot extends LoggedRobot {
       aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
     }
 
-    auto = new Auto(drive, shooter, intake);
-    driverControl = new DriverControl(drive, shooter, intake);
+    auto = new Auto(this);
+    driverControl = new DriverControl(this);
   }
 
   void initLogging() {

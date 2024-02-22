@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
 import java.util.function.DoubleSupplier;
@@ -20,7 +18,10 @@ public class DriverControl {
   private final CommandXboxController controller1 = new CommandXboxController(0);
   private final CommandXboxController controller2 = new CommandXboxController(1);
 
-  public DriverControl(Drive drive, Shooter shooter, Intake intake) {
+  public DriverControl(Robot robot) {
+    var drive = robot.drive;
+    var intake = robot.intake;
+
     drive.setDefaultCommand(
         joystickDrive(
             drive,
