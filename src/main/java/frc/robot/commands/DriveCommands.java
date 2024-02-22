@@ -74,10 +74,10 @@ public class DriveCommands {
   }
 
   public static Command alignToAmp(Drive drive) {
-    return new DriveToPose(drive, FieldPoseUtils::alignedWithAmpPose);
+    return drive.runToPose(FieldPoseUtils::alignedWithAmpPose);
   }
 
   public static Command alignToSource(Drive drive) {
-    return new DriveToPose(drive, FieldPoseUtils::alignedWithSourcePose);
+    return drive.runToPose(FieldPoseUtils::alignedWithSourcePose);
   }
 }

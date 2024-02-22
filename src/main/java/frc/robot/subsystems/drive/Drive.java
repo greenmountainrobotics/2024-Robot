@@ -17,23 +17,33 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.constants.DriveConstants.TrackWidthX;
 import static frc.robot.constants.DriveConstants.TrackWidthY;
 
+import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.constants.DriveConstants;
+import frc.robot.constants.Trajectory;
+import frc.robot.constants.TunableConstants;
 import frc.robot.subsystems.drive.imu.GyroIO;
 import frc.robot.subsystems.drive.imu.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drive.module.Module;
 import frc.robot.subsystems.drive.module.ModuleIO;
+import frc.robot.util.Alliance;
+import frc.robot.util.FieldPoseUtils;
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -61,6 +71,9 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
+
+  private final ProfiledPIDController translationController;
+  private final ProfiledPIDController thetaController;
 
   public Drive(
       GyroIO gyroIO,
@@ -93,6 +106,16 @@ public class Drive extends SubsystemBase {
                 },
                 null,
                 this));
+
+    translationController =
+        new ProfiledPIDController(
+            TunableConstants.KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+    translationController.setTolerance(DriveConstants.DriveTolerance);
+    thetaController =
+        new ProfiledPIDController(
+            TunableConstants.KpTheta, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+    thetaController.setTolerance(DriveConstants.ThetaToleranceRad);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   public void periodic() {
@@ -281,5 +304,85 @@ public class Drive extends SubsystemBase {
       new Translation2d(-TrackWidthX / 2.0, TrackWidthY / 2.0),
       new Translation2d(-TrackWidthX / 2.0, -TrackWidthY / 2.0)
     };
+  }
+
+  private ChassisSpeeds calculatePIDVelocity(Pose2d targetPose) {
+    return calculatePIDVelocity(targetPose, getPose(), 0, 0, 0);
+  }
+
+  private ChassisSpeeds calculatePIDVelocity(
+      Pose2d targetPose, Pose2d currentPose, double xFF, double yFF, double thetaFF) {
+
+    double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
+    double translationVelocityScalar = translationController.calculate(currentDistance, 0.0);
+
+    double thetaVelocity =
+        thetaController.calculate(
+            currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+
+    var driveVelocity =
+        new Pose2d(
+                new Translation2d(),
+                currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
+            .transformBy(new Transform2d(translationVelocityScalar, 0.0, new Rotation2d()))
+            .getTranslation();
+
+    return ChassisSpeeds.fromFieldRelativeSpeeds(
+        driveVelocity.getX() + xFF,
+        driveVelocity.getY() + yFF,
+        thetaVelocity + thetaFF,
+        currentPose.getRotation());
+  }
+
+  public boolean poseAtSetpoint(Pose2d setpoint) {
+    return Math.abs(getPose().getTranslation().getDistance(setpoint.getTranslation()))
+            < DriveConstants.DriveTolerance
+        && Math.abs(getPose().getRotation().minus(setpoint.getRotation()).getRadians())
+            < DriveConstants.ThetaToleranceRad;
+  }
+
+  public Command runToPose(Supplier<Pose2d> targetPoseSupplier) {
+    return new InstantCommand(
+            () -> thetaController.reset(getPose().getRotation().getRadians()), this)
+        .andThen(
+            new RunCommand(
+                () -> {
+                  var targetPose = targetPoseSupplier.get();
+                  Logger.recordOutput("Auto/TargetPose", targetPose);
+                  Logger.recordOutput("Auto/Trajectory", getPose(), targetPose);
+                  runVelocity(calculatePIDVelocity(targetPose));
+                },
+                this))
+        .until(() -> poseAtSetpoint(targetPoseSupplier.get()))
+        .finallyDo(this::stop);
+  }
+
+  public Command followPath(Trajectory trajectoryFile) {
+    ChoreoTrajectory trajectory = Choreo.getTrajectory(trajectoryFile.fileName);
+
+    return new SequentialCommandGroup(
+        runToPose(() -> FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose())),
+        new InstantCommand(
+            () -> {
+              Logger.recordOutput(
+                  "Auto/TargetPose", FieldPoseUtils.flipPoseIfRed(trajectory.getFinalPose()));
+              Logger.recordOutput(
+                  "Auto/Trajectory",
+                  Arrays.stream(trajectory.getPoses())
+                      .map(FieldPoseUtils::flipPoseIfRed)
+                      .toArray(Pose2d[]::new));
+            }),
+        Choreo.choreoSwerveCommand(
+            trajectory,
+            this::getPose,
+            (pose2d, trajectoryState) ->
+                calculatePIDVelocity(
+                    trajectoryState.getPose(),
+                    pose2d,
+                    trajectoryState.velocityX,
+                    trajectoryState.velocityY,
+                    trajectoryState.angularVelocity),
+            this::runVelocity,
+            Alliance::isRed));
   }
 }
