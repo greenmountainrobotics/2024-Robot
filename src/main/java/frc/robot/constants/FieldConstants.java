@@ -47,5 +47,8 @@ public final class FieldConstants {
           new Translation2d(
               -SpeakerCloseCornerToFarCorner.getX(), SpeakerCloseCornerToFarCorner.getY()));
 
+  public static final Translation2d SpeakerFarSideCenter =
+      SpeakerBottomFarSideCorner.plus(SpeakerTopFarSideCorner).div(2);
+
   public static final Rotation2d SpeakerRotation = new Rotation2d();
 }

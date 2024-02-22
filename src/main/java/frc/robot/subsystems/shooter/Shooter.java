@@ -180,10 +180,7 @@ public class Shooter extends SubsystemBase {
                                 poseSupplier
                                     .get()
                                     .getTranslation()
-                                    .getDistance(
-                                        FieldConstants.SpeakerBottomFarSideCorner.plus(
-                                                FieldConstants.SpeakerTopFarSideCorner)
-                                            .div(2))))),
+                                    .getDistance(FieldConstants.SpeakerFarSideCenter)))),
                 this))
         .until(() -> flywheelIsAtSetpoint() && articulationIsAtSetpoint());
   }
