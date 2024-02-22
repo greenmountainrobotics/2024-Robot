@@ -1,21 +1,25 @@
 package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.constants.ShooterConstants.*;
 import static frc.robot.constants.TunableConstants.*;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.DriveConstants;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.RunMode;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -130,6 +134,29 @@ public class Shooter extends SubsystemBase {
     articulationSetpoint = articulation;
   }
 
+  /** does not work if setpoint is zero!! */
+  @AutoLogOutput
+  public boolean flywheelIsAtSetpoint() {
+    var topError =
+        Math.abs(
+            (Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec)
+                    - topSetpointRPM)
+                / topSetpointRPM);
+    var bottomError =
+        Math.abs(
+            (Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec)
+                    - bottomSetpointRPM)
+                / bottomSetpointRPM);
+    return (bottomError < VelocityToleranceCoefficient)
+        && (topError < VelocityToleranceCoefficient);
+  }
+
+  @AutoLogOutput
+  public boolean articulationIsAtSetpoint() {
+    return Math.abs(inputs.articulationPosition.minus(articulationSetpoint).getRadians())
+        < ArticulationToleranceRad;
+  }
+
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command flywheelSysIdQuasistatic(SysIdRoutine.Direction direction) {
     return flywheelSysId.quasistatic(direction);
@@ -138,5 +165,30 @@ public class Shooter extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command flywheelSysIdDynamic(SysIdRoutine.Direction direction) {
     return flywheelSysId.dynamic(direction);
+  }
+
+  /** set articulation to point towards source + run flywheel */
+  public Command prepareToShoot(Supplier<Pose2d> poseSupplier) {
+    return new InstantCommand(
+            () -> setFlywheelSetpointRPM(-ShootingVelocityRPM, ShootingVelocityRPM), this)
+        .andThen(
+            new RunCommand(
+                () ->
+                    setArticulation(
+                        Rotation2d.fromRadians(
+                            ArticulationMap.get(
+                                poseSupplier
+                                    .get()
+                                    .getTranslation()
+                                    .getDistance(
+                                        FieldConstants.SpeakerBottomFarSideCorner.plus(
+                                                FieldConstants.SpeakerTopFarSideCorner)
+                                            .div(2))))),
+                this))
+        .until(() -> flywheelIsAtSetpoint() && articulationIsAtSetpoint());
+  }
+
+  public Command stop() {
+    return new InstantCommand(() -> setFlywheelSetpointRPM(0, 0));
   }
 }

@@ -21,6 +21,7 @@ public class DriverControl {
   public DriverControl(Robot robot) {
     var drive = robot.drive;
     var intake = robot.intake;
+    var shooter = robot.shooter;
 
     drive.setDefaultCommand(
         joystickDrive(
@@ -29,8 +30,7 @@ public class DriverControl {
             () -> -controller1.getLeftX(),
             () -> -controller1.getRightX()));
 
-    controller1.y().onTrue(intake.retract());
-    controller1.x().onTrue(intake.extend());
+    controller1.y().onTrue(shooter.prepareToShoot(drive::getPose));
     controller1.a().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithAmpPose));
     controller1.b().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithSourcePose));
   }
