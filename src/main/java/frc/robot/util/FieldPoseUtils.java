@@ -21,6 +21,15 @@ public class FieldPoseUtils {
     else return pose;
   }
 
+  public static Translation2d flipTranslation(Translation2d translation) {
+    return new Translation2d(FieldWidth - translation.getX(), translation.getY());
+  }
+
+  public static Translation2d flipTranslationIfRed(Translation2d translation) {
+    if (Alliance.isRed()) return flipTranslation(translation);
+    else return translation;
+  }
+
   public static Pose2d alignedWithSourcePose() {
     Pose2d pose =
         new Pose2d(

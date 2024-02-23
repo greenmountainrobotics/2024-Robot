@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.ShooterConstants;
+import frc.robot.util.FieldPoseUtils;
 import frc.robot.util.RunMode;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -180,7 +181,9 @@ public class Shooter extends SubsystemBase {
                                 poseSupplier
                                     .get()
                                     .getTranslation()
-                                    .getDistance(FieldConstants.SpeakerFarSideCenter)))),
+                                    .getDistance(
+                                        FieldPoseUtils.flipTranslationIfRed(
+                                            FieldConstants.SpeakerFarSideCenter))))),
                 this))
         .until(() -> flywheelIsAtSetpoint() && articulationIsAtSetpoint());
   }

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FieldConstants;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
+import org.littletonrobotics.junction.Logger;
 
 public class DriverControl {
   private final CommandXboxController controller1 = new CommandXboxController(0);
@@ -40,7 +41,8 @@ public class DriverControl {
               if (lockedToSpeaker) {
                 omega =
                     drive.calculatePIDThetaVelocity(
-                        FieldConstants.SpeakerFarSideCenter.minus(drive.getPose().getTranslation())
+                        FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerFarSideCenter)
+                            .minus(drive.getPose().getTranslation())
                             .getAngle()
                             .getRadians(),
                         drive.getPose().getRotation().getRadians());
