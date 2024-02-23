@@ -59,8 +59,6 @@ public class ModuleIOReal implements ModuleIO {
   private final boolean isTurnMotorInverted = true;
   private final Rotation2d absoluteEncoderOffset;
 
-  private final String positionName;
-
   public ModuleIOReal(int index) {
     switch (index) {
       case 0:
@@ -69,7 +67,6 @@ public class ModuleIOReal implements ModuleIO {
         turnSparkFlex = new CANSparkFlex(FrontLeftTurnId, kBrushless);
         cancoder = new CANcoder(FrontLeftEncoderId);
         absoluteEncoderOffset = new Rotation2d(FrontLeftEncoderOffset); // CALIBRATED
-        positionName = "FrontLeft";
         break;
       case 1:
         // front right
@@ -77,7 +74,6 @@ public class ModuleIOReal implements ModuleIO {
         turnSparkFlex = new CANSparkFlex(FrontRightTurnId, kBrushless);
         cancoder = new CANcoder(FrontRightEncoderId);
         absoluteEncoderOffset = new Rotation2d(FrontRightEncoderOffset); // CALIBRATED
-        positionName = "FrontRight";
         break;
       case 2:
         // back left
@@ -85,7 +81,6 @@ public class ModuleIOReal implements ModuleIO {
         turnSparkFlex = new CANSparkFlex(BackLeftTurnId, kBrushless);
         cancoder = new CANcoder(BackLeftEncoderId);
         absoluteEncoderOffset = new Rotation2d(BackLeftEncoderOffset); // CALIBRATED
-        positionName = "BackLeft";
         break;
       case 3:
         // back right
@@ -93,7 +88,6 @@ public class ModuleIOReal implements ModuleIO {
         turnSparkFlex = new CANSparkFlex(BackRightTurnId, kBrushless);
         cancoder = new CANcoder(BackRightEncoderId);
         absoluteEncoderOffset = new Rotation2d(BackRightEncoderOffset); // CALIBRATED
-        positionName = "BackRight";
         break;
       default:
         throw new RuntimeException("Invalid module index");

@@ -76,7 +76,15 @@ public class Module {
   }
 
   public void periodic() {
-    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+    Logger.processInputs(
+        "Drive/Module/"
+            + switch (index) {
+              case 0 -> "Front Left";
+              case 1 -> "Front Right";
+              case 2 -> "Back Left";
+              default -> "Back Right";
+            },
+        inputs);
 
     // On first cycle, reset relative turn encoder
     // Wait until absolute angle is nonzero in case it wasn't initialized yet
