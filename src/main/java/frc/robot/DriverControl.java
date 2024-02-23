@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FieldConstants;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
-import org.littletonrobotics.junction.Logger;
 
 public class DriverControl {
   private final CommandXboxController controller1 = new CommandXboxController(0);
@@ -44,6 +43,7 @@ public class DriverControl {
                         FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerFarSideCenter)
                             .minus(drive.getPose().getTranslation())
                             .getAngle()
+                            .minus(Rotation2d.fromRadians(Math.PI))
                             .getRadians(),
                         drive.getPose().getRotation().getRadians());
               } else {
