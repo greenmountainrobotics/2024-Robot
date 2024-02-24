@@ -51,7 +51,7 @@ public class Leds extends SubsystemBase {
     */
 
     if (!State.AprilTagsPoseDetected) {
-      showSolidColor(new Color(128, 0, 0));
+      showSolidColor(new Color(128, 128, 0));
     } else if (State.RunningAuto) {
       pulseColor(Color.kGreen);
     } else if (State.DrivingToPose) {

@@ -14,6 +14,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Camera;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
@@ -122,6 +123,7 @@ public class Robot extends LoggedRobot {
         aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
+        leds = new Leds();
         break;
     }
 
@@ -133,6 +135,7 @@ public class Robot extends LoggedRobot {
 
     auto = new Auto(this);
     driverControl = new DriverControl(this);
+
   }
 
   void initLogging() {
@@ -194,6 +197,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    leds.periodic();
   }
 
   @Override
