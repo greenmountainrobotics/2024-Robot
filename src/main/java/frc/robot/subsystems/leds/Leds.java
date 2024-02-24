@@ -10,15 +10,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Alliance;
+import frc.robot.constants.LedConstants;
 
 public class Leds extends SubsystemBase {
   private final AddressableLED leds;
   private final AddressableLEDBuffer ledBuffer;
-  private static final int LEDS_LENGTH = 10;
-
-  private static final int PULSE_TIME = 500;
-
-  private static final double PULSE_DIF = 256 / PULSE_TIME / 50;
+  private static final double PULSE_DIF = 256 / LedConstants.PULSE_TIME / 100;
   private boolean pulseUp = true;
   private double vValue = 255;
   private static final int hValue = Alliance.isRed() ? 0 : 120;
@@ -34,7 +31,7 @@ public class Leds extends SubsystemBase {
 
   public Leds() {
     leds = new AddressableLED(LedsId);
-    ledBuffer = new AddressableLEDBuffer(LEDS_LENGTH);
+    ledBuffer = new AddressableLEDBuffer(LedConstants.LEDS_LENGTH);
 
     leds.setLength(ledBuffer.getLength());
 
@@ -69,13 +66,13 @@ public class Leds extends SubsystemBase {
   }
 
   private void showSolidColor(Color color) {
-    for (int i = 0; i < LEDS_LENGTH; i++) {
+    for (int i = 0; i < LedConstants.LEDS_LENGTH; i++) {
       ledBuffer.setLED(i, color);
     }
   }
-  
+
   private void pulseColor(Color color) {
-    if (timer.get() > PULSE_TIME) {
+    if (timer.get() > LedConstants.PULSE_TIME) {
       pulseUp = !pulseUp;
       timer.restart();
     }
