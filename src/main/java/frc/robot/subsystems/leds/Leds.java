@@ -2,15 +2,13 @@ package frc.robot.subsystems.leds;
 
 import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
-import java.nio.channels.spi.SelectorProvider;
-
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.Alliance;
 import frc.robot.constants.LedConstants;
+import frc.robot.util.Alliance;
 
 public class Leds extends SubsystemBase {
   private final AddressableLED leds;
@@ -76,7 +74,7 @@ public class Leds extends SubsystemBase {
       pulseUp = !pulseUp;
       timer.restart();
     }
-    if(!pulseUp) {
+    if (!pulseUp) {
       vValue = Math.abs(vValue - PULSE_DIF);
     } else {
       vValue = Math.min(255, vValue + PULSE_DIF);
