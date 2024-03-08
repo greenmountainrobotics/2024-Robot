@@ -36,5 +36,6 @@ public final class IdConstants {
 
   public static final class DIOId {
     public static final int IntakeArticulationEncoderId = 0;
+    public static final int ShooterArticulationEncoderId = 1;
   }
 }
