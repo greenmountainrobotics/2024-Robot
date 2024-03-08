@@ -1,3 +1,5 @@
 {
-    "recommendations": ["mechanical-advantage.event-deploy-wpilib"]
+  "recommendations": [
+    "mechanical-advantage.event-deploy-wpilib"
+  ]
 }
