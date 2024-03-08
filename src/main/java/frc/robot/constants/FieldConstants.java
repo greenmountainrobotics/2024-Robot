@@ -45,10 +45,11 @@ public final class FieldConstants {
   public static final Translation2d SpeakerTopFarSideCorner =
       SpeakerTopCloseSideCorner.plus(
           new Translation2d(
-              -SpeakerCloseCornerToFarCorner.getX(), SpeakerCloseCornerToFarCorner.getY()));
+              SpeakerCloseCornerToFarCorner.getX(), -SpeakerCloseCornerToFarCorner.getY()));
 
   public static final Translation2d SpeakerFarSideCenter =
-      SpeakerBottomFarSideCorner.plus(SpeakerTopFarSideCorner).div(2);
+      SpeakerBottomFarSideCorner.plus(SpeakerTopFarSideCorner)
+          .div(2); // TODO: THIS TRANSLATION IS WRONG
 
   public static final Rotation2d SpeakerRotation = new Rotation2d();
 }
