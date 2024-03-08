@@ -31,6 +31,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOReal;
@@ -58,6 +59,7 @@ public class Robot extends LoggedRobot {
   public AprilTagVision aprilTagVision;
   public Intake intake;
   public Shooter shooter;
+  public Leds leds;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -81,6 +83,7 @@ public class Robot extends LoggedRobot {
             new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
+        leds = new Leds();
         break;
 
       case SIM:
@@ -104,6 +107,7 @@ public class Robot extends LoggedRobot {
 
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
+        leds = new Leds();
         break;
 
       default:
@@ -118,6 +122,7 @@ public class Robot extends LoggedRobot {
         aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
+        leds = new Leds();
         break;
     }
 
