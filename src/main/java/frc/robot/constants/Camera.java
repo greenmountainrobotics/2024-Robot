@@ -15,9 +15,24 @@ public enum Camera {
       800,
       Rotation2d.fromDegrees(75),
       new Transform3d(
-          new Translation3d(0, inchesToMeters(1.260), inchesToMeters(7.940)),
-          new Rotation3d(0, degreesToRadians(-25), 0)));
-
+          new Translation3d(inchesToMeters(-2.091), inchesToMeters(-0.005), inchesToMeters(6.061)),
+          new Rotation3d(0, degreesToRadians(-25), degreesToRadians(180)))),
+  FrontLeftCamera(
+      "FrontLeftCamera",
+      1280,
+      800,
+      Rotation2d.fromDegrees(70),
+      new Transform3d(
+          new Translation3d(inchesToMeters(6.894), inchesToMeters(11.382), inchesToMeters(10.621)),
+          new Rotation3d(0, degreesToRadians(-25), degreesToRadians(60)))),
+  FrontRightCamera(
+      "FrontRightCamera",
+      1280,
+      800,
+      Rotation2d.fromDegrees(70),
+      new Transform3d(
+          new Translation3d(inchesToMeters(6.894), inchesToMeters(-11.390), inchesToMeters(10.621)),
+          new Rotation3d(0, degreesToRadians(-25), degreesToRadians(-60))));
   public final String name;
   public final Transform3d robotToCam;
   public final int width;
