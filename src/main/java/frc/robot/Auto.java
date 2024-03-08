@@ -18,6 +18,7 @@ public class Auto {
 
   public Auto(Robot robot) {
     var drive = robot.drive;
+    var shooter = robot.shooter;
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
     autoDelay = new LoggedDashboardNumber("Auto Delay", 0);
@@ -79,6 +80,19 @@ public class Auto {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "Shooter SysId (Quasistatic Forward)",
+        shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Shooter SysId (Quasistatic Reverse)",
+        shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Shooter SysId (Dynamic Forward)",
+        shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Shooter SysId (Dynamic Reverse)",
+        shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   public void schedule() {
