@@ -26,7 +26,6 @@ public class ShooterIOSim implements ShooterIO {
     articulationMotor.update(LOOP_PERIOD_SECS);
 
     inputs.articulationPosition = new Rotation2d(articulationMotor.getAngularPositionRad());
-    inputs.articulationVelocityRadPerSec = articulationMotor.getAngularVelocityRadPerSec();
     inputs.articulationAppliedVolts = articulationAppliedVolts;
     inputs.articulationCurrentAmps =
         new double[] {Math.abs(articulationMotor.getCurrentDrawAmps())};

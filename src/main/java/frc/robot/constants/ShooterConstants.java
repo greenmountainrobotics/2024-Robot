@@ -12,6 +12,8 @@ public class ShooterConstants {
 
   public static final double ShootingVelocityRPM = 4000;
 
+  public static final double AbsoluteEncoderOffset = 0;
+
   /** k: m, v: rad */
   public static final InterpolatingDoubleTreeMap ArticulationMap = new InterpolatingDoubleTreeMap();
 

@@ -19,6 +19,8 @@ import frc.robot.constants.FieldConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.FieldPoseUtils;
 import frc.robot.util.RunMode;
+
+import java.time.Instant;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -38,6 +40,8 @@ public class Shooter extends SubsystemBase {
   private double topSetpointRPM = 0.0;
   private double bottomSetpointRPM = 0.0;
   private Rotation2d articulationSetpoint = Rotation2d.fromRadians(Math.PI);
+
+  private boolean sysIdRunning = false;
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -82,21 +86,23 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
 
-    io.setTopVoltage(
-        topPID.calculate(
-                Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
-                topSetpointRPM)
-            + topFF.calculate(topSetpointRPM));
+    if (!sysIdRunning) {
+      io.setTopVoltage(
+              topPID.calculate(
+                      Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
+                      topSetpointRPM)
+                      + topFF.calculate(topSetpointRPM));
 
-    io.setBottomVoltage(
-        bottomPID.calculate(
-                Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
-                bottomSetpointRPM)
-            + bottomFF.calculate(bottomSetpointRPM));
+      io.setBottomVoltage(
+              bottomPID.calculate(
+                      Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
+                      bottomSetpointRPM)
+                      + bottomFF.calculate(bottomSetpointRPM));
 
-    io.setArticulationVoltage(
-        articulationPID.calculate(
-            inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
+      io.setArticulationVoltage(
+              articulationPID.calculate(
+                      inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
+    }
 
     Logger.recordOutput("Shooter/TopSetpointRPM", topSetpointRPM);
     Logger.recordOutput(
@@ -160,12 +166,18 @@ public class Shooter extends SubsystemBase {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command flywheelSysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return flywheelSysId.quasistatic(direction);
+    return new SequentialCommandGroup(
+            new InstantCommand(() -> sysIdRunning = true),
+            flywheelSysId.quasistatic(direction),
+    new InstantCommand(() -> sysIdRunning = false));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command flywheelSysIdDynamic(SysIdRoutine.Direction direction) {
-    return flywheelSysId.dynamic(direction);
+    return new SequentialCommandGroup(
+            new InstantCommand(() -> sysIdRunning = true),
+            flywheelSysId.dynamic(direction),
+            new InstantCommand(() -> sysIdRunning = false));
   }
 
   /** set articulation to point towards source + run flywheel */
@@ -183,12 +195,16 @@ public class Shooter extends SubsystemBase {
                                     .getTranslation()
                                     .getDistance(
                                         FieldPoseUtils.flipTranslationIfRed(
-                                            FieldConstants.SpeakerFarSideCenter))))),
+                                            FieldConstants.SpeakerCloseSideCenter))))),
                 this))
         .until(() -> flywheelIsAtSetpoint() && articulationIsAtSetpoint());
   }
 
   public Command stop() {
     return new InstantCommand(() -> setFlywheelSetpointRPM(0, 0));
+  }
+
+  public Command runAtRPM(double RPM) {
+    return new InstantCommand(() -> setFlywheelSetpointRPM(-RPM, RPM), this);
   }
 }

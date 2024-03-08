@@ -8,7 +8,6 @@ public interface ShooterIO {
   @AutoLog
   class ShooterIOInputs {
     public Rotation2d articulationPosition = new Rotation2d();
-    public double articulationVelocityRadPerSec = 0.0;
     public double articulationAppliedVolts = 0.0;
     public double[] articulationCurrentAmps = new double[] {};
 
