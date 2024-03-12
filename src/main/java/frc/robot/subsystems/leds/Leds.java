@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.LedConstants;
 import frc.robot.util.Alliance;
+import frc.robot.util.CustomLeds;
 
 public class Leds extends SubsystemBase {
   private final AddressableLED leds;
@@ -16,8 +17,9 @@ public class Leds extends SubsystemBase {
   private static final double PULSE_DIF = 256 / LedConstants.PULSE_TIME / 100;
   private boolean pulseUp = true;
   private double vValue = 255;
-  private static final int hValue = Alliance.isRed() ? 0 : 120;
+  private int hValue = Alliance.isRed() ? 0 : 120;
   private Timer timer = new Timer();
+  private Color currentColor = Color.kGreen;
 
   public static class State {
     public static boolean AprilTagsPoseDetected = false;
@@ -28,12 +30,10 @@ public class Leds extends SubsystemBase {
   }
 
   public Leds() {
-    leds = new AddressableLED(LedsId);
+    leds = new CustomLeds(LedsId);
     ledBuffer = new AddressableLEDBuffer(LedConstants.LEDS_LENGTH);
 
     leds.setLength(ledBuffer.getLength());
-
-    showSolidColor(Color.kGreen);
 
     leds.setData(ledBuffer);
     leds.start();
@@ -41,6 +41,9 @@ public class Leds extends SubsystemBase {
 
   private void autoSetColors() {
     Color allianceColor = Alliance.isRed() ? Color.kRed : Color.kBlue;
+    hValue += 1;
+    hValue %= 360;
+    showSolidColor(Color.fromHSV(hValue, 255, 255));
 
     /*
     apriltags not connected -> yellow
@@ -50,7 +53,7 @@ public class Leds extends SubsystemBase {
     running to position -> alliance color pulse
     */
 
-    if (!State.AprilTagsPoseDetected) {
+    /*    if (!State.AprilTagsPoseDetected) {
       showSolidColor(new Color(128, 128, 0));
     } else if (State.RunningAuto) {
       pulseColor(Color.kGreen);
@@ -60,7 +63,7 @@ public class Leds extends SubsystemBase {
       showSolidColor(allianceColor);
     } else {
       showSolidColor(Color.kGreen);
-    }
+    }*/
   }
 
   private void showSolidColor(Color color) {
