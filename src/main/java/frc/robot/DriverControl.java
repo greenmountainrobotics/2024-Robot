@@ -40,7 +40,7 @@ public class DriverControl {
               if (lockedToSpeaker) {
                 omega =
                     drive.calculatePIDThetaVelocity(
-                        FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerFarSideCenter)
+                        FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
                             .minus(drive.getPose().getTranslation())
                             .getAngle()
                             .minus(Rotation2d.fromRadians(Math.PI))
