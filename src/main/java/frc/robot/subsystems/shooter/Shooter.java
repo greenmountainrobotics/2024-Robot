@@ -19,8 +19,6 @@ import frc.robot.constants.FieldConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.FieldPoseUtils;
 import frc.robot.util.RunMode;
-
-import java.time.Instant;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -88,20 +86,20 @@ public class Shooter extends SubsystemBase {
 
     if (!sysIdRunning) {
       io.setTopVoltage(
-              topPID.calculate(
-                      Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
-                      topSetpointRPM)
-                      + topFF.calculate(topSetpointRPM));
+          topPID.calculate(
+                  Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
+                  topSetpointRPM)
+              + topFF.calculate(topSetpointRPM));
 
       io.setBottomVoltage(
-              bottomPID.calculate(
-                      Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
-                      bottomSetpointRPM)
-                      + bottomFF.calculate(bottomSetpointRPM));
+          bottomPID.calculate(
+                  Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
+                  bottomSetpointRPM)
+              + bottomFF.calculate(bottomSetpointRPM));
 
       io.setArticulationVoltage(
-              articulationPID.calculate(
-                      inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
+          articulationPID.calculate(
+              inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
     }
 
     Logger.recordOutput("Shooter/TopSetpointRPM", topSetpointRPM);
@@ -167,17 +165,17 @@ public class Shooter extends SubsystemBase {
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command flywheelSysIdQuasistatic(SysIdRoutine.Direction direction) {
     return new SequentialCommandGroup(
-            new InstantCommand(() -> sysIdRunning = true),
-            flywheelSysId.quasistatic(direction),
-    new InstantCommand(() -> sysIdRunning = false));
+        new InstantCommand(() -> sysIdRunning = true),
+        flywheelSysId.quasistatic(direction),
+        new InstantCommand(() -> sysIdRunning = false));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command flywheelSysIdDynamic(SysIdRoutine.Direction direction) {
     return new SequentialCommandGroup(
-            new InstantCommand(() -> sysIdRunning = true),
-            flywheelSysId.dynamic(direction),
-            new InstantCommand(() -> sysIdRunning = false));
+        new InstantCommand(() -> sysIdRunning = true),
+        flywheelSysId.dynamic(direction),
+        new InstantCommand(() -> sysIdRunning = false));
   }
 
   /** set articulation to point towards source + run flywheel */

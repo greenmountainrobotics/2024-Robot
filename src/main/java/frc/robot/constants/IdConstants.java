@@ -20,6 +20,7 @@ public final class IdConstants {
 
     public static final int TopSpinMotorId = 21;
     public static final int BottomSpinMotorId = 22;
+    public static final int ShooterArticulationMotorId = 23;
 
     public static final int PigeonId = 31;
     public static final int RevPDHId = 32;
