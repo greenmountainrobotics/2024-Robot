@@ -83,7 +83,6 @@ public class Robot extends LoggedRobot {
             new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
-        leds = new Leds();
         break;
 
       case SIM:
@@ -99,7 +98,9 @@ public class Robot extends LoggedRobot {
         if (Config.SIMULATE_CAMERAS) {
           aprilTagVision =
               new AprilTagVision(
-                  new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose)));
+                  new PhotonVision(new PhotonVisionIOSim(Camera.BackCamera, drive::getPose)),
+                  new PhotonVision(new PhotonVisionIOSim(Camera.FrontRightCamera, drive::getPose)),
+                  new PhotonVision(new PhotonVisionIOSim(Camera.FrontLeftCamera, drive::getPose)));
         } else {
           aprilTagVision =
               new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
@@ -107,7 +108,6 @@ public class Robot extends LoggedRobot {
 
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
-        leds = new Leds();
         break;
 
       default:
@@ -122,7 +122,6 @@ public class Robot extends LoggedRobot {
         aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
-        leds = new Leds();
         break;
     }
 
@@ -132,6 +131,7 @@ public class Robot extends LoggedRobot {
       aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
     }
 
+    leds = new Leds();
     auto = new Auto(this);
     driverControl = new DriverControl(this);
   }
