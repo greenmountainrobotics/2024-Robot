@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.LedConstants;
 import frc.robot.util.Alliance;
-import frc.robot.util.CustomLeds;
 
 public class Leds extends SubsystemBase {
   private final AddressableLED leds;
@@ -29,8 +28,8 @@ public class Leds extends SubsystemBase {
     public static boolean RunningTeleOp = false;
   }
 
-  public Leds() {
-    leds = new CustomLeds(LedsId);
+  public Leds(AddressableLED leds) {
+    this.leds = leds;
     ledBuffer = new AddressableLEDBuffer(LedConstants.LEDS_LENGTH);
 
     leds.setLength(ledBuffer.getLength());

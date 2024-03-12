@@ -13,7 +13,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Camera;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
@@ -31,6 +33,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.leds.CustomLeds;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
@@ -44,6 +47,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
+
+import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -83,6 +88,7 @@ public class Robot extends LoggedRobot {
             new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
+        leds = new Leds(new CustomLeds(LedsId));
         break;
 
       case SIM:
@@ -108,6 +114,7 @@ public class Robot extends LoggedRobot {
 
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
+        leds = new Leds(new AddressableLED(LedsId));
         break;
 
       default:
@@ -122,6 +129,7 @@ public class Robot extends LoggedRobot {
         aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
+        leds = new Leds(new AddressableLED(LedsId));
         break;
     }
 
@@ -131,7 +139,6 @@ public class Robot extends LoggedRobot {
       aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
     }
 
-    leds = new Leds();
     auto = new Auto(this);
     driverControl = new DriverControl(this);
   }
