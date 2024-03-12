@@ -12,4 +12,6 @@ public interface AprilTagProvider {
   void periodic();
 
   Pose3d[] getTargetPoses();
+
+  boolean isConnected();
 }

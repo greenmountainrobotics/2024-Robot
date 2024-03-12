@@ -3,6 +3,7 @@ package frc.robot.subsystems.apriltagvision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.Leds;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
@@ -20,10 +21,15 @@ public class AprilTagVision extends SubsystemBase {
   public void periodic() {
     ArrayList<Pose3d> targetPoses = new ArrayList<>();
 
+    boolean isConnected = true;
+
     for (AprilTagProvider implementation : implementations) {
       implementation.periodic();
       targetPoses.addAll(Arrays.stream(implementation.getTargetPoses()).toList());
+      if (!implementation.isConnected()) isConnected = false;
     }
+
+    Leds.State.AprilTagsConnected = isConnected;
 
     Logger.recordOutput("AprilTagVision/TargetPoses", targetPoses.toArray(Pose3d[]::new));
   }

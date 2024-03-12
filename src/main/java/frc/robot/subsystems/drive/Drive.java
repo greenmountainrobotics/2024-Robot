@@ -38,6 +38,7 @@ import frc.robot.subsystems.drive.imu.GyroIO;
 import frc.robot.subsystems.drive.imu.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drive.module.Module;
 import frc.robot.subsystems.drive.module.ModuleIO;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
 import java.util.Arrays;
@@ -346,8 +347,10 @@ public class Drive extends SubsystemBase {
   }
 
   public Command runToPose(Supplier<Pose2d> targetPoseSupplier) {
-    return new InstantCommand(
-            () -> thetaController.reset(getPose().getRotation().getRadians()), this)
+    return new InstantCommand(() -> Leds.State.DrivingToPose = true)
+        .andThen(
+            new InstantCommand(
+                () -> thetaController.reset(getPose().getRotation().getRadians()), this))
         .andThen(
             new RunCommand(
                 () -> {
@@ -358,7 +361,8 @@ public class Drive extends SubsystemBase {
                 },
                 this))
         .until(() -> poseAtSetpoint(targetPoseSupplier.get()))
-        .finallyDo(this::stop);
+        .finallyDo(this::stop)
+        .finallyDo(() -> Leds.State.DrivingToPose = false);
   }
 
   public Command followPath(Trajectory trajectoryFile) {

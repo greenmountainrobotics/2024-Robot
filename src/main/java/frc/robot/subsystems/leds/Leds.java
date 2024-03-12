@@ -1,7 +1,5 @@
 package frc.robot.subsystems.leds;
 
-import static frc.robot.constants.IdConstants.PWMId.LedsId;
-
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
@@ -13,24 +11,18 @@ import frc.robot.util.Alliance;
 public class Leds extends SubsystemBase {
   private final AddressableLED leds;
   private final AddressableLEDBuffer ledBuffer;
-  private static final double PULSE_DIF = 256 / LedConstants.PULSE_TIME / 100;
-  private boolean pulseUp = true;
-  private double vValue = 255;
-  private int hValue = Alliance.isRed() ? 0 : 120;
-  private Timer timer = new Timer();
-  private Color currentColor = Color.kGreen;
 
   public static class State {
-    public static boolean AprilTagsPoseDetected = false;
-    public static boolean RunningAuto = false;
-    public static boolean DrivingToPose = false;
+    public static boolean AprilTagsConnected = false; // works
+    public static boolean AutoEnabled = false; // works
+    public static boolean DrivingToPose = false; // works
 
-    public static boolean RunningTeleOp = false;
+    public static boolean Enabled = false; // works
   }
 
   public Leds(AddressableLED leds) {
     this.leds = leds;
-    ledBuffer = new AddressableLEDBuffer(LedConstants.LEDS_LENGTH);
+    ledBuffer = new AddressableLEDBuffer(LedConstants.LedsLength);
 
     leds.setLength(ledBuffer.getLength());
 
@@ -40,54 +32,69 @@ public class Leds extends SubsystemBase {
 
   private void autoSetColors() {
     Color allianceColor = Alliance.isRed() ? Color.kRed : Color.kBlue;
-    hValue += 1;
-    hValue %= 360;
-    showSolidColor(Color.fromHSV(hValue, 255, 255));
+    pulseColor(new Color(0, 255, 0), Color.kRed);
 
     /*
     apriltags not connected -> yellow
     robot started -> green
     auto -> green pulse
-    teleop -> alliance color static
     running to position -> alliance color pulse
+    teleop -> alliance color static
     */
 
-    /*    if (!State.AprilTagsPoseDetected) {
-      showSolidColor(new Color(128, 128, 0));
-    } else if (State.RunningAuto) {
-      pulseColor(Color.kGreen);
+    if (!State.AprilTagsConnected) {
+      flashColor(Color.kYellow, Color.kBlack);
+    } else if (State.AutoEnabled) {
+      pulseColor(Color.kGreen, Color.kBlack);
     } else if (State.DrivingToPose) {
-      pulseColor(allianceColor);
-    } else if (State.RunningTeleOp) {
+      pulseColor(allianceColor, Color.kBlack);
+    } else if (State.Enabled) {
       showSolidColor(allianceColor);
     } else {
       showSolidColor(Color.kGreen);
-    }*/
+    }
   }
 
   private void showSolidColor(Color color) {
-    for (int i = 0; i < LedConstants.LEDS_LENGTH; i++) {
+    for (int i = 0; i < LedConstants.LedsLength; i++) {
       ledBuffer.setLED(i, color);
     }
   }
 
-  private void pulseColor(Color color) {
-    if (timer.get() > LedConstants.PULSE_TIME) {
-      pulseUp = !pulseUp;
-      timer.restart();
-    }
-    if (!pulseUp) {
-      vValue = Math.abs(vValue - PULSE_DIF);
-    } else {
-      vValue = Math.min(255, vValue + PULSE_DIF);
-    }
-    showSolidColor(Color.fromHSV(hValue, 255, (int) vValue));
+  private void flashColor(Color color1, Color color2) {
+    double ratio = (Timer.getFPGATimestamp() % LedConstants.PulseTime) / LedConstants.PulseTime;
+    showSolidColor(
+        new Color(
+            (color1.red * (1 - ratio)) + (color2.red * ratio),
+            (color1.green * (1 - ratio)) + (color2.green * ratio),
+            (color1.blue * (1 - ratio)) + (color2.blue * ratio)));
+  }
+
+  private void pulseColor(Color color1, Color color2) {
+    double ratio =
+        (Math.sin(
+                    Math.PI
+                        * 2
+                        * ((Timer.getFPGATimestamp() % LedConstants.PulseTime)
+                            / LedConstants.PulseTime))
+                + 1)
+            / 2;
+
+    showSolidColor(
+        new Color(
+            (color1.red * (1 - ratio)) + (color2.red * ratio),
+            (color1.green * (1 - ratio)) + (color2.green * ratio),
+            (color1.blue * (1 - ratio)) + (color2.blue * ratio)));
+  }
+
+  // starts from outside and closes in
+  private void loadingBar(Color color, double percentage) {
+    for (int i : LedConstants.LedStrips) {}
   }
 
   @Override
   public void periodic() {
     autoSetColors();
-
     leds.setData(ledBuffer);
   }
 }

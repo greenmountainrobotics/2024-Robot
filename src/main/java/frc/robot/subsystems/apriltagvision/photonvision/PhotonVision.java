@@ -91,4 +91,9 @@ public class PhotonVision implements AprilTagProvider {
     this.poseConsumer = poseConsumer;
     this.referencePoseSupplier = referencePoseSupplier;
   }
+
+  @Override
+  public boolean isConnected() {
+    return inputs.isConnected;
+  }
 }

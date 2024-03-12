@@ -13,10 +13,12 @@
 
 package frc.robot;
 
+import static frc.robot.constants.IdConstants.PWMId.LedsId;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.Camera;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVision;
@@ -47,8 +49,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
-
-import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -138,6 +138,15 @@ public class Robot extends LoggedRobot {
     } else {
       aprilTagVision.setDataInterface(drive::addVisionMeasurement, drive::getPose);
     }
+
+    leds.setDefaultCommand(
+        new InstantCommand(
+                () -> {
+                  Leds.State.AutoEnabled = this.isAutonomousEnabled();
+                  Leds.State.Enabled = this.isEnabled();
+                },
+                leds)
+            .ignoringDisable(true));
 
     auto = new Auto(this);
     driverControl = new DriverControl(this);
