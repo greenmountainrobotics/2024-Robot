@@ -11,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.constants.IdConstants;
+import frc.robot.constants.IntakeConstants;
 
 public class IntakeIOReal implements IntakeIO {
   private final CANSparkMax rightExtensionMotor =
@@ -25,9 +26,15 @@ public class IntakeIOReal implements IntakeIO {
   private final RelativeEncoder leftExtensionEncoder;
 
   public IntakeIOReal() {
+    leftExtensionMotor.restoreFactoryDefaults();
+    rightExtensionMotor.restoreFactoryDefaults();
+
     rightExtensionEncoder = rightExtensionMotor.getEncoder();
     leftExtensionEncoder = leftExtensionMotor.getEncoder();
     articulationEncoder = new DutyCycleEncoder(IdConstants.DIOId.IntakeArticulationEncoderId);
+
+    rightExtensionMotor.setInverted(true);
+    leftExtensionMotor.setInverted(true);
   }
 
   @Override
@@ -46,7 +53,9 @@ public class IntakeIOReal implements IntakeIO {
     inputs.leftExtensionCurrentAmps = leftExtensionMotor.getOutputCurrent();
 
     inputs.articulationPosition =
-        Rotation2d.fromRotations(articulationEncoder.getAbsolutePosition());
+        Rotation2d.fromRotations(
+            articulationEncoder.getAbsolutePosition()
+                + IntakeConstants.AbsoluteEncoderOffset); // TODO: set offset
     inputs.articulationAppliedVolts = articulationMotor.getMotorOutputVoltage();
 
     inputs.spinAppliedVolts = spinMotor.getMotorOutputVoltage();
@@ -61,7 +70,7 @@ public class IntakeIOReal implements IntakeIO {
   @Override
   public void articulationRunVoltage(double voltage) {
     articulationMotor.set(
-        VictorSPXControlMode.PercentOutput, voltage / articulationMotor.getBusVoltage());
+        VictorSPXControlMode.PercentOutput, /*voltage / articulationMotor.getBusVoltage()*/ 0);
   }
 
   @Override

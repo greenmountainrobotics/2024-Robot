@@ -9,10 +9,10 @@ public class IntakeConstants {
 
   public static final double MaxExtension = inchesToMeters(8.524);
   public static final double TargetExtension = inchesToMeters(7.693);
-  public static final double MinExtension = inchesToMeters(2.625);
+  public static final double MinExtension = inchesToMeters(2.625 + 0.5);
   public static final double StartRotatingDownwardsExtension = TargetExtension - inchesToMeters(6);
 
-  public static final double ExtensionMetersPerRotation = inchesToMeters(1);
+  public static final double ExtensionMetersPerRotation = 0.012;
   public static final double PivotHeight = inchesToMeters(8.369);
   public static final double ExtensionStartX = inchesToMeters(10.618500);
 
@@ -30,4 +30,6 @@ public class IntakeConstants {
   public static final double IntakeSpeed = -0.5;
   public static final double FeedIntoShooterSpeed = 0.5;
   public static final double ShootIntoAmpSpeed = 0.5;
+
+  public static final double AbsoluteEncoderOffset = 0;
 }

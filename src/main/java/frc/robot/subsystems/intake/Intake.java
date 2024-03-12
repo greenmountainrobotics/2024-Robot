@@ -63,6 +63,7 @@ public class Intake extends SubsystemBase {
             + IntakeConstants.MinExtension;
 
     var voltage = extensionPID.calculate(currentExtensionMeters);
+    voltage = Math.abs(voltage) > 0.2 ? voltage : 0;
     io.extensionRunVoltage(voltage, voltage);
 
     Logger.recordOutput(
