@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.math.MathUtil.angleModulus;
+
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -15,8 +17,9 @@ public class ShooterIOReal implements ShooterIO {
   private final CANSparkMax bottomSpinMotor =
       new CANSparkMax(IdConstants.CANId.BottomSpinMotorId, CANSparkLowLevel.MotorType.kBrushless);
 
-  // private final CANSparkMax articulationMotor = new CANSparkMax(3,
-  // CANSparkLowLevel.MotorType.kBrushed);
+  private final CANSparkMax articulationMotor =
+      new CANSparkMax(
+          IdConstants.CANId.ShooterArticulationMotorId, CANSparkLowLevel.MotorType.kBrushed);
 
   private final RelativeEncoder topEncoder;
   private final RelativeEncoder bottomEncoder;
@@ -27,10 +30,7 @@ public class ShooterIOReal implements ShooterIO {
     topEncoder = topSpinMotor.getEncoder();
     bottomEncoder = bottomSpinMotor.getEncoder();
     topSpinMotor.setInverted(true);
-    articulationEncoder =
-        new DutyCycleEncoder(
-            IdConstants.DIOId
-                .ShooterArticulationEncoderId); // TODO: set to absolute encoder & offset
+    articulationEncoder = new DutyCycleEncoder(IdConstants.DIOId.ShooterArticulationEncoderId);
 
     topEncoder.setPositionConversionFactor(1.0 / 42);
     bottomEncoder.setPositionConversionFactor(1.0 / 42);
@@ -41,8 +41,12 @@ public class ShooterIOReal implements ShooterIO {
     inputs.bottomPositionRad = Units.rotationsToRadians(bottomEncoder.getPosition());
     inputs.topPositionRad = Units.rotationsToRadians(topEncoder.getPosition());
     inputs.articulationPosition =
-        Rotation2d.fromRotations(
-            topEncoder.getPosition() + ShooterConstants.AbsoluteEncoderOffset); // TODO: fix
+        Rotation2d.fromRadians(
+            angleModulus(
+                Rotation2d.fromRotations(
+                        -articulationEncoder.getAbsolutePosition()
+                            + ShooterConstants.AbsoluteEncoderOffset.getRotations())
+                    .getRadians()));
 
     inputs.bottomVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(bottomEncoder.getVelocity());
@@ -66,6 +70,6 @@ public class ShooterIOReal implements ShooterIO {
 
   @Override
   public void setArticulationVoltage(double volts) {
-    // articulationMotor.setVoltage(volts);
+    articulationMotor.setVoltage(0);
   }
 }

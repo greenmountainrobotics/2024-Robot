@@ -1,9 +1,11 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.constants.ShooterConstants.*;
 import static frc.robot.constants.TunableConstants.*;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,10 +14,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.FieldPoseUtils;
 import frc.robot.util.RunMode;
@@ -30,16 +34,18 @@ public class Shooter extends SubsystemBase {
   private final PIDController bottomPID;
 
   private final PIDController articulationPID;
+  private final ArmFeedforward articulationFF;
 
   private final SimpleMotorFeedforward topFF;
   private final SimpleMotorFeedforward bottomFF;
   private final SysIdRoutine flywheelSysId;
+  private final SysIdRoutine articulationSysId;
 
   private double topSetpointRPM = 0.0;
   private double bottomSetpointRPM = 0.0;
   private Rotation2d articulationSetpoint = Rotation2d.fromRadians(Math.PI);
 
-  private boolean sysIdRunning = false;
+  private SysIdRoutineLog.State sysIdState = SysIdRoutineLog.State.kNone;
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -52,6 +58,7 @@ public class Shooter extends SubsystemBase {
         topPID = new PIDController(KpTopFlywheel, 0, KdTopFlywheel);
         bottomPID = new PIDController(KpBottomFlywheel, 0, KdBottomFlywheel);
         articulationPID = new PIDController(KpShooterArticulation, 0, KdShooterArticulation);
+        articulationFF = new ArmFeedforward(KsShooterArticulation, KgShooterArticulation, KvShooterArticulation, KaIntakeArticulation);
         break;
       default:
         // simulated
@@ -60,16 +67,13 @@ public class Shooter extends SubsystemBase {
         topPID = new PIDController(1, 0, 0);
         bottomPID = new PIDController(1, 0, 0);
         articulationPID = new PIDController(0.1, 0, 0);
+        articulationFF = new ArmFeedforward(0,0,0,0);
         break;
     }
 
     flywheelSysId =
         new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                state -> Logger.recordOutput("Shooter/SysIdState", state.toString())),
+            new SysIdRoutine.Config(null, null, null, state -> sysIdState = state),
             new SysIdRoutine.Mechanism(
                 voltageMeasure -> {
                   io.setTopVoltage(voltageMeasure.in(Volts));
@@ -77,30 +81,24 @@ public class Shooter extends SubsystemBase {
                 },
                 null,
                 this));
+
+    articulationSysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(null, null, null, state -> sysIdState = state),
+            new SysIdRoutine.Mechanism(
+                voltageMeasure -> {
+                  io.setArticulationVoltage(voltageMeasure.in(Volts));
+                },
+                null,
+                this));
+
+    setArticulation(IntakeConstants.RetractedArticulation);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
-
-    if (!sysIdRunning) {
-      io.setTopVoltage(
-          topPID.calculate(
-                  Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
-                  topSetpointRPM)
-              + topFF.calculate(topSetpointRPM));
-
-      io.setBottomVoltage(
-          bottomPID.calculate(
-                  Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
-                  bottomSetpointRPM)
-              + bottomFF.calculate(bottomSetpointRPM));
-
-      io.setArticulationVoltage(
-          articulationPID.calculate(
-              inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
-    }
 
     Logger.recordOutput("Shooter/TopSetpointRPM", topSetpointRPM);
     Logger.recordOutput(
@@ -116,6 +114,26 @@ public class Shooter extends SubsystemBase {
 
     Logger.recordOutput("Shooter/RealMechanism", getMechanism(inputs.articulationPosition));
     Logger.recordOutput("Shooter/TargetMechanism", getMechanism(articulationSetpoint));
+
+    Logger.recordOutput("Shooter/SysIdState", sysIdState.toString());
+
+    if (sysIdState != SysIdRoutineLog.State.kNone) return;
+
+    io.setTopVoltage(
+        topPID.calculate(
+                Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
+                topSetpointRPM)
+            + topFF.calculate(topSetpointRPM));
+
+    io.setBottomVoltage(
+        bottomPID.calculate(
+                Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
+                bottomSetpointRPM)
+            + bottomFF.calculate(bottomSetpointRPM));
+
+    io.setArticulationVoltage(articulationFF.calculate(articulationSetpoint.getRadians(), 0) +
+        articulationPID.calculate(
+            inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
   }
 
   private Mechanism2d getMechanism(Rotation2d articulation) {
@@ -136,7 +154,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setArticulation(Rotation2d articulation) {
-    articulationSetpoint = articulation;
+    articulationSetpoint = Rotation2d.fromRadians(angleModulus(articulation.getRadians()));
   }
 
   /** does not work if setpoint is zero!! */
@@ -144,16 +162,14 @@ public class Shooter extends SubsystemBase {
   public boolean flywheelIsAtSetpoint() {
     var topError =
         Math.abs(
-            (Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec)
-                    - topSetpointRPM)
-                / topSetpointRPM);
+            Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec)
+                - topSetpointRPM);
     var bottomError =
         Math.abs(
-            (Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec)
-                    - bottomSetpointRPM)
-                / bottomSetpointRPM);
-    return (bottomError < VelocityToleranceCoefficient)
-        && (topError < VelocityToleranceCoefficient);
+            Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec)
+                - bottomSetpointRPM);
+
+    return (bottomError < VelocityToleranceRPM) && (topError < VelocityToleranceRPM);
   }
 
   @AutoLogOutput
@@ -164,18 +180,12 @@ public class Shooter extends SubsystemBase {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command flywheelSysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> sysIdRunning = true),
-        flywheelSysId.quasistatic(direction),
-        new InstantCommand(() -> sysIdRunning = false));
+    return flywheelSysId.quasistatic(direction);
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command flywheelSysIdDynamic(SysIdRoutine.Direction direction) {
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> sysIdRunning = true),
-        flywheelSysId.dynamic(direction),
-        new InstantCommand(() -> sysIdRunning = false));
+    return flywheelSysId.dynamic(direction);
   }
 
   /** set articulation to point towards source + run flywheel */
@@ -198,11 +208,8 @@ public class Shooter extends SubsystemBase {
         .until(() -> flywheelIsAtSetpoint() && articulationIsAtSetpoint());
   }
 
-  public Command stop() {
-    return new InstantCommand(() -> setFlywheelSetpointRPM(0, 0));
-  }
-
   public Command runAtRPM(double RPM) {
-    return new InstantCommand(() -> setFlywheelSetpointRPM(-RPM, RPM), this);
+    return new RunCommand(() -> setFlywheelSetpointRPM(-RPM, RPM), this)
+        .until(this::flywheelIsAtSetpoint);
   }
 }
