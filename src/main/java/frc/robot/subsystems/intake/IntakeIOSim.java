@@ -42,12 +42,12 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
-  public void extensionRunVoltage(double left, double right) {
-    leftExtensionMotorAppliedVolts = left;
-    leftExtensionMotor.setInputVoltage(left);
+  public void extensionRunVoltage(double voltage) {
+    leftExtensionMotorAppliedVolts = voltage;
+    leftExtensionMotor.setInputVoltage(voltage);
 
-    rightExtensionMotorAppliedVolts = right;
-    leftExtensionMotor.setInputVoltage(right);
+    rightExtensionMotorAppliedVolts = voltage;
+    leftExtensionMotor.setInputVoltage(voltage);
   }
 
   @Override
@@ -59,6 +59,6 @@ public class IntakeIOSim implements IntakeIO {
   @Override
   public void spinRunVoltage(double voltage) {
     spinMotorAppliedVolts = voltage;
-    articulationMotor.setInputVoltage(voltage);
+    spinMotor.setInputVoltage(voltage);
   }
 }

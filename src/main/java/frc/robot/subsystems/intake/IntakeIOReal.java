@@ -1,9 +1,11 @@
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.math.util.Units.rotationsToRadians;
 import static frc.robot.constants.IdConstants.CANId.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
@@ -35,6 +37,12 @@ public class IntakeIOReal implements IntakeIO {
 
     rightExtensionMotor.setInverted(true);
     leftExtensionMotor.setInverted(true);
+    spinMotor.setInverted(true);
+
+    articulationMotor.setNeutralMode(NeutralMode.Brake);
+    spinMotor.setNeutralMode(NeutralMode.Brake);
+
+    rightExtensionMotor.follow(leftExtensionMotor);
   }
 
   @Override
@@ -53,24 +61,26 @@ public class IntakeIOReal implements IntakeIO {
     inputs.leftExtensionCurrentAmps = leftExtensionMotor.getOutputCurrent();
 
     inputs.articulationPosition =
-        Rotation2d.fromRotations(
-            articulationEncoder.getAbsolutePosition()
-                + IntakeConstants.AbsoluteEncoderOffset); // TODO: set offset
+        Rotation2d.fromRadians(
+            angleModulus(
+                Rotation2d.fromRotations(
+                        (-articulationEncoder.getAbsolutePosition()
+                            + IntakeConstants.AbsoluteEncoderOffset.getRotations()))
+                    .getRadians()));
     inputs.articulationAppliedVolts = articulationMotor.getMotorOutputVoltage();
 
     inputs.spinAppliedVolts = spinMotor.getMotorOutputVoltage();
   }
 
   @Override
-  public void extensionRunVoltage(double left, double right) {
-    leftExtensionMotor.setVoltage(left);
-    rightExtensionMotor.setVoltage(right);
+  public void extensionRunVoltage(double voltage) {
+    leftExtensionMotor.setVoltage(voltage);
   }
 
   @Override
   public void articulationRunVoltage(double voltage) {
     articulationMotor.set(
-        VictorSPXControlMode.PercentOutput, /*voltage / articulationMotor.getBusVoltage()*/ 0);
+        VictorSPXControlMode.PercentOutput, -voltage / articulationMotor.getBusVoltage());
   }
 
   @Override

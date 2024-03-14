@@ -25,7 +25,7 @@ public interface IntakeIO {
 
   default void updateInputs(IntakeIOInputs inputs) {}
 
-  default void extensionRunVoltage(double left, double right) {}
+  default void extensionRunVoltage(double voltage) {}
 
   default void articulationRunVoltage(double voltage) {}
 

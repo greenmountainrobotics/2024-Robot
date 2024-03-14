@@ -1,16 +1,20 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.math.MathUtil.angleModulus;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.constants.IntakeConstants.*;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.TunableConstants;
@@ -24,9 +28,16 @@ public class Intake extends SubsystemBase {
   private final PIDController extensionPID;
   private final PIDController articulationPID;
 
+  private final ArmFeedforward articulationFF;
+
   private double extensionSetpointMeters = MinExtension;
   private double currentExtensionMeters = 0.0;
   private Rotation2d articulationSetpoint = RetractedArticulation;
+
+  private boolean extended;
+
+  private SysIdRoutineLog.State sysIdState = SysIdRoutineLog.State.kNone;
+  private final SysIdRoutine articulationSysId;
 
   public Intake(IntakeIO io) {
     this.io = io;
@@ -39,15 +50,32 @@ public class Intake extends SubsystemBase {
         articulationPID =
             new PIDController(
                 TunableConstants.KpIntakeArticulation, 0, TunableConstants.KdIntakeArticulation);
+        articulationFF =
+            new ArmFeedforward(
+                TunableConstants.KsIntakeArticulation,
+                TunableConstants.KgIntakeArticulation,
+                TunableConstants.KvIntakeArticulation,
+                TunableConstants.KaIntakeArticulation);
       }
       default -> {
         extensionPID = new PIDController(15, 0, 3);
         articulationPID = new PIDController(1, 0, 0.2);
+        articulationFF = new ArmFeedforward(0, 0, 0, 0);
       }
     }
 
     extensionPID.setSetpoint(extensionSetpointMeters);
     articulationPID.setSetpoint(angleModulus(articulationSetpoint.getRadians()));
+
+    articulationSysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(null, null, null, state -> sysIdState = state),
+            new SysIdRoutine.Mechanism(
+                voltageMeasure -> {
+                  io.articulationRunVoltage(voltageMeasure.in(Volts));
+                },
+                null,
+                this));
   }
 
   @Override
@@ -55,21 +83,27 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
 
-    io.articulationRunVoltage(articulationPID.calculate(inputs.articulationPosition.getRadians()));
-
-    currentExtensionMeters =
-        IntakeConstants.ExtensionMetersPerRotation
-                * Rotation2d.fromRadians(inputs.leftExtensionPositionRad).getRotations()
-            + IntakeConstants.MinExtension;
-
-    var voltage = extensionPID.calculate(currentExtensionMeters);
-    voltage = Math.abs(voltage) > 0.2 ? voltage : 0;
-    io.extensionRunVoltage(voltage, voltage);
-
     Logger.recordOutput(
         "Intake/RealMechanism", getMechanism(currentExtensionMeters, inputs.articulationPosition));
     Logger.recordOutput(
         "Intake/TargetMechanism", getMechanism(extensionSetpointMeters, articulationSetpoint));
+    Logger.recordOutput("Intake/SysIdState", sysIdState.toString());
+
+    if (sysIdState != SysIdRoutineLog.State.kNone) return;
+
+    io.articulationRunVoltage(
+        articulationFF.calculate(
+                articulationSetpoint.getRadians(), 0)
+            + articulationPID.calculate(inputs.articulationPosition.getRadians()));
+
+    currentExtensionMeters =
+        IntakeConstants.ExtensionMetersPerRotation
+                * Rotation2d.fromRadians(inputs.leftExtensionPositionRad).getRotations()
+            + IntakeConstants.StartExtension;
+
+    var voltage = extensionPID.calculate(currentExtensionMeters);
+    voltage = Math.abs(voltage) > 0.2 ? voltage : 0;
+    io.extensionRunVoltage(voltage);
   }
 
   private Mechanism2d getMechanism(double extension, Rotation2d articulation) {
@@ -122,9 +156,24 @@ public class Intake extends SubsystemBase {
     return inputs.articulationPosition;
   }
 
+  /** Returns a command to run a quasistatic test in the specified direction. */
+  public Command articulationSysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return articulationSysId.quasistatic(direction);
+  }
+
+  /** Returns a command to run a dynamic test in the specified direction. */
+  public Command articulationSysIdDynamic(SysIdRoutine.Direction direction) {
+    return articulationSysId.dynamic(direction);
+  }
+
   public Command extend() {
-    return new InstantCommand(() -> setExtension(TargetExtension), this)
-        .andThen(new InstantCommand(() -> setArticulation(HalfwayArticulation), this))
+    return new InstantCommand(
+            () -> {
+              setExtension(TargetExtension);
+              setArticulation(HalfwayArticulation);
+              extended = true;
+            },
+            this)
         .andThen(
             new RunCommand(
                     () -> {
@@ -146,7 +195,12 @@ public class Intake extends SubsystemBase {
   }
 
   public Command retract(Rotation2d articulation) {
-    return new InstantCommand(() -> setArticulation(articulation), this)
+    return new InstantCommand(
+            () -> {
+              setArticulation(articulation);
+              extended = false;
+            },
+            this)
         .andThen(
             new WaitUntilCommand(
                 () ->
@@ -154,6 +208,10 @@ public class Intake extends SubsystemBase {
                         || getArticulation().minus(HalfwayArticulation).getRadians() > 0))
         .andThen(new InstantCommand(() -> setExtension(MinExtension), this))
         .andThen(new WaitUntilCommand(() -> articulationIsAtSetpoint() && extensionIsAtSetpoint()));
+  }
+
+  public Command toggleExtension() {
+    return new ConditionalCommand(retract(), extend(), () -> extended);
   }
 
   /**
