@@ -32,7 +32,6 @@ public class Leds extends SubsystemBase {
 
   private void autoSetColors() {
     Color allianceColor = Alliance.isRed() ? Color.kRed : Color.kBlue;
-    pulseColor(new Color(0, 255, 0), Color.kRed);
 
     /*
     apriltags not connected -> yellow
