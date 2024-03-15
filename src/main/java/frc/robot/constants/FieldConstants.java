@@ -63,4 +63,6 @@ public final class FieldConstants {
       BottomInnerNote.plus(new Translation2d(0, DistanceBetweenInnerNotes));
   public static final Translation2d TopInnerNote =
       MiddleInnerNote.plus(new Translation2d(0, DistanceBetweenInnerNotes));
+
+  public static final double NoteDiameter = inchesToMeters(14);
 }

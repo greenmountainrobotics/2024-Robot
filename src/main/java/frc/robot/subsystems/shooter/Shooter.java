@@ -66,10 +66,10 @@ public class Shooter extends SubsystemBase {
         break;
       default:
         // simulated
-        topFF = new SimpleMotorFeedforward(0, .005);
-        bottomFF = new SimpleMotorFeedforward(0, .005);
-        topPID = new PIDController(1, 0, 0);
-        bottomPID = new PIDController(1, 0, 0);
+        topFF = new SimpleMotorFeedforward(0, .001);
+        bottomFF = new SimpleMotorFeedforward(0, .001);
+        topPID = new PIDController(0.1, 0, 0);
+        bottomPID = new PIDController(0.1, 0, 0);
         articulationPID = new PIDController(0.1, 0, 0);
         articulationFF = new ArmFeedforward(0, 0, 0, 0);
         break;

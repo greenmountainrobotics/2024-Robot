@@ -43,6 +43,7 @@ import frc.robot.subsystems.leds.Leds;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
@@ -350,7 +351,11 @@ public class Drive extends SubsystemBase {
             < DriveConstants.ThetaToleranceRad;
   }
 
-  public Command runToPose(Supplier<Pose2d> targetPoseSupplier) {
+  public double distanceFromPoint(Translation2d point) {
+    return getPose().getTranslation().getDistance(point);
+  }
+
+  public Command runToPose(Supplier<Pose2d> targetPoseSupplier, boolean stop) {
     return new InstantCommand(() -> Leds.State.DrivingToPose = true)
         .andThen(
             new InstantCommand(
@@ -365,8 +370,15 @@ public class Drive extends SubsystemBase {
                 },
                 this))
         .until(() -> poseAtSetpoint(targetPoseSupplier.get()))
-        .finallyDo(this::stop)
+        .finallyDo(
+            () -> {
+              if (stop) this.stop();
+            })
         .finallyDo(() -> Leds.State.DrivingToPose = false);
+  }
+
+  public Command runToPose(Supplier<Pose2d> targetPoseSupplier) {
+    return runToPose(targetPoseSupplier, true);
   }
 
   public Command followPath(Trajectory trajectoryFile) {
@@ -398,7 +410,7 @@ public class Drive extends SubsystemBase {
             Alliance::isRed));
   }
 
-  public Command alignToSpeaker() { // TODO: flip sides
+  public Command alignToSpeaker() {
     return runToPose(
         () -> {
           var targetTranslation =
@@ -420,5 +432,38 @@ public class Drive extends SubsystemBase {
                   .getAngle()
                   .minus(Rotation2d.fromRadians(Math.PI)));
         });
+  }
+
+  public Command alignToNote(Translation2d noteTranslation) {
+    return new DeferredCommand(
+        () -> {
+          var targetTranslation =
+              noteTranslation.plus(
+                  new Translation2d(
+                          DriveConstants.WidthWithBumpersX / 2 + FieldConstants.NoteDiameter / 2, 0)
+                      .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()));
+
+          var targetPose =
+              new Pose2d(
+                  targetTranslation.getX(),
+                  targetTranslation.getY(),
+                  noteTranslation.minus(targetTranslation).getAngle());
+
+          return runToPose(
+                  () -> new Pose2d(getPose().getX(), getPose().getY(), targetPose.getRotation()),
+                  false)
+              .until(
+                  () ->
+                      Math.abs(targetPose.getRotation().minus(getPose().getRotation()).getRadians())
+                          < Math.PI / 6)
+              .andThen(
+                  runToPose(
+                      () ->
+                          new Pose2d(
+                              targetTranslation.getX(),
+                              targetTranslation.getY(),
+                              noteTranslation.minus(targetTranslation).getAngle())));
+        },
+        Set.of(this));
   }
 }

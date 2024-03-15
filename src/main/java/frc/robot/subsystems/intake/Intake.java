@@ -20,6 +20,7 @@ import frc.robot.constants.DriveConstants;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.TunableConstants;
 import frc.robot.util.RunMode;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -62,7 +63,7 @@ public class Intake extends SubsystemBase {
                 TunableConstants.KaIntakeArticulation);
       }
       default -> {
-        extensionPID = new PIDController(15, 0, 3);
+        extensionPID = new PIDController(25, 0, 4);
         articulationPID = new PIDController(1, 0, 0.2);
         articulationFF = new ArmFeedforward(0, 0, 0, 0);
       }
@@ -149,10 +150,12 @@ public class Intake extends SubsystemBase {
     extensionPID.setSetpoint(extensionSetpointMeters);
   }
 
+  @AutoLogOutput
   public boolean extensionIsAtSetpoint() {
     return Math.abs(extensionSetpointMeters - currentExtensionMeters) < ExtensionTolerance;
   }
 
+  @AutoLogOutput
   public boolean articulationIsAtSetpoint() {
     return Math.abs(getArticulation().minus(articulationSetpoint).getRadians())
         < ArticulationToleranceRad;

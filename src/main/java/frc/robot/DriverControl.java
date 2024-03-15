@@ -1,13 +1,13 @@
 package frc.robot;
 
-import static frc.robot.Commands.shootInSpeaker;
-import static frc.robot.Commands.stopShooting;
+import static frc.robot.Commands.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.FieldConstants;
 import frc.robot.util.Alliance;
 
 public class DriverControl {
@@ -30,6 +30,17 @@ public class DriverControl {
         .y()
         .whileTrue(shootInSpeaker(shooter, drive, intake))
         .onFalse(stopShooting(shooter, intake));
+
+    controller1
+        .a()
+        .whileTrue(
+            shootInSpeaker(shooter, drive, intake)
+                .andThen(intakeFromGround(FieldConstants.BottomInnerNote, intake, drive))
+                .andThen(shootInSpeaker(shooter, drive, intake))
+                .andThen(intakeFromGround(FieldConstants.MiddleInnerNote, intake, drive))
+                .andThen(shootInSpeaker(shooter, drive, intake))
+                .andThen(intakeFromGround(FieldConstants.TopInnerNote, intake, drive))
+                .andThen(shootInSpeaker(shooter, drive, intake)));
 
     drive.setDefaultCommand(
         new RunCommand(

@@ -25,7 +25,7 @@ public class IntakeConstants {
       Rotation2d.fromDegrees(180 - 52.993);
   public static final Rotation2d PointingUpArticulation = Rotation2d.fromDegrees(180 - 100.405);
 
-  public static final double ExtensionTolerance = Units.inchesToMeters(0.2);
+  public static final double ExtensionTolerance = Units.inchesToMeters(0.4);
   public static final double ArticulationToleranceRad = 0.5;
 
   public static final double ArticulationVelocity = 0;

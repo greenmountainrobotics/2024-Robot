@@ -10,8 +10,8 @@ public class ShooterIOSim implements ShooterIO {
   private static final double LOOP_PERIOD_SECS = 0.02;
 
   // TODO: set constants
-  private final DCMotorSim topSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.025);
-  private final DCMotorSim bottomSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.025);
+  private final DCMotorSim topSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.0025);
+  private final DCMotorSim bottomSpinMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.0025);
   private final DCMotorSim articulationMotor = new DCMotorSim(DCMotor.getNEO(1), 1, 0.025);
 
   private double topAppliedVolts = 0.0;
