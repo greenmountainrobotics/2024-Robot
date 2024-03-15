@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.constants.Trajectory;
-import frc.robot.util.FieldPoseUtils;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -24,7 +22,6 @@ public class Auto {
 
     // No-op
     autoChooser.addDefaultOption("None", new InstantCommand(() -> {}));
-
   }
 
   public void schedule() {

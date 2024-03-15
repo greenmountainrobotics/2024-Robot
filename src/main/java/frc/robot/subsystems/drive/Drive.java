@@ -402,13 +402,16 @@ public class Drive extends SubsystemBase {
     return runToPose(
         () -> {
           var targetTranslation =
-              FieldConstants.SpeakerCloseSideCenter.plus(
-                  new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
-                      .rotateBy(
-                          getPose()
-                              .getTranslation()
-                              .minus(FieldConstants.SpeakerCloseSideCenter)
-                              .getAngle()));
+              FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                  .plus(
+                      new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
+                          .rotateBy(
+                              getPose()
+                                  .getTranslation()
+                                  .minus(
+                                      FieldPoseUtils.flipTranslationIfRed(
+                                          FieldConstants.SpeakerCloseSideCenter))
+                                  .getAngle()));
           return new Pose2d(
               targetTranslation.getX(),
               targetTranslation.getY(),

@@ -1,17 +1,14 @@
 package frc.robot;
 
+import static frc.robot.Commands.shootInSpeaker;
+import static frc.robot.Commands.stopShooting;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.FieldConstants;
 import frc.robot.util.Alliance;
-import frc.robot.util.FieldPoseUtils;
-
-import static frc.robot.Commands.shootInSpeaker;
-import static frc.robot.Commands.stopShooting;
 
 public class DriverControl {
   private final CommandXboxController controller1 = new CommandXboxController(0);
@@ -43,11 +40,10 @@ public class DriverControl {
               var y = -controller1.getLeftX();
               var omega = 0.0;
 
-
-                omega = -controller1.getRightX();
-                omega = MathUtil.applyDeadband(omega, DEADBAND);
-                omega = Math.copySign(omega * omega, omega);
-                omega = omega * drive.getMaxAngularSpeedRadPerSec();
+              omega = -controller1.getRightX();
+              omega = MathUtil.applyDeadband(omega, DEADBAND);
+              omega = Math.copySign(omega * omega, omega);
+              omega = omega * drive.getMaxAngularSpeedRadPerSec();
 
               double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
               Rotation2d linearDirection = new Rotation2d(x, y);

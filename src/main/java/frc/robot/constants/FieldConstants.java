@@ -52,5 +52,5 @@ public final class FieldConstants {
 
   public static final Rotation2d SpeakerRotation = new Rotation2d();
 
-  public static final double SpeakerShootingDistance = 3;
+  public static final double SpeakerShootingDistance = 2;
 }
