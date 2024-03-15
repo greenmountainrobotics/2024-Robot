@@ -18,7 +18,7 @@ public enum Camera {
           new Translation3d(inchesToMeters(-2.091), inchesToMeters(-0.005), inchesToMeters(6.061)),
           new Rotation3d(0, degreesToRadians(-25), degreesToRadians(180)))),
   FrontLeftCamera(
-      "FrontLeftCamera",
+      "FrontLeftCam",
       1280,
       800,
       Rotation2d.fromDegrees(70),
@@ -26,7 +26,7 @@ public enum Camera {
           new Translation3d(inchesToMeters(6.894), inchesToMeters(11.382), inchesToMeters(10.621)),
           new Rotation3d(0, degreesToRadians(-25), degreesToRadians(60)))),
   FrontRightCamera(
-      "FrontRightCamera",
+      "Arducam_OV9281_USB_Camera",
       1280,
       800,
       Rotation2d.fromDegrees(70),

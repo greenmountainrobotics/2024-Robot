@@ -17,9 +17,9 @@ public class ShooterIOReal implements ShooterIO {
   private final CANSparkMax bottomSpinMotor =
       new CANSparkMax(IdConstants.CANId.BottomSpinMotorId, CANSparkLowLevel.MotorType.kBrushless);
 
-  private final CANSparkMax articulationMotor =
-      new CANSparkMax(
-          IdConstants.CANId.ShooterArticulationMotorId, CANSparkLowLevel.MotorType.kBrushed);
+  /*  private final CANSparkMax articulationMotor =
+  new CANSparkMax(
+      IdConstants.CANId.ShooterArticulationMotorId, CANSparkLowLevel.MotorType.kBrushed);*/
 
   private final RelativeEncoder topEncoder;
   private final RelativeEncoder bottomEncoder;
@@ -70,6 +70,6 @@ public class ShooterIOReal implements ShooterIO {
 
   @Override
   public void setArticulationVoltage(double volts) {
-    articulationMotor.setVoltage(0);
+    /*articulationMotor.setVoltage(volts);*/
   }
 }

@@ -1,14 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.DriveConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.util.Alliance;
 import frc.robot.util.FieldPoseUtils;
@@ -23,10 +22,45 @@ public class DriverControl {
     var intake = robot.intake;
     var shooter = robot.shooter;
 
-    controller1.y().onTrue(shooter.prepareToShoot(drive::getPose));
-    controller1.a().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithAmpPose));
-    controller1.b().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithSourcePose));
-    controller1.x().onTrue(new InstantCommand(() -> lockedToSpeaker = !lockedToSpeaker));
+    // controller1.y().onTrue(shooter.prepareToShoot(drive::getPose));
+    // controller1.a().onTrue(shooter.runAtRPM(5000));
+    // controller1.b().onTrue(shooter.stop());
+    /*controller1.a().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithAmpPose));
+    controller1.b().whileTrue(drive.runToPose(FieldPoseUtils::alignedWithSourcePose));*/
+    controller1
+        .a()
+        .onTrue(new InstantCommand(() -> lockedToSpeaker = true))
+        .onFalse(new InstantCommand(() -> lockedToSpeaker = false));
+
+    controller1
+        .x()
+        .onTrue(intake.shoot(-1).andThen(intake.extend()))
+        .onFalse(intake.shoot(0).andThen(intake.retract()));
+
+    controller1
+        .y()
+        .onTrue(
+            shooter
+                .runAtRPM(5000)
+                .andThen(intake.shoot(1))
+                .andThen(new WaitCommand(1))
+                .andThen(intake.shoot(0))
+                .andThen(shooter.runAtRPM(0).alongWith(intake.shoot(0))))
+        .onFalse(shooter.runAtRPM(0).alongWith(intake.shoot(0)));
+
+    controller1
+        .b()
+        .whileTrue(
+            drive.runToPose(
+                () ->
+                    FieldPoseUtils.flipPoseIfRed(
+                        new Pose2d(
+                            FieldConstants.SpeakerCloseSideCenter.getX()
+                                + DriveConstants.WidthWithBumpersX / 2,
+                            FieldConstants.SpeakerCloseSideCenter.getY(),
+                            new Rotation2d()))));
+
+    controller1.povLeft().onTrue(new InstantCommand(() -> drive.setPose(new Pose2d())));
 
     drive.setDefaultCommand(
         new RunCommand(

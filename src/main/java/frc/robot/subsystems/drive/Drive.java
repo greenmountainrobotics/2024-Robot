@@ -114,7 +114,10 @@ public class Drive extends SubsystemBase {
     translationController.setTolerance(DriveConstants.DriveTolerance);
     thetaController =
         new ProfiledPIDController(
-            TunableConstants.KpTheta, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+            TunableConstants.KpTheta,
+            0,
+            TunableConstants.KdTheta,
+            new TrapezoidProfile.Constraints(5, 5));
     thetaController.setTolerance(DriveConstants.ThetaToleranceRad);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }

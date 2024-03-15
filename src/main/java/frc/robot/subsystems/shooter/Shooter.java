@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.FieldConstants;
-import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.FieldPoseUtils;
 import frc.robot.util.RunMode;
@@ -58,7 +57,12 @@ public class Shooter extends SubsystemBase {
         topPID = new PIDController(KpTopFlywheel, 0, KdTopFlywheel);
         bottomPID = new PIDController(KpBottomFlywheel, 0, KdBottomFlywheel);
         articulationPID = new PIDController(KpShooterArticulation, 0, KdShooterArticulation);
-        articulationFF = new ArmFeedforward(KsShooterArticulation, KgShooterArticulation, KvShooterArticulation, KaIntakeArticulation);
+        articulationFF =
+            new ArmFeedforward(
+                KsShooterArticulation,
+                KgShooterArticulation,
+                KvShooterArticulation,
+                KaIntakeArticulation);
         break;
       default:
         // simulated
@@ -67,7 +71,7 @@ public class Shooter extends SubsystemBase {
         topPID = new PIDController(1, 0, 0);
         bottomPID = new PIDController(1, 0, 0);
         articulationPID = new PIDController(0.1, 0, 0);
-        articulationFF = new ArmFeedforward(0,0,0,0);
+        articulationFF = new ArmFeedforward(0, 0, 0, 0);
         break;
     }
 
@@ -92,7 +96,7 @@ public class Shooter extends SubsystemBase {
                 null,
                 this));
 
-    setArticulation(IntakeConstants.RetractedArticulation);
+    setArticulation(Rotation2d.fromDegrees(90 + 20));
   }
 
   @Override
@@ -131,9 +135,10 @@ public class Shooter extends SubsystemBase {
                 bottomSetpointRPM)
             + bottomFF.calculate(bottomSetpointRPM));
 
-    io.setArticulationVoltage(articulationFF.calculate(articulationSetpoint.getRadians(), 0) +
-        articulationPID.calculate(
-            inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
+    io.setArticulationVoltage(
+        articulationFF.calculate(articulationSetpoint.getRadians(), 0)
+            + articulationPID.calculate(
+                inputs.articulationPosition.getRadians(), articulationSetpoint.getRadians()));
   }
 
   private Mechanism2d getMechanism(Rotation2d articulation) {

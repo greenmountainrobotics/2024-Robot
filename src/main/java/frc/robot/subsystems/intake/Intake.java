@@ -7,6 +7,7 @@ import static frc.robot.constants.IntakeConstants.*;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -38,6 +39,9 @@ public class Intake extends SubsystemBase {
 
   private SysIdRoutineLog.State sysIdState = SysIdRoutineLog.State.kNone;
   private final SysIdRoutine articulationSysId;
+
+  private double prevArticulation = 0.0;
+  private double prevTimestamp = 0.0;
 
   public Intake(IntakeIO io) {
     this.io = io;
@@ -88,12 +92,18 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput(
         "Intake/TargetMechanism", getMechanism(extensionSetpointMeters, articulationSetpoint));
     Logger.recordOutput("Intake/SysIdState", sysIdState.toString());
+    Logger.recordOutput("Intake/ArticulationPositionRad", inputs.articulationPosition.getRadians());
+    Logger.recordOutput(
+        "Intake/ArticulatinonVelocity",
+        (inputs.articulationPosition.getRadians() - prevArticulation)
+            / (Timer.getFPGATimestamp() - prevTimestamp));
+    prevArticulation = inputs.articulationPosition.getRadians();
+    prevTimestamp = Timer.getFPGATimestamp();
 
     if (sysIdState != SysIdRoutineLog.State.kNone) return;
 
     io.articulationRunVoltage(
-        articulationFF.calculate(
-                articulationSetpoint.getRadians(), 0)
+        articulationFF.calculate(inputs.articulationPosition.getRadians(), 0, 0)
             + articulationPID.calculate(inputs.articulationPosition.getRadians()));
 
     currentExtensionMeters =
@@ -218,6 +228,6 @@ public class Intake extends SubsystemBase {
    * @param speed positive is outwards
    */
   public Command shoot(double speed) {
-    return new RunCommand(() -> setIntakeSpeed(speed), this).finallyDo(() -> setIntakeSpeed(0));
+    return new InstantCommand(() -> setIntakeSpeed(speed), this);
   }
 }
