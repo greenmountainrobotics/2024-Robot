@@ -29,6 +29,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.DriveConstants;
@@ -78,6 +80,8 @@ public class Drive extends SubsystemBase {
   private final ProfiledPIDController translationController;
   private final ProfiledPIDController thetaController;
 
+  private final Field2d smartDashboardField;
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -122,6 +126,8 @@ public class Drive extends SubsystemBase {
             new TrapezoidProfile.Constraints(5, 5));
     thetaController.setTolerance(DriveConstants.ThetaToleranceRad);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    smartDashboardField = new Field2d();
   }
 
   public void periodic() {
@@ -179,6 +185,9 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
+
+    smartDashboardField.setRobotPose(getPose());
+    SmartDashboard.putData("Field", smartDashboardField);
   }
 
   /**

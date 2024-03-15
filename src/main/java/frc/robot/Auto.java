@@ -1,38 +1,86 @@
 package frc.robot;
 
+import static frc.robot.Commands.intakeFromGround;
+import static frc.robot.Commands.shootInSpeaker;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.constants.FieldConstants;
+import frc.robot.constants.Trajectory;
+import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 public class Auto {
-  private final LoggedDashboardChooser<Command> autoChooser;
   private final LoggedDashboardNumber autoDelay;
+
+  private final LoggedDashboardBoolean shootTop;
+  private final LoggedDashboardBoolean shootMiddle;
+  private final LoggedDashboardBoolean shootBottom;
+
+  private final LoggedDashboardBoolean knockOut;
+
+  private final LoggedDashboardChooser<String> preloadedNoteShoot;
 
   private Command currentCommand;
 
-  public Auto(Robot robot) {
-    var drive = robot.drive;
-    var shooter = robot.shooter;
+  private final Robot robot;
 
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+  public Auto(Robot robot) {
+    this.robot = robot;
+
     autoDelay = new LoggedDashboardNumber("Auto Delay", 0);
 
-    // No-op
-    autoChooser.addDefaultOption("None", new InstantCommand(() -> {}));
+    shootMiddle = new LoggedDashboardBoolean("Middle -> Shoot", false);
+    shootBottom = new LoggedDashboardBoolean("Bottom -> Shoot", false);
+    shootTop = new LoggedDashboardBoolean("Top -> Shoot", false);
+
+    preloadedNoteShoot = new LoggedDashboardChooser<>("Preloaded Note Action");
+    preloadedNoteShoot.addDefaultOption("None", "None");
+    preloadedNoteShoot.addOption("Beginning", "Beginning");
+    preloadedNoteShoot.addOption("End", "End");
+
+    knockOut = new LoggedDashboardBoolean("Knock Out Middle", false);
   }
 
   public void schedule() {
-    if (autoDelay.get() != 0) {
+    var drive = robot.drive;
+    var shooter = robot.shooter;
+    var intake = robot.intake;
+
+    currentCommand = new InstantCommand(() -> {});
+
+    if (autoDelay.get() != 0)
+      currentCommand = currentCommand.andThen(new WaitCommand(autoDelay.get()));
+
+    if (preloadedNoteShoot.get().equals("Beginning"))
+      currentCommand = currentCommand.andThen(shootInSpeaker(shooter, drive, intake));
+
+    if (knockOut.get())
+      currentCommand = currentCommand.andThen(drive.followPath(Trajectory.KnockOutMiddle));
+
+    if (shootMiddle.get())
       currentCommand =
-          new SequentialCommandGroup(new WaitCommand(autoDelay.get()), autoChooser.get());
-    } else if (autoChooser.get() == null) {
-      currentCommand = new InstantCommand(() -> {});
-    } else {
-      currentCommand = autoChooser.get();
-    }
+          currentCommand
+              .andThen(intakeFromGround(FieldConstants.MiddleInnerNote, intake, drive))
+              .andThen(shootInSpeaker(shooter, drive, intake));
+
+    if (shootBottom.get())
+      currentCommand =
+          currentCommand
+              .andThen(intakeFromGround(FieldConstants.BottomInnerNote, intake, drive))
+              .andThen(shootInSpeaker(shooter, drive, intake));
+
+    if (shootTop.get())
+      currentCommand =
+          currentCommand
+              .andThen(intakeFromGround(FieldConstants.TopInnerNote, intake, drive))
+              .andThen(shootInSpeaker(shooter, drive, intake));
+
+    if (preloadedNoteShoot.get().equals("End"))
+      currentCommand = currentCommand.andThen(shootInSpeaker(shooter, drive, intake));
+
     currentCommand.schedule();
   }
 

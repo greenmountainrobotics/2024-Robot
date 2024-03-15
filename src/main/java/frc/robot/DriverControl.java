@@ -8,7 +8,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.FieldConstants;
 import frc.robot.util.Alliance;
 
 public class DriverControl {
@@ -55,23 +54,9 @@ public class DriverControl {
     // manually control intake / shooter
     controller2.povRight().whileTrue(intake.shoot(() -> -controller2.getRightY()));
 
-    controller2
-        .povDown()
-        .and(controller2.a())
-        .onTrue(shooter.runAtRPM(5000));
+    controller2.povDown().and(controller2.a()).onTrue(shooter.runAtRPM(5000));
 
     controller2.povDown().and(controller2.b()).onTrue(shooter.runAtRPM(0));
-
-    controller1
-        .a()
-        .whileTrue(
-            shootInSpeaker(shooter, drive, intake)
-                .andThen(intakeFromGround(FieldConstants.MiddleInnerNote, intake, drive))
-                .andThen(shootInSpeaker(shooter, drive, intake))
-                .andThen(intakeFromGround(FieldConstants.BottomInnerNote, intake, drive))
-                .andThen(shootInSpeaker(shooter, drive, intake))
-                .andThen(intakeFromGround(FieldConstants.TopInnerNote, intake, drive))
-                .andThen(shootInSpeaker(shooter, drive, intake)));
 
     drive.setDefaultCommand(
         new RunCommand(
