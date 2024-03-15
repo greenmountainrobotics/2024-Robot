@@ -188,6 +188,11 @@ public class Drive extends SubsystemBase {
 
     smartDashboardField.setRobotPose(getPose());
     SmartDashboard.putData("Field", smartDashboardField);
+
+    Logger.recordOutput(
+        "Drive/DistanceFromShooter",
+        distanceFromPoint(
+            FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)));
   }
 
   /**

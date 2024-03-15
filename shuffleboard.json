@@ -31,8 +31,8 @@
             ],
             "content": {
               "_type": "Toggle Switch",
-              "_source0": "network_table:///SmartDashboard/Middle -\u003e Shoot",
-              "_title": "Middle -\u003e Shoot",
+              "_source0": "network_table:///SmartDashboard/Middle -> Shoot",
+              "_title": "Middle -> Shoot",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -44,8 +44,8 @@
             ],
             "content": {
               "_type": "Toggle Switch",
-              "_source0": "network_table:///SmartDashboard/Bottom -\u003e Shoot",
-              "_title": "Bottom -\u003e Shoot",
+              "_source0": "network_table:///SmartDashboard/Bottom -> Shoot",
+              "_title": "Bottom -> Shoot",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -57,8 +57,8 @@
             ],
             "content": {
               "_type": "Toggle Switch",
-              "_source0": "network_table:///SmartDashboard/Top -\u003e Shoot",
-              "_title": "Top -\u003e Shoot",
+              "_source0": "network_table:///SmartDashboard/Top -> Shoot",
+              "_title": "Top -> Shoot",
               "_glyph": 148,
               "_showGlyph": false
             }
