@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.RunMode;
 import org.littletonrobotics.junction.Logger;
 
@@ -37,6 +38,7 @@ public class Module {
   private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
+  private double lastTurnOffsetTime = 0.0;
 
   public Module(ModuleIO io, int index) {
     this.io = io;
@@ -86,12 +88,6 @@ public class Module {
             },
         inputs);
 
-    // On first cycle, reset relative turn encoder
-    // Wait until absolute angle is nonzero in case it wasn't initialized yet
-    if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
-      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
-    }
-
     // Run closed loop turn control
     if (angleSetpoint != null) {
       io.setTurnVoltage(
@@ -124,6 +120,14 @@ public class Module {
           inputs.odometryTurnPositions[i].plus(
               turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+    }
+
+    // On first cycle, reset relative turn encoder
+    // Wait until absolute angle is nonzero in case it wasn't initialized yet
+    if ((turnRelativeOffset == null /*|| Timer.getFPGATimestamp() - lastTurnOffsetTime > 0.1*/)
+        && inputs.turnAbsolutePosition.getRadians() != 0.0) {
+      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
+      lastTurnOffsetTime = Timer.getFPGATimestamp();
     }
   }
 

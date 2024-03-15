@@ -20,6 +20,7 @@ public class Auto {
   private final LoggedDashboardBoolean shootBottom;
 
   private final LoggedDashboardBoolean knockOut;
+  private final LoggedDashboardBoolean taxi;
 
   private final LoggedDashboardChooser<String> preloadedNoteShoot;
 
@@ -41,7 +42,8 @@ public class Auto {
     preloadedNoteShoot.addOption("Beginning", "Beginning");
     preloadedNoteShoot.addOption("End", "End");
 
-    knockOut = new LoggedDashboardBoolean("Knock Out Middle", false);
+    knockOut = new LoggedDashboardBoolean("Gremlin Path", false);
+    taxi = new LoggedDashboardBoolean("Taxi", false);
   }
 
   public void schedule() {
@@ -59,6 +61,8 @@ public class Auto {
 
     if (knockOut.get())
       currentCommand = currentCommand.andThen(drive.followPath(Trajectory.KnockOutMiddle));
+
+    if (taxi.get()) currentCommand = currentCommand.andThen(drive.followPath(Trajectory.Taxi));
 
     if (shootMiddle.get())
       currentCommand =

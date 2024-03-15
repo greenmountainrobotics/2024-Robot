@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static frc.robot.Commands.*;
+import static frc.robot.Config.SINGLE_CONTROLLER;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.*;
@@ -8,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.ShooterConstants;
 import frc.robot.util.Alliance;
 
 public class DriverControl {
@@ -28,8 +30,10 @@ public class DriverControl {
     // shoot
     controller2
         .rightTrigger()
-        .whileTrue(shootInSpeaker(shooter, drive, intake))
+        .whileTrue(shootInSpeaker(shooter, drive, intake)) // TODO: fix
         .onFalse(stopShooting(shooter, intake));
+
+    controller2.a().whileTrue(intake.shoot(-1));
 
     // apriltags on and off
     controller2
@@ -54,20 +58,32 @@ public class DriverControl {
     // manually control intake / shooter
     controller2.povRight().whileTrue(intake.shoot(() -> -controller2.getRightY()));
 
-    controller2.povDown().and(controller2.a()).onTrue(shooter.runAtRPM(5000));
+    controller2
+        .povDown()
+        .and(controller2.a())
+        .onTrue(shooter.runAtRPM(ShooterConstants.ShootingVelocityRPM));
 
     controller2.povDown().and(controller2.b()).onTrue(shooter.runAtRPM(0));
+
+    controller2
+        .b()
+        .whileTrue(shootInSpeaker(shooter, drive, intake, false))
+        .onFalse(stopShooting(shooter, intake));
+
+    var driveController = SINGLE_CONTROLLER ? controller2 : controller1;
+
+    driveController.x().onTrue(new InstantCommand(drive::stopWithX, drive));
 
     drive.setDefaultCommand(
         new RunCommand(
             () -> {
               var DEADBAND = 0.25;
 
-              var x = -controller1.getLeftY();
-              var y = -controller1.getLeftX();
+              var x = -driveController.getLeftY();
+              var y = -driveController.getLeftX();
               var omega = 0.0;
 
-              omega = -controller1.getRightX();
+              omega = -driveController.getRightX();
               omega = MathUtil.applyDeadband(omega, DEADBAND);
               omega = Math.copySign(omega * omega, omega);
               omega = omega * drive.getMaxAngularSpeedRadPerSec();

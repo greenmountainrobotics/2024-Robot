@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.constants.DriveConstants.TrackWidthX;
 import static frc.robot.constants.DriveConstants.TrackWidthY;
@@ -188,6 +189,11 @@ public class Drive extends SubsystemBase {
 
     smartDashboardField.setRobotPose(getPose());
     SmartDashboard.putData("Field", smartDashboardField);
+
+    Logger.recordOutput(
+        "Odometry/DistanceFromShooter",
+        distanceFromPoint(
+            FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)));
   }
 
   /**
@@ -394,7 +400,7 @@ public class Drive extends SubsystemBase {
     ChoreoTrajectory trajectory = Choreo.getTrajectory(trajectoryFile.fileName);
 
     return new SequentialCommandGroup(
-        runToPose(() -> FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose())),
+        runToPose(() -> FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose()), false),
         new InstantCommand(
             () -> {
               Logger.recordOutput(
@@ -420,37 +426,65 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToSpeaker() {
-    return runToPose(
+    return new DeferredCommand(
         () -> {
+          var angle =
+              angleModulus(
+                  getPose()
+                      .getTranslation()
+                      .minus(
+                          FieldPoseUtils.flipTranslationIfRed(
+                              FieldConstants.SpeakerCloseSideCenter))
+                      .getAngle()
+                      .getRadians());
+
           var targetTranslation =
               FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
                   .plus(
                       new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
                           .rotateBy(
-                              getPose()
-                                  .getTranslation()
-                                  .minus(
-                                      FieldPoseUtils.flipTranslationIfRed(
-                                          FieldConstants.SpeakerCloseSideCenter))
-                                  .getAngle()));
-          return new Pose2d(
-              targetTranslation.getX(),
-              targetTranslation.getY(),
-              FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                  .minus(targetTranslation)
-                  .getAngle()
-                  .minus(Rotation2d.fromRadians(Math.PI)));
-        });
+                              Rotation2d.fromRadians(
+                                  Alliance.isRed()
+                                      ? angle > Math.PI * 5 / 6
+                                          ? angle
+                                          : angle < Math.PI * -5 / 6
+                                              ? angle
+                                              : angle < 0 ? Math.PI * -5 / 6 : Math.PI * 5 / 6
+                                      : Math.min(Math.max(angle, -Math.PI / 6), Math.PI / 6))));
+
+          var targetPose =
+              new Pose2d(
+                  // getPose().getX(),
+                  // getPose().getY(),
+                  targetTranslation.getX(), // TODO: revert!!!
+                  targetTranslation.getY(),
+                  FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                      .minus(getPose().getTranslation())
+                      .getAngle()
+                      .minus(Rotation2d.fromRadians(Math.PI)));
+
+          return runToPose(() -> targetPose);
+        },
+        Set.of(this));
   }
 
   public Command alignToNote(Translation2d noteTranslation) {
     return new DeferredCommand(
         () -> {
           var targetTranslation =
-              noteTranslation.plus(
-                  new Translation2d(
-                          DriveConstants.WidthWithBumpersX / 2 + FieldConstants.NoteDiameter / 2, 0)
-                      .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()));
+              Alliance.isRed()
+                  ? noteTranslation.plus(
+                      new Translation2d(
+                              DriveConstants.WidthWithBumpersX / 2
+                                  + FieldConstants.NoteDiameter / 2,
+                              0)
+                          .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()))
+                  : noteTranslation.minus(
+                      new Translation2d(
+                              DriveConstants.WidthWithBumpersX / 2
+                                  + FieldConstants.NoteDiameter / 2,
+                              0)
+                          .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()));
 
           var targetPose =
               new Pose2d(
@@ -458,20 +492,18 @@ public class Drive extends SubsystemBase {
                   targetTranslation.getY(),
                   noteTranslation.minus(targetTranslation).getAngle());
 
+          var startingPose = getPose();
+
           return runToPose(
-                  () -> new Pose2d(getPose().getX(), getPose().getY(), targetPose.getRotation()),
+                  () ->
+                      new Pose2d(
+                          startingPose.getX(), startingPose.getY(), targetPose.getRotation()),
                   false)
               .until(
                   () ->
                       Math.abs(targetPose.getRotation().minus(getPose().getRotation()).getRadians())
                           < Math.PI / 6)
-              .andThen(
-                  runToPose(
-                      () ->
-                          new Pose2d(
-                              targetTranslation.getX(),
-                              targetTranslation.getY(),
-                              noteTranslation.minus(targetTranslation).getAngle())));
+              .andThen(runToPose(() -> targetPose));
         },
         Set.of(this));
   }

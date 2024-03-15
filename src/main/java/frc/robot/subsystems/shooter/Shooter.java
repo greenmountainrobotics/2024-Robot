@@ -52,8 +52,8 @@ public class Shooter extends SubsystemBase {
     switch (RunMode.getMode()) {
       case REAL:
       case REPLAY:
-        topFF = new SimpleMotorFeedforward(KsTopFlywheel, KvTopFlywheel);
-        bottomFF = new SimpleMotorFeedforward(KsBottomFlywheel, KvBottomFlywheel);
+        topFF = new SimpleMotorFeedforward(KsTopFlywheel, KvTopFlywheel, KaTopFlywheel);
+        bottomFF = new SimpleMotorFeedforward(KsBottomFlywheel, KvBottomFlywheel, KaBottomFlywheel);
         topPID = new PIDController(KpTopFlywheel, 0, KdTopFlywheel);
         bottomPID = new PIDController(KpBottomFlywheel, 0, KdBottomFlywheel);
         articulationPID = new PIDController(KpShooterArticulation, 0, KdShooterArticulation);

@@ -15,7 +15,8 @@ public final class IdConstants {
     public static final int BackLeftEncoderId = 9;
 
     public static final int BackRightDriveId = 10;
-    public static final int BackRightTurnId = 11;
+    public static final int BackRightTurnId =
+        11; // This one just... randomly reset its CAN id?? 3/16/2024
     public static final int BackRightEncoderId = 12;
 
     public static final int TopSpinMotorId = 21;

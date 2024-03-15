@@ -17,14 +17,16 @@ public final class TunableConstants {
   public static final double KpIntakeArticulation = 3;
   public static final double KdIntakeArticulation = 0;
 
-  public static final double KsTopFlywheel = 0.19355;
-  public static final double KvTopFlywheel = 0.0021631;
-  public static final double KpTopFlywheel = 0.00002627;
+  public static final double KsTopFlywheel = 0.17822;
+  public static final double KvTopFlywheel = 0.02057;
+  public static final double KaTopFlywheel = 0.0018085;
+  public static final double KpTopFlywheel = 0.00074184;
   public static final double KdTopFlywheel = 0;
 
-  public static final double KsBottomFlywheel = 0.1628;
-  public static final double KvBottomFlywheel = 0.0020878;
-  public static final double KpBottomFlywheel = 0.00009089;
+  public static final double KsBottomFlywheel = 0.17307;
+  public static final double KvBottomFlywheel = 0.019895;
+  public static final double KaBottomFlywheel = 0.0018211;
+  public static final double KpBottomFlywheel = 0.00027367;
   public static final double KdBottomFlywheel = 0;
 
   public static final double KsShooterArticulation = 0;

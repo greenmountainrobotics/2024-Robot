@@ -18,7 +18,6 @@ public class PhotonVision implements AprilTagProvider {
   private BiConsumer<Pose2d, Double> poseConsumer = (x, y) -> {};
   private Supplier<Pose2d> referencePoseSupplier = () -> new Pose2d();
   private final AprilTagFieldLayout aprilTagFieldLayout;
-  private final Transform3d robotToCam;
 
   private Pose3d estimatedPose = new Pose3d();
 
@@ -35,11 +34,10 @@ public class PhotonVision implements AprilTagProvider {
     io.updateCamera(inputs);
     processInputs();
 
-    robotToCam = inputs.camera.robotToCam;
-
     aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     photonPoseEstimator =
-        new PhotonPoseEstimator(aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
+        new PhotonPoseEstimator(
+            aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, inputs.robotToCam);
     photonPoseEstimator.setMultiTagFallbackStrategy(CLOSEST_TO_REFERENCE_POSE);
   }
 
@@ -59,8 +57,7 @@ public class PhotonVision implements AprilTagProvider {
     Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose2d", estimatedPose.toPose2d());
     Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose3d", estimatedPose);
     Logger.recordOutput(
-        "PhotonVision/" + inputs.camera + "/CameraPose",
-        referencePose3d.plus(inputs.camera.robotToCam));
+        "PhotonVision/" + inputs.camera + "/CameraPose", referencePose3d.plus(inputs.robotToCam));
 
     photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 
@@ -72,7 +69,9 @@ public class PhotonVision implements AprilTagProvider {
 
       targetPoses =
           update.get().targetsUsed.stream()
-              .map(target -> referencePose3d.plus(robotToCam).plus(target.getBestCameraToTarget()))
+              .map(
+                  target ->
+                      referencePose3d.plus(inputs.robotToCam).plus(target.getBestCameraToTarget()))
               .toArray(Pose3d[]::new);
     } else {
       targetPoses = new Pose3d[] {};

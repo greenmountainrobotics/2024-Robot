@@ -15,6 +15,7 @@ package frc.robot;
 
 import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -74,6 +75,8 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     initLogging();
 
+    CameraServer.startAutomaticCapture();
+
     switch (RunMode.getMode()) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -86,9 +89,10 @@ public class Robot extends LoggedRobot {
                 new ModuleIOReal(3));
         aprilTagVision =
             new AprilTagVision(
-                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)),
-                new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
-                new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera)));
+                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera))
+                // new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
+                // new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))
+                );
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
         leds = new Leds(new CustomLeds(LedsId));
@@ -112,7 +116,10 @@ public class Robot extends LoggedRobot {
                   new PhotonVision(new PhotonVisionIOSim(Camera.FrontLeftCamera, drive::getPose)));
         } else {
           aprilTagVision =
-              new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)));
+              new AprilTagVision(
+                  new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)),
+                  new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
+                  new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera)));
         }
 
         intake = new Intake(new IntakeIOSim());
