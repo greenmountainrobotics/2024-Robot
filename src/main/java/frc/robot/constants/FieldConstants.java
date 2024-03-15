@@ -51,4 +51,6 @@ public final class FieldConstants {
       SpeakerBottomCloseSideCorner.plus(SpeakerTopCloseSideCorner).div(2);
 
   public static final Rotation2d SpeakerRotation = new Rotation2d();
+
+  public static final double SpeakerShootingDistance = 3;
 }

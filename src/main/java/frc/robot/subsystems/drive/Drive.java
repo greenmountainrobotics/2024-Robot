@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.DriveConstants;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.Trajectory;
 import frc.robot.constants.TunableConstants;
 import frc.robot.subsystems.drive.imu.GyroIO;
@@ -395,5 +396,26 @@ public class Drive extends SubsystemBase {
                     trajectoryState.angularVelocity),
             this::runVelocity,
             Alliance::isRed));
+  }
+
+  public Command alignToSpeaker() { // TODO: flip sides
+    return runToPose(
+        () -> {
+          var targetTranslation =
+              FieldConstants.SpeakerCloseSideCenter.plus(
+                  new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
+                      .rotateBy(
+                          getPose()
+                              .getTranslation()
+                              .minus(FieldConstants.SpeakerCloseSideCenter)
+                              .getAngle()));
+          return new Pose2d(
+              targetTranslation.getX(),
+              targetTranslation.getY(),
+              FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                  .minus(targetTranslation)
+                  .getAngle()
+                  .minus(Rotation2d.fromRadians(Math.PI)));
+        });
   }
 }

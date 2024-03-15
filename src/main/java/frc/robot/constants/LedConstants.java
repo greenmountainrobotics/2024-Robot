@@ -5,5 +5,4 @@ import java.util.Arrays;
 public class LedConstants {
   public static final int[] LedStrips = {(21 / 3), (21 / 3), (33 / 3), (33 / 3)};
   public static final int LedsLength = Arrays.stream(LedStrips).sum();
-  public static final double PulseTime = 2;
 }

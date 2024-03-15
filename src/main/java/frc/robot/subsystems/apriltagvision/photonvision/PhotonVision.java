@@ -27,7 +27,7 @@ public class PhotonVision implements AprilTagProvider {
   private Pose3d[] targetPoses = new Pose3d[] {};
 
   private void processInputs() {
-    Logger.processInputs("PhotonVision", inputs);
+    Logger.processInputs("PhotonVision/" + inputs.camera, inputs);
   }
 
   public PhotonVision(PhotonVisionIO io) {

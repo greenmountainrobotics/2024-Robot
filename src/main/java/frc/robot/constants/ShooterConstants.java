@@ -18,6 +18,7 @@ public class ShooterConstants {
       Rotation2d.fromRadians(2.67).unaryMinus().plus(Rotation2d.fromRadians(Math.PI));
 
   /** k: m, v: rad */
+  // UNUSED
   public static final InterpolatingDoubleTreeMap ArticulationMap = new InterpolatingDoubleTreeMap();
 
   static {

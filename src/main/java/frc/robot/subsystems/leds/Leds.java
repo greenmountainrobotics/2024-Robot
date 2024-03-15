@@ -42,11 +42,11 @@ public class Leds extends SubsystemBase {
     */
 
     if (!State.AprilTagsConnected) {
-      flashColor(Color.kYellow, Color.kBlack);
+      flashColor(Color.kYellow, Color.kBlack, 2);
     } else if (State.AutoEnabled) {
-      pulseColor(Color.kGreen, Color.kBlack);
+      pulseColor(Color.kGreen, Color.kBlack, 2);
     } else if (State.DrivingToPose) {
-      pulseColor(allianceColor, Color.kBlack);
+      pulseColor(allianceColor, Color.kBlack, 0.5);
     } else if (State.Enabled) {
       showSolidColor(allianceColor);
     } else {
@@ -60,8 +60,8 @@ public class Leds extends SubsystemBase {
     }
   }
 
-  private void flashColor(Color color1, Color color2) {
-    double ratio = (Timer.getFPGATimestamp() % LedConstants.PulseTime) / LedConstants.PulseTime;
+  private void flashColor(Color color1, Color color2, double pulseTimeSeconds) {
+    double ratio = (Timer.getFPGATimestamp() % pulseTimeSeconds) / pulseTimeSeconds;
     showSolidColor(
         new Color(
             (color1.red * (1 - ratio)) + (color2.red * ratio),
@@ -69,13 +69,9 @@ public class Leds extends SubsystemBase {
             (color1.blue * (1 - ratio)) + (color2.blue * ratio)));
   }
 
-  private void pulseColor(Color color1, Color color2) {
+  private void pulseColor(Color color1, Color color2, double pulseTimeSeconds) {
     double ratio =
-        (Math.sin(
-                    Math.PI
-                        * 2
-                        * ((Timer.getFPGATimestamp() % LedConstants.PulseTime)
-                            / LedConstants.PulseTime))
+        (Math.sin(Math.PI * 2 * ((Timer.getFPGATimestamp() % pulseTimeSeconds) / pulseTimeSeconds))
                 + 1)
             / 2;
 

@@ -228,6 +228,13 @@ public class Intake extends SubsystemBase {
    * @param speed positive is outwards
    */
   public Command shoot(double speed) {
-    return new InstantCommand(() -> setIntakeSpeed(speed), this);
+    return new RunCommand(() -> setIntakeSpeed(speed), this).finallyDo(() -> setIntakeSpeed(0));
+  }
+
+  /**
+   * @param speed positive is outwards
+   */
+  public Command setShooter(double speed) {
+    return new InstantCommand(() -> setIntakeSpeed(speed));
   }
 }
