@@ -5,6 +5,7 @@ import static frc.robot.Commands.*;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FieldConstants;
@@ -20,24 +21,54 @@ public class DriverControl {
     var shooter = robot.shooter;
 
     // intake
-    controller1
-        .x()
+    controller2
+        .leftTrigger()
         .onTrue(intake.setShooter(-1).andThen(intake.extend()))
         .onFalse(intake.setShooter(0).andThen(intake.retract()));
 
     // shoot
-    controller1
-        .y()
+    controller2
+        .rightTrigger()
         .whileTrue(shootInSpeaker(shooter, drive, intake))
         .onFalse(stopShooting(shooter, intake));
+
+    // apriltags on and off
+    controller2
+        .povLeft()
+        .and(controller2.a())
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    robot.aprilTagVision.setDataInterface(
+                        drive::addVisionMeasurement, drive::getPose)));
+
+    controller2
+        .povLeft()
+        .and(controller2.b())
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  robot.aprilTagVision.setDataInterface((pose2d, aDouble) -> {}, Pose2d::new);
+                  drive.setPose(new Pose2d());
+                }));
+
+    // manually control intake / shooter
+    controller2.povRight().whileTrue(intake.shoot(() -> -controller2.getRightY()));
+
+    controller2
+        .povDown()
+        .and(controller2.a())
+        .onTrue(shooter.runAtRPM(5000));
+
+    controller2.povDown().and(controller2.b()).onTrue(shooter.runAtRPM(0));
 
     controller1
         .a()
         .whileTrue(
             shootInSpeaker(shooter, drive, intake)
-                .andThen(intakeFromGround(FieldConstants.BottomInnerNote, intake, drive))
-                .andThen(shootInSpeaker(shooter, drive, intake))
                 .andThen(intakeFromGround(FieldConstants.MiddleInnerNote, intake, drive))
+                .andThen(shootInSpeaker(shooter, drive, intake))
+                .andThen(intakeFromGround(FieldConstants.BottomInnerNote, intake, drive))
                 .andThen(shootInSpeaker(shooter, drive, intake))
                 .andThen(intakeFromGround(FieldConstants.TopInnerNote, intake, drive))
                 .andThen(shootInSpeaker(shooter, drive, intake)));

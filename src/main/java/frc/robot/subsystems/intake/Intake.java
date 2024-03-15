@@ -20,6 +20,7 @@ import frc.robot.constants.DriveConstants;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.TunableConstants;
 import frc.robot.util.RunMode;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -231,7 +232,12 @@ public class Intake extends SubsystemBase {
    * @param speed positive is outwards
    */
   public Command shoot(double speed) {
-    return new RunCommand(() -> setIntakeSpeed(speed), this).finallyDo(() -> setIntakeSpeed(0));
+    return shoot(() -> speed);
+  }
+
+  public Command shoot(Supplier<Double> speedSupplier) {
+    return new RunCommand(() -> setIntakeSpeed(speedSupplier.get()), this)
+        .finallyDo(() -> setIntakeSpeed(0));
   }
 
   /**

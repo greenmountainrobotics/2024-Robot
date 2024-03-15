@@ -213,8 +213,19 @@ public class Shooter extends SubsystemBase {
         .until(() -> flywheelIsAtSetpoint() && articulationIsAtSetpoint());
   }
 
+  /** positive is outwards */
   public Command runAtRPM(double RPM) {
-    return new RunCommand(() -> setFlywheelSetpointRPM(-RPM, RPM), this)
+    return runAtRPM(() -> RPM);
+  }
+
+  /** positive is outwards */
+  public Command runAtRPM(Supplier<Double> RPMSupplier) {
+    return new RunCommand(
+            () -> {
+              var RPM = RPMSupplier.get();
+              setFlywheelSetpointRPM(-RPM, RPM);
+            },
+            this)
         .until(this::flywheelIsAtSetpoint);
   }
 }
