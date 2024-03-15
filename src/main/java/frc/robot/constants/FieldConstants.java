@@ -53,4 +53,14 @@ public final class FieldConstants {
   public static final Rotation2d SpeakerRotation = new Rotation2d();
 
   public static final double SpeakerShootingDistance = 2;
+
+  public static final double InnerNoteDistanceFromCloseSide = inchesToMeters(114);
+  public static final double DistanceBetweenInnerNotes = inchesToMeters(57);
+
+  public static final Translation2d BottomInnerNote =
+      new Translation2d(InnerNoteDistanceFromCloseSide, FieldHeight / 2);
+  public static final Translation2d MiddleInnerNote =
+      BottomInnerNote.plus(new Translation2d(0, DistanceBetweenInnerNotes));
+  public static final Translation2d TopInnerNote =
+      MiddleInnerNote.plus(new Translation2d(0, DistanceBetweenInnerNotes));
 }
