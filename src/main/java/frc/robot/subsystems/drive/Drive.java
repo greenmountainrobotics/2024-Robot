@@ -466,14 +466,19 @@ public class Drive extends SubsystemBase {
   public Command alignToNote(Translation2d noteTranslation) {
     return new DeferredCommand(
         () -> {
-          var targetTranslation = Alliance.isRed() ?
-              noteTranslation.plus(
-                  new Translation2d(
-                          DriveConstants.WidthWithBumpersX / 2 + FieldConstants.NoteDiameter / 2, 0)
-                      .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()))
+          var targetTranslation =
+              Alliance.isRed()
+                  ? noteTranslation.plus(
+                      new Translation2d(
+                              DriveConstants.WidthWithBumpersX / 2
+                                  + FieldConstants.NoteDiameter / 2,
+                              0)
+                          .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()))
                   : noteTranslation.minus(
-                  new Translation2d(
-                          DriveConstants.WidthWithBumpersX / 2 + FieldConstants.NoteDiameter / 2, 0)
+                      new Translation2d(
+                              DriveConstants.WidthWithBumpersX / 2
+                                  + FieldConstants.NoteDiameter / 2,
+                              0)
                           .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()));
 
           var targetPose =
