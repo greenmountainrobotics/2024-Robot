@@ -39,6 +39,6 @@ public class Commands {
                             < DriveConstants.WidthWithBumpersX * 2)
                 .andThen(intake.setShooter(-0.5))
                 .andThen(intake.extend()))
-            .alongWith(new WaitCommand(0.5));
+        .alongWith(new WaitCommand(1));
   }
 }
