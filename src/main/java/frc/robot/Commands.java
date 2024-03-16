@@ -11,7 +11,7 @@ import frc.robot.util.FieldPoseUtils;
 public class Commands {
   public static Command shootInSpeaker(Shooter shooter, Drive drive, Intake intake, boolean align) {
     return shooter
-        .runAtRPM(5000)
+        .runAtRPM(5500)
         .alongWith(
             new ConditionalCommand(
                 drive.alignToSpeaker(), new InstantCommand(() -> {}), () -> align))

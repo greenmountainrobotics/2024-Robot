@@ -54,7 +54,7 @@ public class DriverControl {
     // manually control intake / shooter
     controller2.povRight().whileTrue(intake.shoot(() -> -controller2.getRightY()));
 
-    controller2.povDown().and(controller2.a()).onTrue(shooter.runAtRPM(5000));
+    controller2.povDown().and(controller2.a()).onTrue(shooter.runAtRPM(5500));
 
     controller2.povDown().and(controller2.b()).onTrue(shooter.runAtRPM(0));
 
