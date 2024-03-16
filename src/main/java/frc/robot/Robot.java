@@ -15,6 +15,7 @@ package frc.robot;
 
 import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -73,6 +74,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     initLogging();
+
+    CameraServer.startAutomaticCapture();
 
     switch (RunMode.getMode()) {
       case REAL:
