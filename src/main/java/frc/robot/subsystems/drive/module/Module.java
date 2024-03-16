@@ -88,14 +88,6 @@ public class Module {
             },
         inputs);
 
-    // On first cycle, reset relative turn encoder
-    // Wait until absolute angle is nonzero in case it wasn't initialized yet
-    if ((turnRelativeOffset == null || Timer.getFPGATimestamp() - lastTurnOffsetTime > 0.1)
-        && inputs.turnAbsolutePosition.getRadians() != 0.0) {
-      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
-      lastTurnOffsetTime = Timer.getFPGATimestamp();
-    }
-
     // Run closed loop turn control
     if (angleSetpoint != null) {
       io.setTurnVoltage(
@@ -128,6 +120,14 @@ public class Module {
           inputs.odometryTurnPositions[i].plus(
               turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+    }
+
+    // On first cycle, reset relative turn encoder
+    // Wait until absolute angle is nonzero in case it wasn't initialized yet
+    if ((turnRelativeOffset == null || Timer.getFPGATimestamp() - lastTurnOffsetTime > 0.1)
+            && inputs.turnAbsolutePosition.getRadians() != 0.0) {
+      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
+      lastTurnOffsetTime = Timer.getFPGATimestamp();
     }
   }
 
