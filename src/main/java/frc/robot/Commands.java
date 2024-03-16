@@ -1,10 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
@@ -41,6 +38,7 @@ public class Commands {
                         drive.distanceFromPoint(finalNotePosition)
                             < DriveConstants.WidthWithBumpersX * 2)
                 .andThen(intake.setShooter(-0.5))
-                .andThen(intake.extend()));
+                .andThen(intake.extend()))
+            .alongWith(new WaitCommand(0.5));
   }
 }
