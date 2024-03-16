@@ -11,13 +11,13 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.FieldPoseUtils;
 
-import java.util.concurrent.locks.Condition;
-
 public class Commands {
   public static Command shootInSpeaker(Shooter shooter, Drive drive, Intake intake, boolean align) {
     return shooter
         .runAtRPM(5000)
-        .alongWith(new ConditionalCommand(drive.alignToSpeaker(), new InstantCommand(() -> {}), () -> align))
+        .alongWith(
+            new ConditionalCommand(
+                drive.alignToSpeaker(), new InstantCommand(() -> {}), () -> align))
         .alongWith(intake.setShooter(0).andThen(intake.retract()))
         .andThen(intake.shoot(1).withTimeout(0.5))
         .andThen(shooter.runAtRPM(0));

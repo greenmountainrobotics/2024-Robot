@@ -28,7 +28,7 @@ public class DriverControl {
     // shoot
     controller2
         .rightTrigger()
-        .whileTrue(shootInSpeaker(shooter, drive, intake, false))
+        .whileTrue(shootInSpeaker(shooter, drive, intake)) // TODO: fix
         .onFalse(stopShooting(shooter, intake));
 
     // apriltags on and off
