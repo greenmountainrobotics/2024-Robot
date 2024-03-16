@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.constants.DriveConstants.TrackWidthX;
 import static frc.robot.constants.DriveConstants.TrackWidthY;
@@ -427,17 +428,29 @@ public class Drive extends SubsystemBase {
   public Command alignToSpeaker() {
     return runToPose(
         () -> {
+          var angle =
+              angleModulus(
+                  getPose()
+                      .getTranslation()
+                      .minus(
+                          FieldPoseUtils.flipTranslationIfRed(
+                              FieldConstants.SpeakerCloseSideCenter))
+                      .getAngle()
+                      .getRadians());
+
           var targetTranslation =
               FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
                   .plus(
                       new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
                           .rotateBy(
-                              getPose()
-                                  .getTranslation()
-                                  .minus(
-                                      FieldPoseUtils.flipTranslationIfRed(
-                                          FieldConstants.SpeakerCloseSideCenter))
-                                  .getAngle()));
+                              Rotation2d.fromRadians(
+                                  Alliance.isRed()
+                                      ? angle > Math.PI * 3 / 4
+                                          ? angle
+                                          : angle < Math.PI * -3 / 4
+                                              ? angle
+                                              : angle < 0 ? Math.PI * -3 / 4 : Math.PI * 3 / 4
+                                      : Math.min(Math.max(angle, -Math.PI / 4), Math.PI / 4))));
           return new Pose2d(
               // getPose().getX(),
               // getPose().getY(),

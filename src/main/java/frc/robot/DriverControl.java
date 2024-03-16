@@ -58,8 +58,11 @@ public class DriverControl {
 
     controller2.povDown().and(controller2.b()).onTrue(shooter.runAtRPM(0));
 
-    controller2.povDown().and(controller2.x()).whileTrue(shootInSpeaker(shooter, drive, intake, false))
-            .onFalse(stopShooting(shooter, intake));
+    controller2
+        .povDown()
+        .and(controller2.x())
+        .whileTrue(shootInSpeaker(shooter, drive, intake, false))
+        .onFalse(stopShooting(shooter, intake));
 
     drive.setDefaultCommand(
         new RunCommand(
