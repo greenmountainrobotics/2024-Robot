@@ -426,7 +426,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToSpeaker() {
-    return runToPose(
+    return new DeferredCommand(
         () -> {
           var angle =
               angleModulus(
@@ -451,16 +451,21 @@ public class Drive extends SubsystemBase {
                                               ? angle
                                               : angle < 0 ? Math.PI * -3 / 4 : Math.PI * 3 / 4
                                       : Math.min(Math.max(angle, -Math.PI / 4), Math.PI / 4))));
-          return new Pose2d(
-              // getPose().getX(),
-              // getPose().getY(),
-              targetTranslation.getX(), // TODO: revert!!!
-              targetTranslation.getY(),
-              FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                  .minus(getPose().getTranslation())
-                  .getAngle()
-                  .minus(Rotation2d.fromRadians(Math.PI)));
-        });
+
+          return runToPose(
+              () -> {
+                return new Pose2d(
+                    // getPose().getX(),
+                    // getPose().getY(),
+                    targetTranslation.getX(), // TODO: revert!!!
+                    targetTranslation.getY(),
+                    FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                        .minus(getPose().getTranslation())
+                        .getAngle()
+                        .minus(Rotation2d.fromRadians(Math.PI)));
+              });
+        },
+        Set.of(this));
   }
 
   public Command alignToNote(Translation2d noteTranslation) {
