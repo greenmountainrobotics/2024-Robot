@@ -439,10 +439,12 @@ public class Drive extends SubsystemBase {
                                           FieldConstants.SpeakerCloseSideCenter))
                                   .getAngle()));
           return new Pose2d(
-              targetTranslation.getX(),
-              targetTranslation.getY(),
+                  getPose().getX(),
+              getPose().getY(),
+              //targetTranslation.getX(),
+              //targetTranslation.getY(),
               FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                  .minus(targetTranslation)
+                  .minus(getPose().getTranslation())
                   .getAngle()
                   .minus(Rotation2d.fromRadians(Math.PI)));
         });
