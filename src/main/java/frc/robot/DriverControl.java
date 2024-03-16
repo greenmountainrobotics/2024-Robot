@@ -60,7 +60,8 @@ public class DriverControl {
 
     controller2.povDown().and(controller2.b()).onTrue(shooter.runAtRPM(0));
 
-    controller2.b()
+    controller2
+        .b()
         .whileTrue(shootInSpeaker(shooter, drive, intake, false))
         .onFalse(stopShooting(shooter, intake));
 
