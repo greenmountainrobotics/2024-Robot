@@ -31,6 +31,8 @@ public class DriverControl {
         .whileTrue(shootInSpeaker(shooter, drive, intake)) // TODO: fix
         .onFalse(stopShooting(shooter, intake));
 
+    controller2.a().whileTrue(intake.shoot(-1));
+
     // apriltags on and off
     controller2
         .povLeft()
