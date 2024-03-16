@@ -190,7 +190,7 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putData("Field", smartDashboardField);
 
     Logger.recordOutput(
-        "Drive/DistanceFromShooter",
+        "Odometry/DistanceFromShooter",
         distanceFromPoint(
             FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)));
   }
