@@ -66,25 +66,24 @@ public class Auto {
 
     if (shootMiddle.get())
       currentCommand =
-              currentCommand
-                      .andThen(intakeFromGround(FieldConstants.MiddleInnerNote, intake, drive))
-                      .andThen(shootInSpeaker(shooter, drive, intake));
+          currentCommand
+              .andThen(intakeFromGround(FieldConstants.MiddleInnerNote, intake, drive))
+              .andThen(shootInSpeaker(shooter, drive, intake));
 
     if (shootBottom.get())
       currentCommand =
-              currentCommand
-                      .andThen(intakeFromGround(FieldConstants.BottomInnerNote, intake, drive))
-                      .andThen(shootInSpeaker(shooter, drive, intake));
+          currentCommand
+              .andThen(intakeFromGround(FieldConstants.BottomInnerNote, intake, drive))
+              .andThen(shootInSpeaker(shooter, drive, intake));
 
     if (shootTop.get())
       currentCommand =
-              currentCommand
-                      .andThen(intakeFromGround(FieldConstants.TopInnerNote, intake, drive))
-                      .andThen(shootInSpeaker(shooter, drive, intake));
+          currentCommand
+              .andThen(intakeFromGround(FieldConstants.TopInnerNote, intake, drive))
+              .andThen(shootInSpeaker(shooter, drive, intake));
 
     if (preloadedNoteShoot.get().equals("End"))
       currentCommand = currentCommand.andThen(shootInSpeaker(shooter, drive, intake));
-
   }
 
   public void cancel() {
