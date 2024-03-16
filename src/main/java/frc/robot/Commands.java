@@ -40,7 +40,7 @@ public class Commands {
                     () ->
                         drive.distanceFromPoint(finalNotePosition)
                             < DriveConstants.WidthWithBumpersX * 2)
-                .andThen(intake.setShooter(-1))
+                .andThen(intake.setShooter(-0.5))
                 .andThen(intake.extend()));
   }
 }
