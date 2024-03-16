@@ -445,12 +445,12 @@ public class Drive extends SubsystemBase {
                           .rotateBy(
                               Rotation2d.fromRadians(
                                   Alliance.isRed()
-                                      ? angle > Math.PI * 2 / 3
+                                      ? angle > Math.PI * 4 / 5
                                           ? angle
-                                          : angle < Math.PI * -2 / 3
+                                          : angle < Math.PI * -4 / 5
                                               ? angle
-                                              : angle < 0 ? Math.PI * -2 / 3 : Math.PI * 2 / 3
-                                      : Math.min(Math.max(angle, -Math.PI / 3), Math.PI / 3))));
+                                              : angle < 0 ? Math.PI * -4 / 5 : Math.PI * 4 / 5
+                                      : Math.min(Math.max(angle, -Math.PI / 5), Math.PI / 5))));
 
           return runToPose(
               () -> {
