@@ -12,8 +12,8 @@ import frc.robot.util.FieldPoseUtils;
 public class Commands {
   public static Command shootInSpeaker(Shooter shooter, Drive drive, Intake intake) {
     return shooter
-        .runAtRPM(5000)
-            .alongWith(drive.alignToSpeaker())
+        .runAtRPM(5500)
+        .alongWith(drive.alignToSpeaker())
         .alongWith(intake.setShooter(0).andThen(intake.retract()))
         .andThen(intake.shoot(1).withTimeout(0.5))
         .andThen(shooter.runAtRPM(0));
