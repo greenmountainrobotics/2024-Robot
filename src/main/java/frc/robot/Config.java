@@ -18,4 +18,6 @@ public final class Config {
 
   /** simulate cameras in simulation */
   public static final boolean SIMULATE_CAMERAS = true;
+
+  public static final boolean SINGLE_CONTROLLER = false;
 }

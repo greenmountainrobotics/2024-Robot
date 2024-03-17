@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static frc.robot.Commands.*;
+import static frc.robot.Config.SINGLE_CONTROLLER;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.*;
@@ -64,6 +65,8 @@ public class DriverControl {
         .b()
         .whileTrue(shootInSpeaker(shooter, drive, intake, false))
         .onFalse(stopShooting(shooter, intake));
+
+    var driveController = SINGLE_CONTROLLER ? controller1 : controller2;
 
     drive.setDefaultCommand(
         new RunCommand(
