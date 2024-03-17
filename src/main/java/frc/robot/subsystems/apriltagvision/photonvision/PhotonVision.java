@@ -18,7 +18,6 @@ public class PhotonVision implements AprilTagProvider {
   private BiConsumer<Pose2d, Double> poseConsumer = (x, y) -> {};
   private Supplier<Pose2d> referencePoseSupplier = () -> new Pose2d();
   private final AprilTagFieldLayout aprilTagFieldLayout;
-  private final Transform3d robotToCam;
 
   private Pose3d estimatedPose = new Pose3d();
 
