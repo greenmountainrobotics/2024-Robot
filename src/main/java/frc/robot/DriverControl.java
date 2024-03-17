@@ -73,11 +73,11 @@ public class DriverControl {
             () -> {
               var DEADBAND = 0.25;
 
-              var x = -controller1.getLeftY();
-              var y = -controller1.getLeftX();
+              var x = - driveController.getLeftY();
+              var y = -driveController.getLeftX();
               var omega = 0.0;
 
-              omega = -controller1.getRightX();
+              omega = -driveController.getRightX();
               omega = MathUtil.applyDeadband(omega, DEADBAND);
               omega = Math.copySign(omega * omega, omega);
               omega = omega * drive.getMaxAngularSpeedRadPerSec();
