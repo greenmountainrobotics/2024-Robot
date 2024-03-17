@@ -73,7 +73,7 @@ public class DriverControl {
             () -> {
               var DEADBAND = 0.25;
 
-              var x = - driveController.getLeftY();
+              var x = -driveController.getLeftY();
               var y = -driveController.getLeftX();
               var omega = 0.0;
 
