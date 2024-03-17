@@ -1,7 +1,6 @@
 package frc.robot.subsystems.apriltagvision.photonvision;
 
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.constants.Camera;
 import org.littletonrobotics.junction.AutoLog;
 import org.photonvision.targeting.PhotonPipelineResult;
 

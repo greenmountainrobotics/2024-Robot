@@ -69,7 +69,9 @@ public class PhotonVision implements AprilTagProvider {
 
       targetPoses =
           update.get().targetsUsed.stream()
-              .map(target -> referencePose3d.plus(inputs.robotToCam).plus(target.getBestCameraToTarget()))
+              .map(
+                  target ->
+                      referencePose3d.plus(inputs.robotToCam).plus(target.getBestCameraToTarget()))
               .toArray(Pose3d[]::new);
     } else {
       targetPoses = new Pose3d[] {};
