@@ -22,7 +22,6 @@ public class Auto {
   private final LoggedDashboardBoolean knockOut;
   private final LoggedDashboardBoolean taxi;
 
-
   private final LoggedDashboardChooser<String> preloadedNoteShoot;
 
   private Command currentCommand;
@@ -67,8 +66,7 @@ public class Auto {
     if (knockOut.get())
       currentCommand = currentCommand.andThen(drive.followPath(Trajectory.KnockOutMiddle));
 
-    if (taxi.get())
-      currentCommand = currentCommand.andThen(drive.followPath(Trajectory.Taxi));
+    if (taxi.get()) currentCommand = currentCommand.andThen(drive.followPath(Trajectory.Taxi));
 
     if (shootMiddle.get())
       currentCommand =
