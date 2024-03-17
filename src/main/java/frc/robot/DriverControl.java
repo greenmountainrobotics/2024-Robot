@@ -66,7 +66,9 @@ public class DriverControl {
         .whileTrue(shootInSpeaker(shooter, drive, intake, false))
         .onFalse(stopShooting(shooter, intake));
 
-    var driveController = SINGLE_CONTROLLER ? controller1 : controller2;
+    var driveController = SINGLE_CONTROLLER ? controller2 : controller1;
+
+    driveController.x().onTrue(new InstantCommand(drive::stopWithX, drive));
 
     drive.setDefaultCommand(
         new RunCommand(
