@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.Alliance;
 
 public class DriverControl {
@@ -20,6 +21,15 @@ public class DriverControl {
     var intake = robot.intake;
     var shooter = robot.shooter;
 
+    controller2.a().whileTrue(shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kReverse));
+      controller2.b().whileTrue(shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kForward));
+
+      controller2.x().whileTrue(shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+
+      controller2.y().whileTrue(shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+
+
+/*
     // intake
     controller2
         .leftTrigger()
@@ -65,6 +75,7 @@ public class DriverControl {
         .b()
         .whileTrue(shootInSpeaker(shooter, drive, intake, false))
         .onFalse(stopShooting(shooter, intake));
+*/
 
     var driveController = SINGLE_CONTROLLER ? controller2 : controller1;
 
