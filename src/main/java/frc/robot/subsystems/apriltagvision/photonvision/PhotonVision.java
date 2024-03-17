@@ -35,11 +35,9 @@ public class PhotonVision implements AprilTagProvider {
     io.updateCamera(inputs);
     processInputs();
 
-    robotToCam = inputs.camera.robotToCam;
-
     aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     photonPoseEstimator =
-        new PhotonPoseEstimator(aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
+        new PhotonPoseEstimator(aprilTagFieldLayout, MULTI_TAG_PNP_ON_COPROCESSOR, inputs.robotToCam);
     photonPoseEstimator.setMultiTagFallbackStrategy(CLOSEST_TO_REFERENCE_POSE);
   }
 
@@ -60,7 +58,7 @@ public class PhotonVision implements AprilTagProvider {
     Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose3d", estimatedPose);
     Logger.recordOutput(
         "PhotonVision/" + inputs.camera + "/CameraPose",
-        referencePose3d.plus(inputs.camera.robotToCam));
+        referencePose3d.plus(inputs.robotToCam));
 
     photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 

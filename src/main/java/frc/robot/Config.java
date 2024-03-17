@@ -14,10 +14,10 @@
 package frc.robot;
 
 public final class Config {
-  public static final boolean REPLAY = false;
+  public static final boolean REPLAY = true;
 
   /** simulate cameras in simulation */
-  public static final boolean SIMULATE_CAMERAS = true;
+  public static final boolean SIMULATE_CAMERAS = false;
 
   public static final boolean SINGLE_CONTROLLER = false;
 }

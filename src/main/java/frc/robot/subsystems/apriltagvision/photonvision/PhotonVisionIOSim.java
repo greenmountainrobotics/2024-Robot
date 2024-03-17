@@ -43,10 +43,12 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
     visionSim.update(poseSupplier.get());
     inputs.isConnected = photonCamera.isConnected();
     inputs.latestResult = photonCamera.getLatestResult();
+    inputs.robotToCam = camera.robotToCam;
   }
 
   @Override
   public void updateCamera(PhotonVisionIOInputs inputs) {
     inputs.camera = camera;
+    inputs.robotToCam = camera.robotToCam;
   }
 }

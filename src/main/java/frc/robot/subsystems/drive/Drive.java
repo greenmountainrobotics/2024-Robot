@@ -493,19 +493,7 @@ public class Drive extends SubsystemBase {
                   noteTranslation.minus(targetTranslation).getAngle());
 
           return runToPose(
-                  () -> new Pose2d(getPose().getX(), getPose().getY(), targetPose.getRotation()),
-                  false)
-              .until(
-                  () ->
-                      Math.abs(targetPose.getRotation().minus(getPose().getRotation()).getRadians())
-                          < Math.PI / 6)
-              .andThen(
-                  runToPose(
-                      () ->
-                          new Pose2d(
-                              targetTranslation.getX(),
-                              targetTranslation.getY(),
-                              noteTranslation.minus(targetTranslation).getAngle())));
+              () ->targetPose);
         },
         Set.of(this));
   }
