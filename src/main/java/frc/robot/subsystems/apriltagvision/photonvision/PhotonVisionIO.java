@@ -10,7 +10,7 @@ public interface PhotonVisionIO {
   class PhotonVisionIOInputs {
     public boolean isConnected;
     public PhotonPipelineResult latestResult = new PhotonPipelineResult();
-    public Camera camera;
+    public String camera;
 
     public Transform3d robotToCam;
   }

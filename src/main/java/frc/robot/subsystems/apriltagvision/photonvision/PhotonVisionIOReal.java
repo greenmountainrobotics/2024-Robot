@@ -16,13 +16,13 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
   public void updateInputs(PhotonVisionIOInputs inputs) {
     inputs.isConnected = photonCamera.isConnected();
     inputs.latestResult = photonCamera.getLatestResult();
-    inputs.camera = camera;
+    inputs.camera = camera.name;
     inputs.robotToCam = camera.robotToCam;
   }
 
   @Override
   public void updateCamera(PhotonVisionIOInputs inputs) {
-    inputs.camera = camera;
+    inputs.camera = camera.name;
     inputs.robotToCam = camera.robotToCam;
   }
 }
