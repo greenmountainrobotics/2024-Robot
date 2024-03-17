@@ -492,8 +492,7 @@ public class Drive extends SubsystemBase {
                   targetTranslation.getY(),
                   noteTranslation.minus(targetTranslation).getAngle());
 
-          return runToPose(
-              () ->targetPose);
+          return runToPose(() -> targetPose);
         },
         Set.of(this));
   }
