@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.constants.DriveConstants;
+import frc.robot.constants.ShooterConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -11,7 +12,7 @@ import frc.robot.util.FieldPoseUtils;
 public class Commands {
   public static Command shootInSpeaker(Shooter shooter, Drive drive, Intake intake, boolean align) {
     return shooter
-        .runAtRPM(5000)
+        .runAtRPM(ShooterConstants.ShootingVelocityRPM)
         .alongWith(
             new ConditionalCommand(
                 drive.alignToSpeaker(), new InstantCommand(() -> {}), () -> align))
