@@ -429,44 +429,44 @@ public class Drive extends SubsystemBase {
     return new DeferredCommand(
         () -> {
           var angle =
-              angleModulus(
-                  getPose()
-                      .getTranslation()
-                      .minus(
-                          FieldPoseUtils.flipTranslationIfRed(
-                              FieldConstants.SpeakerCloseSideCenter))
-                      .getAngle()
-                      .getRadians());
+                  angleModulus(
+                          getPose()
+                                  .getTranslation()
+                                  .minus(
+                                          FieldPoseUtils.flipTranslationIfRed(
+                                                  FieldConstants.SpeakerCloseSideCenter))
+                                  .getAngle()
+                                  .getRadians());
 
           var targetTranslation =
-              FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                  .plus(
-                      new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
-                          .rotateBy(
-                              Rotation2d.fromRadians(
-                                  Alliance.isRed()
-                                      ? angle > Math.PI * 5 / 6
-                                          ? angle
-                                          : angle < Math.PI * -5 / 6
-                                              ? angle
-                                              : angle < 0 ? Math.PI * -5 / 6 : Math.PI * 5 / 6
-                                      : Math.min(Math.max(angle, -Math.PI / 6), Math.PI / 6))));
+                  FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                          .plus(
+                                  new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
+                                          .rotateBy(
+                                                  Rotation2d.fromRadians(
+                                                          Alliance.isRed()
+                                                                  ? angle > Math.PI * 5 / 6
+                                                                  ? angle
+                                                                  : angle < Math.PI * -5 / 6
+                                                                  ? angle
+                                                                  : angle < 0 ? Math.PI * -5 / 6 : Math.PI * 5 / 6
+                                                                  : Math.min(Math.max(angle, -Math.PI / 6), Math.PI / 6))));
+
+          var targetPose = new Pose2d(
+                  // getPose().getX(),
+                  // getPose().getY(),
+                  targetTranslation.getX(), // TODO: revert!!!
+                  targetTranslation.getY(),
+                  FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                          .minus(getPose().getTranslation())
+                          .getAngle()
+                          .minus(Rotation2d.fromRadians(Math.PI)));
 
           return runToPose(
-              () -> {
-                return new Pose2d(
-                    // getPose().getX(),
-                    // getPose().getY(),
-                    targetTranslation.getX(), // TODO: revert!!!
-                    targetTranslation.getY(),
-                    FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                        .minus(getPose().getTranslation())
-                        .getAngle()
-                        .minus(Rotation2d.fromRadians(Math.PI)));
-              });
+                  () -> targetPose);
         },
         Set.of(this));
-  }
+  };
 
   public Command alignToNote(Translation2d noteTranslation) {
     return new DeferredCommand(
