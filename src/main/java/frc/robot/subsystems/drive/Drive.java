@@ -467,34 +467,44 @@ public class Drive extends SubsystemBase {
         },
         Set.of(this));
   }
-  ;
 
   public Command alignToNote(Translation2d noteTranslation) {
     return new DeferredCommand(
-        () -> {
-          var targetTranslation =
-              Alliance.isRed()
-                  ? noteTranslation.plus(
-                      new Translation2d(
-                              DriveConstants.WidthWithBumpersX / 2
-                                  + FieldConstants.NoteDiameter / 2,
-                              0)
-                          .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()))
-                  : noteTranslation.minus(
-                      new Translation2d(
-                              DriveConstants.WidthWithBumpersX / 2
-                                  + FieldConstants.NoteDiameter / 2,
-                              0)
-                          .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()));
+            () -> {
+              var targetTranslation =
+                      Alliance.isRed()
+                              ? noteTranslation.plus(
+                              new Translation2d(
+                                      DriveConstants.WidthWithBumpersX / 2
+                                              + FieldConstants.NoteDiameter / 2,
+                                      0)
+                                      .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()))
+                              : noteTranslation.minus(
+                              new Translation2d(
+                                      DriveConstants.WidthWithBumpersX / 2
+                                              + FieldConstants.NoteDiameter / 2,
+                                      0)
+                                      .rotateBy(getPose().getTranslation().minus(noteTranslation).getAngle()));
 
-          var targetPose =
-              new Pose2d(
-                  targetTranslation.getX(),
-                  targetTranslation.getY(),
-                  noteTranslation.minus(targetTranslation).getAngle());
+              var targetPose =
+                      new Pose2d(
+                              targetTranslation.getX(),
+                              targetTranslation.getY(),
+                              noteTranslation.minus(targetTranslation).getAngle());
 
-          return runToPose(() -> targetPose);
-        },
-        Set.of(this));
+              var startingPose = getPose();
+
+              return runToPose(
+                      () -> new Pose2d(startingPose.getX(), startingPose.getY(), targetPose.getRotation()),
+                      false)
+                      .until(
+                              () ->
+                                      Math.abs(targetPose.getRotation().minus(getPose().getRotation()).getRadians())
+                                              < Math.PI / 6)
+                      .andThen(
+                              runToPose(
+                                      () -> targetPose));
+            },
+            Set.of(this));
   }
 }
