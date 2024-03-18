@@ -47,10 +47,6 @@ public class Auto {
   }
 
   public void schedule() {
-    currentCommand.schedule();
-  }
-
-  public void periodic() {
     var drive = robot.drive;
     var shooter = robot.shooter;
     var intake = robot.intake;
@@ -88,6 +84,8 @@ public class Auto {
 
     if (preloadedNoteShoot.get().equals("End"))
       currentCommand = currentCommand.andThen(shootInSpeaker(shooter, drive, intake));
+
+    currentCommand.schedule();
   }
 
   public void cancel() {
