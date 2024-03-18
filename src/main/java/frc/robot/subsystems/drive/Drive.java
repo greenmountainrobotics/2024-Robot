@@ -400,7 +400,7 @@ public class Drive extends SubsystemBase {
     ChoreoTrajectory trajectory = Choreo.getTrajectory(trajectoryFile.fileName);
 
     return new SequentialCommandGroup(
-        runToPose(() -> FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose())),
+        runToPose(() -> FieldPoseUtils.flipPoseIfRed(trajectory.getInitialPose()), false),
         new InstantCommand(
             () -> {
               Logger.recordOutput(
