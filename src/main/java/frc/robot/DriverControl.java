@@ -6,6 +6,7 @@ import static frc.robot.Config.SINGLE_CONTROLLER;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -17,6 +18,7 @@ public class DriverControl {
   private final CommandXboxController controller2 = new CommandXboxController(1);
 
   public DriverControl(Robot robot) {
+    var driveController = SINGLE_CONTROLLER ? controller2 : controller1;
     var drive = robot.drive;
     var intake = robot.intake;
     var shooter = robot.shooter;
@@ -30,8 +32,22 @@ public class DriverControl {
     // shoot
     controller2
         .rightTrigger()
-        .whileTrue(shootInSpeaker(shooter, drive, intake)) // TODO: fix
-        .onFalse(stopShooting(shooter, intake));
+        .whileTrue(
+            shootInSpeaker(shooter, drive, intake)
+                .alongWith(
+                    new InstantCommand(
+                        () ->
+                            driveController
+                                .getHID()
+                                .setRumble(GenericHID.RumbleType.kBothRumble, 1))))
+        .onFalse(
+            stopShooting(shooter, intake)
+                .alongWith(
+                    new InstantCommand(
+                        () ->
+                            driveController
+                                .getHID()
+                                .setRumble(GenericHID.RumbleType.kBothRumble, 0))));
 
     controller2.a().whileTrue(intake.shoot(-1));
 
@@ -69,8 +85,6 @@ public class DriverControl {
         .b()
         .whileTrue(shootInSpeaker(shooter, drive, intake, false))
         .onFalse(stopShooting(shooter, intake));
-
-    var driveController = SINGLE_CONTROLLER ? controller2 : controller1;
 
     driveController.x().onTrue(new InstantCommand(drive::stopWithX, drive));
 
