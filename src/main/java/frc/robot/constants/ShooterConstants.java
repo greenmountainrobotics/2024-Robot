@@ -12,6 +12,7 @@ public class ShooterConstants {
   public static final double ArticulationToleranceRad = 0.02;
 
   public static final double ShootingVelocityRPM = 5500;
+  public static final double ShooterGearRatio = 1.0 / 1.25;
 
   // measured from bottom edge of shooter facing forwards
   public static final Rotation2d AbsoluteEncoderOffset =

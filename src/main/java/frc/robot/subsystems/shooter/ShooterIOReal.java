@@ -38,8 +38,10 @@ public class ShooterIOReal implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.bottomPositionRad = Units.rotationsToRadians(bottomEncoder.getPosition());
-    inputs.topPositionRad = Units.rotationsToRadians(topEncoder.getPosition());
+    inputs.bottomPositionRad =
+        Units.rotationsToRadians(bottomEncoder.getPosition()) / ShooterConstants.ShooterGearRatio;
+    inputs.topPositionRad =
+        Units.rotationsToRadians(topEncoder.getPosition()) / ShooterConstants.ShooterGearRatio;
     inputs.articulationPosition =
         Rotation2d.fromRadians(
             angleModulus(
@@ -49,9 +51,11 @@ public class ShooterIOReal implements ShooterIO {
                     .getRadians()));
 
     inputs.bottomVelocityRadPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(bottomEncoder.getVelocity());
+        Units.rotationsPerMinuteToRadiansPerSecond(bottomEncoder.getVelocity())
+            / ShooterConstants.ShooterGearRatio;
     inputs.topVelocityRadPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(topEncoder.getVelocity());
+        Units.rotationsPerMinuteToRadiansPerSecond(topEncoder.getVelocity())
+            / ShooterConstants.ShooterGearRatio;
 
     inputs.bottomAppliedVolts =
         bottomSpinMotor.getAppliedOutput() * bottomSpinMotor.getBusVoltage();
