@@ -52,7 +52,7 @@ public final class FieldConstants {
 
   public static final Rotation2d SpeakerRotation = new Rotation2d();
 
-  public static final double SpeakerShootingDistance = 2.20;
+  public static final double SpeakerShootingDistance = 2.10;
 
   public static final double InnerNoteDistanceFromCloseSide = inchesToMeters(114);
   public static final double DistanceBetweenInnerNotes = inchesToMeters(57);
