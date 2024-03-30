@@ -24,11 +24,6 @@ public class DriverControl {
     var intake = robot.intake;
     var shooter = robot.shooter;
 
-    controller1.a().whileTrue(shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kReverse));
-    controller1.b().whileTrue(shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kForward));
-    controller1.x().whileTrue(shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    controller1.y().whileTrue(shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kForward));
-
     // intake
     controller2
         .leftTrigger()
@@ -89,7 +84,7 @@ public class DriverControl {
 
     controller2
         .b()
-        .whileTrue(shootInAmp(shooter, drive, intake, false))
+        .whileTrue(shootInSpeaker(shooter,drive,intake, false))
         .onFalse(stopShooting(shooter, intake));
     controller2
         .y()
