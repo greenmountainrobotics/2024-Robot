@@ -476,12 +476,10 @@ public class Drive extends SubsystemBase {
 
           var targetPose =
               new Pose2d(
-                  // getPose().getX(),
-                  // getPose().getY(),
-                  targetTranslation.getX(), // TODO: revert!!!
+                  targetTranslation.getX(),
                   targetTranslation.getY(),
                   FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                      .minus(getPose().getTranslation())
+                      .minus(targetTranslation)
                       .getAngle()
                       .minus(Rotation2d.fromRadians(Math.PI)));
 
