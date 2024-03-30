@@ -157,8 +157,8 @@ public class Robot extends LoggedRobot {
     auto = new Auto(this);
     driverControl = new DriverControl(this);
 
-    SmartDashboard.putNumber("amp speed", 150);
-    SmartDashboard.putNumber("amp ratio", 18);
+    SmartDashboard.putNumber("amp speed", 130);
+    SmartDashboard.putNumber("amp ratio", 17);
   }
 
   void initLogging() {
