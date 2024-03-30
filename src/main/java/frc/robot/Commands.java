@@ -57,8 +57,7 @@ public class Commands {
                         .withTimeout(0.5)
                         .alongWith(
                             new ConditionalCommand(
-                                drive.alignToAmp(), new InstantCommand(() -> {}), () -> align)))
-        )
+                                drive.alignToAmp(), new InstantCommand(() -> {}), () -> align))))
         .andThen(shooter.runAtRPM(0));
   }
 
