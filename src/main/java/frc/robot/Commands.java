@@ -51,10 +51,14 @@ public class Commands {
                     () ->
                         SmartDashboard.getNumber("amp speed", 900)
                             * SmartDashboard.getNumber("amp ratio", 4.5))
-                .andThen(intake.shoot(1).withTimeout(0.5))
-                .alongWith(
-                    new ConditionalCommand(
-                        drive.alignToAmp(), new InstantCommand(() -> {}), () -> align)))
+                .andThen(
+                    intake
+                        .shoot(1)
+                        .withTimeout(0.5)
+                        .alongWith(
+                            new ConditionalCommand(
+                                drive.alignToAmp(), new InstantCommand(() -> {}), () -> align)))
+        )
         .andThen(shooter.runAtRPM(0));
   }
 
