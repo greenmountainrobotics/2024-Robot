@@ -553,7 +553,7 @@ public class Drive extends SubsystemBase {
                             .rotateBy(Rotation2d.fromDegrees(90))),
                     FieldConstants.AmpRotation)),
         true,
-        TunableConstants.KpTranslation * 999,
+        TunableConstants.KpTranslation,
         TunableConstants.KpTheta);
   }
 
