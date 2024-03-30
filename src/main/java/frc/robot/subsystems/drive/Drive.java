@@ -22,6 +22,7 @@ import static frc.robot.constants.TunableConstants.KpTranslation;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
@@ -32,6 +33,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -76,7 +78,13 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+      new SwerveDrivePoseEstimator(
+          kinematics,
+          rawGyroRotation,
+          lastModulePositions,
+          new Pose2d(),
+          VecBuilder.fill(0.1, 0.1, 0.1),
+          VecBuilder.fill(0.9, 0.9, 0.9));
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
@@ -464,7 +472,7 @@ public class Drive extends SubsystemBase {
           var targetTranslation =
               FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
                   .plus(
-                      new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
+                      new Translation2d(SmartDashboard.getNumber("Shooting Distance M", FieldConstants.SpeakerShootingDistance), 0)
                           .rotateBy(
                               Rotation2d.fromRadians(
                                   Alliance.isRed()

@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static frc.robot.constants.FieldConstants.SpeakerShootingDistance;
 import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -23,8 +24,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.Camera;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVision;
-import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIO;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOReal;
+import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOReplay;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.imu.GyroIO;
@@ -133,7 +134,10 @@ public class Robot extends LoggedRobot {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
+        aprilTagVision =
+            new AprilTagVision(new PhotonVision(new PhotonVisionIOReplay(Camera.BackCamera)),
+                new PhotonVision(new PhotonVisionIOReplay(Camera.FrontRightCamera)),
+                new PhotonVision(new PhotonVisionIOReplay(Camera.FrontLeftCamera)));
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         leds = new Leds(new AddressableLED(LedsId));
@@ -160,6 +164,8 @@ public class Robot extends LoggedRobot {
 
     SmartDashboard.putNumber("amp speed", 130);
     SmartDashboard.putNumber("amp ratio", 18);
+    SmartDashboard.putNumber("Shooting Distance M", SpeakerShootingDistance);
+
   }
 
   void initLogging() {
@@ -204,7 +210,7 @@ public class Robot extends LoggedRobot {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
         Logger.setReplaySource(new WPILOGReader(logPath));
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"), 0.02));
         break;
     }
 
