@@ -553,7 +553,7 @@ public class Drive extends SubsystemBase {
                             .rotateBy(Rotation2d.fromDegrees(90))),
                     FieldConstants.AmpRotation)),
         true,
-        TunableConstants.KpTranslation * 4,
+        TunableConstants.KpTranslation * 999,
         TunableConstants.KpTheta);
   }
 
@@ -565,7 +565,7 @@ public class Drive extends SubsystemBase {
                     FieldConstants.AmpCenter.minus(
                         new Translation2d(DriveConstants.WidthWithBumpersX, 0)
                             .times(0.5)
-                            .plus(new Translation2d(DriveConstants.WidthWithBumpersX/2, 0))
+                            .plus(new Translation2d(DriveConstants.WidthWithBumpersX / 2, 0))
                             .rotateBy(Rotation2d.fromDegrees(90))),
                     FieldConstants.AmpRotation)));
   }
