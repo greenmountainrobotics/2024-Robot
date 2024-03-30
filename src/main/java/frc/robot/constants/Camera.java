@@ -16,7 +16,7 @@ public enum Camera {
       Rotation2d.fromDegrees(75),
       new Transform3d(
           new Translation3d(inchesToMeters(-2.091), inchesToMeters(-0.005), inchesToMeters(6.061)),
-          new Rotation3d(0, degreesToRadians(-25), degreesToRadians(180)))),
+          new Rotation3d(0, degreesToRadians(-30), degreesToRadians(180)))),
   FrontLeftCamera(
       "FrontLeftCam",
       1280,
