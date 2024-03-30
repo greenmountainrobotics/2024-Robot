@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.Alliance;
 
@@ -84,7 +83,7 @@ public class DriverControl {
 
     controller2
         .b()
-        .whileTrue(shootInSpeaker(shooter,drive,intake, false))
+        .whileTrue(shootInSpeaker(shooter, drive, intake, false))
         .onFalse(stopShooting(shooter, intake));
     controller2
         .y()

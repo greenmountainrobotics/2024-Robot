@@ -17,6 +17,8 @@ import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.constants.DriveConstants.TrackWidthX;
 import static frc.robot.constants.DriveConstants.TrackWidthY;
+import static frc.robot.constants.TunableConstants.KpTheta;
+import static frc.robot.constants.TunableConstants.KpTranslation;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
@@ -117,7 +119,7 @@ public class Drive extends SubsystemBase {
 
     translationController =
         new ProfiledPIDController(
-            TunableConstants.KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+            KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
     translationController.setTolerance(DriveConstants.DriveTolerance);
     thetaController =
         new ProfiledPIDController(
@@ -537,7 +539,7 @@ public class Drive extends SubsystemBase {
                         new Translation2d(DriveConstants.WidthWithBumpersX, 0)
                             .times(0.5)
                             .rotateBy(Rotation2d.fromDegrees(90))),
-                    FieldConstants.AmpRotation)));
+                    FieldConstants.AmpRotation)), true, KpTranslation * 4, KpTheta);
   }
 
   public Command alignToFrontOfAmp() {
