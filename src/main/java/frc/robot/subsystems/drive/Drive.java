@@ -118,8 +118,7 @@ public class Drive extends SubsystemBase {
                 this));
 
     translationController =
-        new ProfiledPIDController(
-            KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+        new ProfiledPIDController(KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
     translationController.setTolerance(DriveConstants.DriveTolerance);
     thetaController =
         new ProfiledPIDController(
@@ -539,7 +538,10 @@ public class Drive extends SubsystemBase {
                         new Translation2d(DriveConstants.WidthWithBumpersX, 0)
                             .times(0.5)
                             .rotateBy(Rotation2d.fromDegrees(90))),
-                    FieldConstants.AmpRotation)), true, KpTranslation * 4, KpTheta);
+                    FieldConstants.AmpRotation)),
+        true,
+        KpTranslation * 4,
+        KpTheta);
   }
 
   public Command alignToFrontOfAmp() {
