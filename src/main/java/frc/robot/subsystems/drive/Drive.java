@@ -392,6 +392,28 @@ public class Drive extends SubsystemBase {
         .finallyDo(() -> Leds.State.DrivingToPose = false);
   }
 
+  public Command runToPose(
+      Supplier<Pose2d> targetPoseSupplier, boolean stop, double translationP, double thetaP) {
+    return new DeferredCommand(
+        () -> {
+          var oldTranslationP = translationController.getP();
+          var oldThetaP = thetaController.getP();
+          return new InstantCommand(
+                  () -> {
+                    translationController.setP(translationP);
+                    thetaController.setP(thetaP);
+                  })
+              .andThen(runToPose(targetPoseSupplier, stop))
+              .andThen(
+                  new InstantCommand(
+                      () -> {
+                        translationController.setP(oldTranslationP);
+                        thetaController.setP(oldThetaP);
+                      }));
+        },
+        Set.of(this));
+  }
+
   public Command runToPose(Supplier<Pose2d> targetPoseSupplier) {
     return runToPose(targetPoseSupplier, true);
   }
@@ -506,5 +528,45 @@ public class Drive extends SubsystemBase {
               .andThen(runToPose(() -> targetPose));
         },
         Set.of(this));
+  }
+
+  public Command alignToAmp() {
+    return runToPose(
+        () ->
+            FieldPoseUtils.flipPoseIfRed(
+                new Pose2d(
+                    FieldConstants.AmpCenter.minus(
+                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
+                            .times(0.5)
+                            .rotateBy(Rotation2d.fromDegrees(90))),
+                    FieldConstants.AmpRotation)));
+  }
+
+  public Command alignToAmpFast() {
+    return runToPose(
+        () ->
+            FieldPoseUtils.flipPoseIfRed(
+                new Pose2d(
+                    FieldConstants.AmpCenter.minus(
+                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
+                            .times(0.5)
+                            .rotateBy(Rotation2d.fromDegrees(90))),
+                    FieldConstants.AmpRotation)),
+        true,
+        TunableConstants.KpTranslation * 2,
+        TunableConstants.KpTheta);
+  }
+
+  public Command alignToFrontOfAmp() {
+    return runToPose(
+        () ->
+            FieldPoseUtils.flipPoseIfRed(
+                new Pose2d(
+                    FieldConstants.AmpCenter.minus(
+                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
+                            .times(0.5)
+                            .plus(new Translation2d(DriveConstants.WidthWithBumpersX, 0))
+                            .rotateBy(Rotation2d.fromDegrees(90))),
+                    FieldConstants.AmpRotation)));
   }
 }

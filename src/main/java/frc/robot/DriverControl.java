@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.Alliance;
 
@@ -23,10 +24,15 @@ public class DriverControl {
     var intake = robot.intake;
     var shooter = robot.shooter;
 
+    controller1.a().whileTrue(shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kReverse));
+    controller1.b().whileTrue(shooter.flywheelSysIdDynamic(SysIdRoutine.Direction.kForward));
+    controller1.x().whileTrue(shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    controller1.y().whileTrue(shooter.flywheelSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+
     // intake
     controller2
         .leftTrigger()
-        .onTrue(intake.setShooter(-1).andThen(intake.extend()))
+        .onTrue(intake.setShooter(-1).until(intake::isLimitSwitchPressed).andThen(intake.extend()))
         .onFalse(intake.setShooter(0).andThen(intake.retract()));
 
     // shoot
@@ -83,7 +89,11 @@ public class DriverControl {
 
     controller2
         .b()
-        .whileTrue(shootInSpeaker(shooter, drive, intake, false))
+        .whileTrue(shootInAmp(shooter, drive, intake, false))
+        .onFalse(stopShooting(shooter, intake));
+    controller2
+        .y()
+        .whileTrue(shootInAmp(shooter, drive, intake, true))
         .onFalse(stopShooting(shooter, intake));
 
     driveController.x().onTrue(new InstantCommand(drive::stopWithX, drive));

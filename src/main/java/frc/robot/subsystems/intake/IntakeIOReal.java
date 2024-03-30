@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IntakeConstants;
@@ -26,6 +27,8 @@ public class IntakeIOReal implements IntakeIO {
 
   private final RelativeEncoder rightExtensionEncoder;
   private final RelativeEncoder leftExtensionEncoder;
+
+  private final DigitalInput limitSwitch = new DigitalInput(IdConstants.DIOId.LimitSwitchId);
 
   public IntakeIOReal() {
     leftExtensionMotor.restoreFactoryDefaults();
@@ -70,6 +73,8 @@ public class IntakeIOReal implements IntakeIO {
     inputs.articulationAppliedVolts = articulationMotor.getMotorOutputVoltage();
 
     inputs.spinAppliedVolts = spinMotor.getMotorOutputVoltage();
+
+    inputs.limitSwitchPressed = limitSwitch.get();
   }
 
   @Override

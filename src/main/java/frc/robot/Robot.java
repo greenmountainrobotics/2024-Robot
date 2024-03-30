@@ -15,9 +15,9 @@ package frc.robot;
 
 import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.Camera;
@@ -75,8 +75,6 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     initLogging();
 
-    CameraServer.startAutomaticCapture();
-
     switch (RunMode.getMode()) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -89,8 +87,8 @@ public class Robot extends LoggedRobot {
                 new ModuleIOReal(3));
         aprilTagVision =
             new AprilTagVision(
-                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera))
-                // new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
+                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)),
+                new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera))
                 // new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))
                 );
         intake = new Intake(new IntakeIOReal());
@@ -160,6 +158,9 @@ public class Robot extends LoggedRobot {
 
     auto = new Auto(this);
     driverControl = new DriverControl(this);
+
+    SmartDashboard.putNumber("amp speed", 900);
+    SmartDashboard.putNumber("amp ratio", 4.5);
   }
 
   void initLogging() {

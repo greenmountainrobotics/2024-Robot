@@ -17,6 +17,6 @@ public final class DriveConstants {
   public static final double BackLeftEncoderOffset = -3.8085926536;
   public static final double BackRightEncoderOffset = -0.907;
 
-  public static final double DriveTolerance = 0.02;
-  public static final double ThetaToleranceRad = 0.02;
+  public static final double DriveTolerance = 0.05;
+  public static final double ThetaToleranceRad = 0.05;
 }
