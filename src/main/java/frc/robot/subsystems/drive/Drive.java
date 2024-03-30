@@ -542,21 +542,6 @@ public class Drive extends SubsystemBase {
                     FieldConstants.AmpRotation)));
   }
 
-  public Command alignToAmpFast() {
-    return runToPose(
-        () ->
-            FieldPoseUtils.flipPoseIfRed(
-                new Pose2d(
-                    FieldConstants.AmpCenter.minus(
-                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
-                            .times(0.5)
-                            .rotateBy(Rotation2d.fromDegrees(90))),
-                    FieldConstants.AmpRotation)),
-        true,
-        TunableConstants.KpTranslation,
-        TunableConstants.KpTheta);
-  }
-
   public Command alignToFrontOfAmp() {
     return runToPose(
         () ->
@@ -565,7 +550,7 @@ public class Drive extends SubsystemBase {
                     FieldConstants.AmpCenter.minus(
                         new Translation2d(DriveConstants.WidthWithBumpersX, 0)
                             .times(0.5)
-                            .plus(new Translation2d(DriveConstants.WidthWithBumpersX / 2, 0))
+                            .plus(new Translation2d(DriveConstants.WidthWithBumpersX *2/3, 0))
                             .rotateBy(Rotation2d.fromDegrees(90))),
                     FieldConstants.AmpRotation)));
   }
