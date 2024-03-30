@@ -60,7 +60,7 @@ public class Intake extends SubsystemBase {
                 TunableConstants.KpIntakeArticulation,
                 0,
                 TunableConstants.KdIntakeArticulation,
-                new TrapezoidProfile.Constraints(200, 50));
+                new TrapezoidProfile.Constraints(200, 100));
         articulationFF =
             new ArmFeedforward(
                 TunableConstants.KsIntakeArticulation,
