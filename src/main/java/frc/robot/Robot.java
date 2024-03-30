@@ -88,8 +88,8 @@ public class Robot extends LoggedRobot {
         aprilTagVision =
             new AprilTagVision(
                 new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)),
-                new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera))
-                // new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))
+                new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
+                new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))
                 );
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
