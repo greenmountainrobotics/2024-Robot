@@ -89,8 +89,7 @@ public class Robot extends LoggedRobot {
             new AprilTagVision(
                 new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)),
                 new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
-                new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))
-                );
+                new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera)));
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
         leds = new Leds(new CustomLeds(LedsId));
@@ -159,8 +158,8 @@ public class Robot extends LoggedRobot {
     auto = new Auto(this);
     driverControl = new DriverControl(this);
 
-    SmartDashboard.putNumber("amp speed", 900);
-    SmartDashboard.putNumber("amp ratio", 4.5);
+    SmartDashboard.putNumber("amp speed", 180);
+    SmartDashboard.putNumber("amp ratio", 15);
   }
 
   void initLogging() {
