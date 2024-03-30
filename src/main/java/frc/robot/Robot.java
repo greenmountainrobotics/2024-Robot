@@ -13,18 +13,19 @@
 
 package frc.robot;
 
+import static frc.robot.constants.FieldConstants.SpeakerShootingDistance;
 import static frc.robot.constants.IdConstants.PWMId.LedsId;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.Camera;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVision;
-import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIO;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOReal;
+import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOReplay;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.imu.GyroIO;
@@ -75,8 +76,6 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     initLogging();
 
-    CameraServer.startAutomaticCapture();
-
     switch (RunMode.getMode()) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -88,11 +87,9 @@ public class Robot extends LoggedRobot {
                 new ModuleIOReal(2),
                 new ModuleIOReal(3));
         aprilTagVision =
-            new AprilTagVision(
-                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera))
-                // new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
-                // new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))
-                );
+            new AprilTagVision(new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)) /*,
+                new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
+                new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))*/);
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
         leds = new Leds(new CustomLeds(LedsId));
@@ -136,7 +133,11 @@ public class Robot extends LoggedRobot {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        aprilTagVision = new AprilTagVision(new PhotonVision(new PhotonVisionIO() {}));
+        aprilTagVision =
+            new AprilTagVision(
+                new PhotonVision(new PhotonVisionIOReplay(Camera.BackCamera)),
+                new PhotonVision(new PhotonVisionIOReplay(Camera.FrontRightCamera)),
+                new PhotonVision(new PhotonVisionIOReplay(Camera.FrontLeftCamera)));
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         leds = new Leds(new AddressableLED(LedsId));
@@ -160,6 +161,10 @@ public class Robot extends LoggedRobot {
 
     auto = new Auto(this);
     driverControl = new DriverControl(this);
+
+    SmartDashboard.putNumber("amp speed", 130);
+    SmartDashboard.putNumber("amp ratio", 18);
+    SmartDashboard.putNumber("Shooting Distance M", SpeakerShootingDistance);
   }
 
   void initLogging() {
@@ -204,7 +209,7 @@ public class Robot extends LoggedRobot {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
         Logger.setReplaySource(new WPILOGReader(logPath));
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"), 0.02));
         break;
     }
 

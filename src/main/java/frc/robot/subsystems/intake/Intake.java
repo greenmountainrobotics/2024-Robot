@@ -6,7 +6,9 @@ import static frc.robot.constants.IntakeConstants.*;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -29,7 +31,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
 
   private final PIDController extensionPID;
-  private final PIDController articulationPID;
+  private final ProfiledPIDController articulationPID;
 
   private final ArmFeedforward articulationFF;
 
@@ -54,8 +56,11 @@ public class Intake extends SubsystemBase {
             new PIDController(
                 TunableConstants.KpIntakeExtension, 0, TunableConstants.KdIntakeExtension);
         articulationPID =
-            new PIDController(
-                TunableConstants.KpIntakeArticulation, 0, TunableConstants.KdIntakeArticulation);
+            new ProfiledPIDController(
+                TunableConstants.KpIntakeArticulation,
+                0,
+                TunableConstants.KdIntakeArticulation,
+                new TrapezoidProfile.Constraints(200, 100));
         articulationFF =
             new ArmFeedforward(
                 TunableConstants.KsIntakeArticulation,
@@ -65,13 +70,14 @@ public class Intake extends SubsystemBase {
       }
       default -> {
         extensionPID = new PIDController(25, 0, 4);
-        articulationPID = new PIDController(1, 0, 0.2);
+        articulationPID =
+            new ProfiledPIDController(1, 0, 0.2, new TrapezoidProfile.Constraints(1, 1));
         articulationFF = new ArmFeedforward(0, 0, 0, 0);
       }
     }
 
     extensionPID.setSetpoint(extensionSetpointMeters);
-    articulationPID.setSetpoint(angleModulus(articulationSetpoint.getRadians()));
+    articulationPID.setGoal(angleModulus(articulationSetpoint.getRadians()));
 
     articulationSysId =
         new SysIdRoutine(
@@ -142,7 +148,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setArticulation(Rotation2d rotation) {
-    articulationPID.setSetpoint(angleModulus(rotation.getRadians()));
+    articulationPID.setGoal(angleModulus(rotation.getRadians()));
     articulationSetpoint = rotation;
   }
 
@@ -245,5 +251,10 @@ public class Intake extends SubsystemBase {
    */
   public Command setShooter(double speed) {
     return new InstantCommand(() -> setIntakeSpeed(speed));
+  }
+
+  @AutoLogOutput
+  public boolean isLimitSwitchPressed() {
+    return inputs.limitSwitchPressed;
   }
 }

@@ -11,7 +11,9 @@ public class ShooterConstants {
   public static final double VelocityToleranceRPM = 100;
   public static final double ArticulationToleranceRad = 0.02;
 
-  public static final double ShootingVelocityRPM = 5500;
+  public static final double ShootingVelocityRPM = 6000;
+  public static final double AmpVelocityRPM = 900;
+  public static final double AmpTopToBottomRatio = 4.5;
   public static final double ShooterGearRatio = 1.0 / 1.25;
 
   // measured from bottom edge of shooter facing forwards

@@ -1,6 +1,8 @@
 package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.math.MathUtil.angleModulus;
+import static edu.wpi.first.math.util.Units.rotationsPerMinuteToRadiansPerSecond;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.constants.ShooterConstants.*;
 import static frc.robot.constants.TunableConstants.*;
@@ -66,10 +68,10 @@ public class Shooter extends SubsystemBase {
         break;
       default:
         // simulated
-        topFF = new SimpleMotorFeedforward(0, .001);
-        bottomFF = new SimpleMotorFeedforward(0, .001);
-        topPID = new PIDController(0.1, 0, 0);
-        bottomPID = new PIDController(0.1, 0, 0);
+        topFF = new SimpleMotorFeedforward(0, .003);
+        bottomFF = new SimpleMotorFeedforward(0, .003);
+        topPID = new PIDController(0.7, 0, 0);
+        bottomPID = new PIDController(0.7, 0, 0);
         articulationPID = new PIDController(0.1, 0, 0);
         articulationFF = new ArmFeedforward(0, 0, 0, 0);
         break;
@@ -125,15 +127,14 @@ public class Shooter extends SubsystemBase {
 
     io.setTopVoltage(
         topPID.calculate(
-                Units.radiansPerSecondToRotationsPerMinute(inputs.topVelocityRadPerSec),
-                topSetpointRPM)
-            + topFF.calculate(topSetpointRPM));
+                inputs.topVelocityRadPerSec, rotationsPerMinuteToRadiansPerSecond(topSetpointRPM))
+            + topFF.calculate(rotationsPerMinuteToRadiansPerSecond(topSetpointRPM)));
 
     io.setBottomVoltage(
         bottomPID.calculate(
-                Units.radiansPerSecondToRotationsPerMinute(inputs.bottomVelocityRadPerSec),
-                bottomSetpointRPM)
-            + bottomFF.calculate(bottomSetpointRPM));
+                inputs.bottomVelocityRadPerSec,
+                rotationsPerMinuteToRadiansPerSecond(bottomSetpointRPM))
+            + bottomFF.calculate(rotationsPerMinuteToRadiansPerSecond(bottomSetpointRPM)));
 
     io.setArticulationVoltage(
         articulationFF.calculate(articulationSetpoint.getRadians(), 0)
@@ -218,12 +219,23 @@ public class Shooter extends SubsystemBase {
     return runAtRPM(() -> RPM);
   }
 
+  public Command runAtRPM(double top, double bottom) {
+    return runAtRPM(() -> top, () -> bottom);
+  }
+
+  public Command setRPM(double RPM) {
+    return new InstantCommand(() -> setFlywheelSetpointRPM(-RPM, RPM));
+  }
+
   /** positive is outwards */
   public Command runAtRPM(Supplier<Double> RPMSupplier) {
+    return runAtRPM(() -> -RPMSupplier.get(), RPMSupplier);
+  }
+
+  public Command runAtRPM(Supplier<Double> topSupplier, Supplier<Double> bottomSupplier) {
     return new RunCommand(
             () -> {
-              var RPM = RPMSupplier.get();
-              setFlywheelSetpointRPM(-RPM, RPM);
+              setFlywheelSetpointRPM(topSupplier.get(), bottomSupplier.get());
             },
             this)
         .until(this::flywheelIsAtSetpoint);

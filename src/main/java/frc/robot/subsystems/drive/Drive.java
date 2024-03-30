@@ -17,9 +17,12 @@ import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.constants.DriveConstants.TrackWidthX;
 import static frc.robot.constants.DriveConstants.TrackWidthY;
+import static frc.robot.constants.TunableConstants.KpTheta;
+import static frc.robot.constants.TunableConstants.KpTranslation;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
@@ -74,7 +77,13 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+      new SwerveDrivePoseEstimator(
+          kinematics,
+          rawGyroRotation,
+          lastModulePositions,
+          new Pose2d(),
+          VecBuilder.fill(0.1, 0.1, 0.1),
+          VecBuilder.fill(0.9, 0.9, 0.9));
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
@@ -116,8 +125,7 @@ public class Drive extends SubsystemBase {
                 this));
 
     translationController =
-        new ProfiledPIDController(
-            TunableConstants.KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
+        new ProfiledPIDController(KpTranslation, 0, 0, new TrapezoidProfile.Constraints(5, 5));
     translationController.setTolerance(DriveConstants.DriveTolerance);
     thetaController =
         new ProfiledPIDController(
@@ -392,6 +400,28 @@ public class Drive extends SubsystemBase {
         .finallyDo(() -> Leds.State.DrivingToPose = false);
   }
 
+  public Command runToPose(
+      Supplier<Pose2d> targetPoseSupplier, boolean stop, double translationP, double thetaP) {
+    return new DeferredCommand(
+        () -> {
+          var oldTranslationP = translationController.getP();
+          var oldThetaP = thetaController.getP();
+          return new InstantCommand(
+                  () -> {
+                    translationController.setP(translationP);
+                    thetaController.setP(thetaP);
+                  })
+              .andThen(runToPose(targetPoseSupplier, stop))
+              .andThen(
+                  new InstantCommand(
+                      () -> {
+                        translationController.setP(oldTranslationP);
+                        thetaController.setP(oldThetaP);
+                      }));
+        },
+        Set.of(this));
+  }
+
   public Command runToPose(Supplier<Pose2d> targetPoseSupplier) {
     return runToPose(targetPoseSupplier, true);
   }
@@ -441,7 +471,10 @@ public class Drive extends SubsystemBase {
           var targetTranslation =
               FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
                   .plus(
-                      new Translation2d(FieldConstants.SpeakerShootingDistance, 0)
+                      new Translation2d(
+                              SmartDashboard.getNumber(
+                                  "Shooting Distance M", FieldConstants.SpeakerShootingDistance),
+                              0)
                           .rotateBy(
                               Rotation2d.fromRadians(
                                   Alliance.isRed()
@@ -454,12 +487,10 @@ public class Drive extends SubsystemBase {
 
           var targetPose =
               new Pose2d(
-                  // getPose().getX(),
-                  // getPose().getY(),
-                  targetTranslation.getX(), // TODO: revert!!!
+                  targetTranslation.getX(),
                   targetTranslation.getY(),
                   FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                      .minus(getPose().getTranslation())
+                      .minus(targetTranslation)
                       .getAngle()
                       .minus(Rotation2d.fromRadians(Math.PI)));
 
@@ -506,5 +537,33 @@ public class Drive extends SubsystemBase {
               .andThen(runToPose(() -> targetPose));
         },
         Set.of(this));
+  }
+
+  public Command alignToAmp() {
+    return runToPose(
+        () ->
+            FieldPoseUtils.flipPoseIfRed(
+                new Pose2d(
+                    FieldConstants.AmpCenter.minus(
+                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
+                            .times(0.5)
+                            .rotateBy(Rotation2d.fromDegrees(90))),
+                    FieldConstants.AmpRotation)),
+        true,
+        KpTranslation * 4,
+        KpTheta);
+  }
+
+  public Command alignToFrontOfAmp() {
+    return runToPose(
+        () ->
+            FieldPoseUtils.flipPoseIfRed(
+                new Pose2d(
+                    FieldConstants.AmpCenter.minus(
+                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
+                            .times(0.5)
+                            .plus(new Translation2d(DriveConstants.WidthWithBumpersX * 2 / 3, 0))
+                            .rotateBy(Rotation2d.fromDegrees(90))),
+                    FieldConstants.AmpRotation)));
   }
 }

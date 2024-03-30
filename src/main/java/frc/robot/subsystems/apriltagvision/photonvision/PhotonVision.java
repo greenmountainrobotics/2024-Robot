@@ -54,17 +54,18 @@ public class PhotonVision implements AprilTagProvider {
             0,
             new Rotation3d(0, 0, referencePose.getRotation().getRadians()));
 
-    Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose2d", estimatedPose.toPose2d());
-    Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose3d", estimatedPose);
     Logger.recordOutput(
         "PhotonVision/" + inputs.camera + "/CameraPose", referencePose3d.plus(inputs.robotToCam));
 
     photonPoseEstimator.setReferencePose(referencePoseSupplier.get());
 
     var update = photonPoseEstimator.update(inputs.latestResult);
+    Logger.recordOutput("PhotonVision/" + inputs.camera + "/LatestResult", inputs.latestResult);
+    Logger.recordOutput("PhotonVision/" + inputs.camera + "/isPresent", update.isPresent());
 
     if (update.isPresent()) {
       estimatedPose = update.get().estimatedPose;
+      if (estimatedPose.getZ() > 0.1) return;
       poseConsumer.accept(estimatedPose.toPose2d(), update.get().timestampSeconds);
 
       targetPoses =
@@ -78,6 +79,8 @@ public class PhotonVision implements AprilTagProvider {
     }
 
     Logger.recordOutput("PhotonVision/" + inputs.camera + "/TargetPoses", targetPoses);
+    Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose2d", estimatedPose.toPose2d());
+    Logger.recordOutput("PhotonVision/" + inputs.camera + "/Pose3d", estimatedPose);
   }
 
   public Pose3d[] getTargetPoses() {

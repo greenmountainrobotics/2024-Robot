@@ -19,7 +19,7 @@ public class IntakeConstants {
 
   // articulation is measured between extension and top side of end effector when retracted
   public static final Rotation2d TargetArticulation = Rotation2d.fromDegrees(-77);
-  public static final Rotation2d RetractedArticulation = Rotation2d.fromDegrees(90 + 32.724839);
+  public static final Rotation2d RetractedArticulation = Rotation2d.fromDegrees(90 + 36);
   public static final Rotation2d HalfwayArticulation = Rotation2d.fromDegrees(180 + 166.600512);
   public static final Rotation2d PointingAtShooterArticulation =
       Rotation2d.fromDegrees(180 - 52.993);

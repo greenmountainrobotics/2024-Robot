@@ -21,6 +21,8 @@ public interface IntakeIO {
     public double articulationAppliedVolts = 0.0;
 
     public double spinAppliedVolts = 0.0;
+
+    public boolean limitSwitchPressed = false;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}

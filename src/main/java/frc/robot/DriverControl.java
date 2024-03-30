@@ -26,7 +26,7 @@ public class DriverControl {
     // intake
     controller2
         .leftTrigger()
-        .onTrue(intake.setShooter(-1).andThen(intake.extend()))
+        .onTrue(intake.setShooter(-1).until(intake::isLimitSwitchPressed).andThen(intake.extend()))
         .onFalse(intake.setShooter(0).andThen(intake.retract()));
 
     // shoot
@@ -84,6 +84,10 @@ public class DriverControl {
     controller2
         .b()
         .whileTrue(shootInSpeaker(shooter, drive, intake, false))
+        .onFalse(stopShooting(shooter, intake));
+    controller2
+        .y()
+        .whileTrue(shootInAmp(shooter, drive, intake, true))
         .onFalse(stopShooting(shooter, intake));
 
     driveController.x().onTrue(new InstantCommand(drive::stopWithX, drive));
