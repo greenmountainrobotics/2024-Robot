@@ -10,8 +10,7 @@ public class PhotonVisionIOReplay implements PhotonVisionIO {
   }
 
   @Override
-  public void updateCamera(PhotonVisionIOInputs inputs) {
-    inputs.camera = camera.name;
-    inputs.robotToCam = camera.robotToCam;
+  public void updateInputs(PhotonVisionIOInputs inputs) {
+    inputs.camera = camera.name();
   }
 }
