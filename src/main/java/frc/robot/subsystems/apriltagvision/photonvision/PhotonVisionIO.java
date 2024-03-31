@@ -9,12 +9,11 @@ public interface PhotonVisionIO {
   class PhotonVisionIOInputs {
     public boolean isConnected;
     public PhotonPipelineResult latestResult = new PhotonPipelineResult();
-    public String camera;
+    public double timestamp = -1.0;
+    public String camera = "";
 
-    public Transform3d robotToCam;
+    public Transform3d robotToCam = new Transform3d();
   }
 
   default void updateInputs(PhotonVisionIOInputs inputs) {}
-
-  default void updateCamera(PhotonVisionIOInputs inputs) {}
 }
