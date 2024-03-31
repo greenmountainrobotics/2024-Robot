@@ -88,9 +88,9 @@ public class Robot extends LoggedRobot {
                 new ModuleIOReal(3));
         aprilTagVision =
             new AprilTagVision(
-                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)),
+                new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera))/*,
                 new PhotonVision(new PhotonVisionIOReal(Camera.FrontRightCamera)),
-                new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera)));
+                new PhotonVision(new PhotonVisionIOReal(Camera.FrontLeftCamera))*/);
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
         leds = new Leds(new CustomLeds(LedsId));
@@ -135,7 +135,8 @@ public class Robot extends LoggedRobot {
                 new ModuleIO() {},
                 new ModuleIO() {});
         aprilTagVision =
-            new AprilTagVision(new PhotonVision(new PhotonVisionIOReplay(Camera.BackCamera)),
+            new AprilTagVision(
+                new PhotonVision(new PhotonVisionIOReplay(Camera.BackCamera)),
                 new PhotonVision(new PhotonVisionIOReplay(Camera.FrontRightCamera)),
                 new PhotonVision(new PhotonVisionIOReplay(Camera.FrontLeftCamera)));
         intake = new Intake(new IntakeIO() {});
@@ -165,7 +166,6 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putNumber("amp speed", 130);
     SmartDashboard.putNumber("amp ratio", 18);
     SmartDashboard.putNumber("Shooting Distance M", SpeakerShootingDistance);
-
   }
 
   void initLogging() {
