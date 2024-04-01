@@ -18,6 +18,5 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
     inputs.latestResult = photonCamera.getLatestResult();
     inputs.timestamp = inputs.latestResult.getTimestampSeconds();
     inputs.camera = camera.name();
-    inputs.robotToCam = camera.robotToCam;
   }
 }

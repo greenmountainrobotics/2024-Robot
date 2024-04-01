@@ -67,7 +67,7 @@ public class DriverControl {
         .onTrue(
             new InstantCommand(
                 () -> {
-                  robot.aprilTagVision.setDataInterface((pose2d, aDouble) -> {}, Pose2d::new);
+                  robot.aprilTagVision.setDataInterface((pose2d, aDouble, c) -> {}, Pose2d::new);
                   drive.setPose(new Pose2d());
                 }));
 

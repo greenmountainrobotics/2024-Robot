@@ -22,6 +22,7 @@ import static frc.robot.constants.TunableConstants.KpTranslation;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -30,6 +31,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -55,6 +58,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.opencv.core.Mat;
 
 public class Drive extends SubsystemBase {
   private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
@@ -81,9 +85,7 @@ public class Drive extends SubsystemBase {
           kinematics,
           rawGyroRotation,
           lastModulePositions,
-          new Pose2d(),
-          VecBuilder.fill(0.1, 0.1, 0.1),
-          VecBuilder.fill(0.9, 0.9, 0.9));
+          new Pose2d());
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
@@ -310,9 +312,16 @@ public class Drive extends SubsystemBase {
    *
    * @param visionPose The pose of the robot as measured by the vision camera.
    * @param timestamp The timestamp of the vision measurement in seconds.
+   * @param visionMeasurementStdDevs standard deviations
    */
-  public void addVisionMeasurement(Pose2d visionPose, double timestamp) {
+  public void addVisionMeasurement(Pose2d visionPose, double timestamp, Matrix<N3, N1> visionMeasurementStdDevs) {
+    poseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
+  }
+
+  @FunctionalInterface
+  public interface VisionMeasurementConsumer {
+    void accept(Pose2d visionPose, double timestamp, Matrix<N3, N1> visionMeasurementStdDevs);
   }
 
   /** Returns the maximum linear speed in meters per sec. */

@@ -11,8 +11,6 @@ public interface PhotonVisionIO {
     public PhotonPipelineResult latestResult = new PhotonPipelineResult();
     public double timestamp = -1.0;
     public String camera = "";
-
-    public Transform3d robotToCam = new Transform3d();
   }
 
   default void updateInputs(PhotonVisionIOInputs inputs) {}
