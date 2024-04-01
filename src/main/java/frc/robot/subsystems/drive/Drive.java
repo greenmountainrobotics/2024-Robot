@@ -23,7 +23,6 @@ import static frc.robot.constants.TunableConstants.KpTranslation;
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
@@ -55,10 +54,10 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import org.opencv.core.Mat;
 
 public class Drive extends SubsystemBase {
   private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
@@ -81,11 +80,7 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(
-          kinematics,
-          rawGyroRotation,
-          lastModulePositions,
-          new Pose2d());
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
@@ -314,14 +309,25 @@ public class Drive extends SubsystemBase {
    * @param timestamp The timestamp of the vision measurement in seconds.
    * @param visionMeasurementStdDevs standard deviations
    */
-  public void addVisionMeasurement(Pose2d visionPose, double timestamp, Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
+  public void addVisionMeasurement(
+      Pose2d visionPose,
+      double timestamp,
+      Function<DriveState, Matrix<N3, N1>> visionMeasurementStdDevs) {
+    poseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs.apply(DriveState.NONE));
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
   @FunctionalInterface
   public interface VisionMeasurementConsumer {
-    void accept(Pose2d visionPose, double timestamp, Matrix<N3, N1> visionMeasurementStdDevs);
+    void accept(
+        Pose2d visionPose,
+        double timestamp,
+        Function<DriveState, Matrix<N3, N1>> visionMeasurementStdDevs);
+  }
+
+  public enum DriveState {
+    NONE
+    // TODO: fill
   }
 
   /** Returns the maximum linear speed in meters per sec. */

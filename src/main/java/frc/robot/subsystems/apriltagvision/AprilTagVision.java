@@ -7,7 +7,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.leds.Leds;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -36,7 +35,7 @@ public class AprilTagVision extends SubsystemBase {
   }
 
   public void setDataInterface(
-          Drive.VisionMeasurementConsumer poseConsumer, Supplier<Pose2d> referencePoseSupplier) {
+      Drive.VisionMeasurementConsumer poseConsumer, Supplier<Pose2d> referencePoseSupplier) {
     for (AprilTagProvider implementation : implementations) {
       implementation.setDataInterface(poseConsumer, referencePoseSupplier);
     }

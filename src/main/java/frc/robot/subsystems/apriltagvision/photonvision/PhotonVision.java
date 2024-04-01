@@ -8,10 +8,8 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import frc.robot.constants.Camera;
 import frc.robot.subsystems.apriltagvision.AprilTagProvider;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
 import frc.robot.subsystems.drive.Drive;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonPoseEstimator;
 
@@ -73,7 +71,7 @@ public class PhotonVision implements AprilTagProvider {
     if (update.isPresent()) {
       estimatedPose = update.get().estimatedPose;
       if (estimatedPose.getZ() > 0.1) return;
-      poseConsumer.accept(estimatedPose.toPose2d(), update.get().timestampSeconds, camera.stddevs);
+      poseConsumer.accept(estimatedPose.toPose2d(), update.get().timestampSeconds, camera.stddev);
 
       targetPoses =
           update.get().targetsUsed.stream()
@@ -96,7 +94,7 @@ public class PhotonVision implements AprilTagProvider {
 
   @Override
   public void setDataInterface(
-          Drive.VisionMeasurementConsumer poseConsumer, Supplier<Pose2d> referencePoseSupplier) {
+      Drive.VisionMeasurementConsumer poseConsumer, Supplier<Pose2d> referencePoseSupplier) {
     this.poseConsumer = poseConsumer;
     this.referencePoseSupplier = referencePoseSupplier;
   }
