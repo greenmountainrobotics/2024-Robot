@@ -474,7 +474,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToSpeaker() {
-    return setState(DriveState.ALIGNING_TO_AMP).andThen(new DeferredCommand(
+    return setStateCommand(DriveState.ALIGNING_TO_AMP).andThen(new DeferredCommand(
         () -> {
           var angle =
               angleModulus(
@@ -515,7 +515,7 @@ public class Drive extends SubsystemBase {
           return runToPose(() -> targetPose);
         },
         Set.of(this)))
-            .andThen(setState(DriveState.NONE));
+            .andThen(setStateCommand(DriveState.NONE));
   }
 
   public Command alignToNote(Translation2d noteTranslation) {
@@ -559,7 +559,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToAmp() {
-    return setState(DriveState.ALIGNING_TO_AMP).andThen(runToPose(
+    return setStateCommand(DriveState.ALIGNING_TO_AMP).andThen(runToPose(
         () ->
             FieldPoseUtils.flipPoseIfRed(
                 new Pose2d(
@@ -571,11 +571,11 @@ public class Drive extends SubsystemBase {
         true,
         KpTranslation * 4,
         KpTheta))
-            .andThen(setState(DriveState.NONE));
+            .andThen(setStateCommand(DriveState.NONE));
   }
 
   public Command alignToFrontOfAmp() {
-    return setState(DriveState.ALIGNING_TO_AMP).andThen(runToPose(
+    return setStateCommand(DriveState.ALIGNING_TO_AMP).andThen(runToPose(
         () ->
             FieldPoseUtils.flipPoseIfRed(
                 new Pose2d(
@@ -585,10 +585,14 @@ public class Drive extends SubsystemBase {
                             .plus(new Translation2d(DriveConstants.WidthWithBumpersX * 2 / 3, 0))
                             .rotateBy(Rotation2d.fromDegrees(90))),
                     FieldConstants.AmpRotation))))
-            .andThen(setState(DriveState.NONE));
+            .andThen(setStateCommand(DriveState.NONE));
   }
 
-  public Command setState(DriveState state) {
+  public Command setStateCommand(DriveState state) {
     return new InstantCommand(() -> driveState = state);
+  }
+
+  public void setState(DriveState state) {
+    driveState = state;
   }
 }
