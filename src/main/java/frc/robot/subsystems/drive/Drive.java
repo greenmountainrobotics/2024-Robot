@@ -89,6 +89,8 @@ public class Drive extends SubsystemBase {
 
   private final Field2d smartDashboardField;
 
+  private DriveState driveState = DriveState.NONE;
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -313,7 +315,7 @@ public class Drive extends SubsystemBase {
       Pose2d visionPose,
       double timestamp,
       Function<DriveState, Matrix<N3, N1>> visionMeasurementStdDevs) {
-    poseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs.apply(DriveState.NONE));
+    poseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs.apply(driveState));
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
@@ -326,8 +328,9 @@ public class Drive extends SubsystemBase {
   }
 
   public enum DriveState {
-    NONE
-    // TODO: fill
+    NONE,
+    ALIGNING_TO_SPEAKER,
+    ALIGNING_TO_AMP
   }
 
   /** Returns the maximum linear speed in meters per sec. */
