@@ -90,6 +90,8 @@ public class DriverControl {
         .whileTrue(shootInAmp(shooter, drive, intake, true))
         .onFalse(stopShooting(shooter, intake));
 
+    controller1.a().whileTrue(drive.wheelRadiusCharacterization());
+
     driveController.x().onTrue(new InstantCommand(drive::stopWithX, drive));
 
     drive.setDefaultCommand(
