@@ -474,48 +474,54 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToSpeaker() {
-    return setStateCommand(DriveState.ALIGNING_TO_AMP).andThen(new DeferredCommand(
-        () -> {
-          var angle =
-              angleModulus(
-                  getPose()
-                      .getTranslation()
-                      .minus(
-                          FieldPoseUtils.flipTranslationIfRed(
-                              FieldConstants.SpeakerCloseSideCenter))
-                      .getAngle()
-                      .getRadians());
+    return setStateCommand(DriveState.ALIGNING_TO_AMP)
+        .andThen(
+            new DeferredCommand(
+                () -> {
+                  var angle =
+                      angleModulus(
+                          getPose()
+                              .getTranslation()
+                              .minus(
+                                  FieldPoseUtils.flipTranslationIfRed(
+                                      FieldConstants.SpeakerCloseSideCenter))
+                              .getAngle()
+                              .getRadians());
 
-          var targetTranslation =
-              FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                  .plus(
-                      new Translation2d(
-                              SmartDashboard.getNumber(
-                                  "Shooting Distance M", FieldConstants.SpeakerShootingDistance),
-                              0)
-                          .rotateBy(
-                              Rotation2d.fromRadians(
-                                  Alliance.isRed()
-                                      ? angle > Math.PI * 5 / 6
-                                          ? angle
-                                          : angle < Math.PI * -5 / 6
-                                              ? angle
-                                              : angle < 0 ? Math.PI * -5 / 6 : Math.PI * 5 / 6
-                                      : Math.min(Math.max(angle, -Math.PI / 6), Math.PI / 6))));
+                  var targetTranslation =
+                      FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                          .plus(
+                              new Translation2d(
+                                      SmartDashboard.getNumber(
+                                          "Shooting Distance M",
+                                          FieldConstants.SpeakerShootingDistance),
+                                      0)
+                                  .rotateBy(
+                                      Rotation2d.fromRadians(
+                                          Alliance.isRed()
+                                              ? angle > Math.PI * 5 / 6
+                                                  ? angle
+                                                  : angle < Math.PI * -5 / 6
+                                                      ? angle
+                                                      : angle < 0
+                                                          ? Math.PI * -5 / 6
+                                                          : Math.PI * 5 / 6
+                                              : Math.min(
+                                                  Math.max(angle, -Math.PI / 6), Math.PI / 6))));
 
-          var targetPose =
-              new Pose2d(
-                  targetTranslation.getX(),
-                  targetTranslation.getY(),
-                  FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
-                      .minus(targetTranslation)
-                      .getAngle()
-                      .minus(Rotation2d.fromRadians(Math.PI)));
+                  var targetPose =
+                      new Pose2d(
+                          targetTranslation.getX(),
+                          targetTranslation.getY(),
+                          FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)
+                              .minus(targetTranslation)
+                              .getAngle()
+                              .minus(Rotation2d.fromRadians(Math.PI)));
 
-          return runToPose(() -> targetPose);
-        },
-        Set.of(this)))
-            .andThen(setStateCommand(DriveState.NONE));
+                  return runToPose(() -> targetPose);
+                },
+                Set.of(this)))
+        .andThen(setStateCommand(DriveState.NONE));
   }
 
   public Command alignToNote(Translation2d noteTranslation) {
@@ -559,33 +565,39 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToAmp() {
-    return setStateCommand(DriveState.ALIGNING_TO_AMP).andThen(runToPose(
-        () ->
-            FieldPoseUtils.flipPoseIfRed(
-                new Pose2d(
-                    FieldConstants.AmpCenter.minus(
-                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
-                            .times(0.5)
-                            .rotateBy(Rotation2d.fromDegrees(90))),
-                    FieldConstants.AmpRotation)),
-        true,
-        KpTranslation * 4,
-        KpTheta))
-            .andThen(setStateCommand(DriveState.NONE));
+    return setStateCommand(DriveState.ALIGNING_TO_AMP)
+        .andThen(
+            runToPose(
+                () ->
+                    FieldPoseUtils.flipPoseIfRed(
+                        new Pose2d(
+                            FieldConstants.AmpCenter.minus(
+                                new Translation2d(DriveConstants.WidthWithBumpersX, 0)
+                                    .times(0.5)
+                                    .rotateBy(Rotation2d.fromDegrees(90))),
+                            FieldConstants.AmpRotation)),
+                true,
+                KpTranslation * 4,
+                KpTheta))
+        .andThen(setStateCommand(DriveState.NONE));
   }
 
   public Command alignToFrontOfAmp() {
-    return setStateCommand(DriveState.ALIGNING_TO_AMP).andThen(runToPose(
-        () ->
-            FieldPoseUtils.flipPoseIfRed(
-                new Pose2d(
-                    FieldConstants.AmpCenter.minus(
-                        new Translation2d(DriveConstants.WidthWithBumpersX, 0)
-                            .times(0.5)
-                            .plus(new Translation2d(DriveConstants.WidthWithBumpersX * 2 / 3, 0))
-                            .rotateBy(Rotation2d.fromDegrees(90))),
-                    FieldConstants.AmpRotation))))
-            .andThen(setStateCommand(DriveState.NONE));
+    return setStateCommand(DriveState.ALIGNING_TO_AMP)
+        .andThen(
+            runToPose(
+                () ->
+                    FieldPoseUtils.flipPoseIfRed(
+                        new Pose2d(
+                            FieldConstants.AmpCenter.minus(
+                                new Translation2d(DriveConstants.WidthWithBumpersX, 0)
+                                    .times(0.5)
+                                    .plus(
+                                        new Translation2d(
+                                            DriveConstants.WidthWithBumpersX * 2 / 3, 0))
+                                    .rotateBy(Rotation2d.fromDegrees(90))),
+                            FieldConstants.AmpRotation))))
+        .andThen(setStateCommand(DriveState.NONE));
   }
 
   public Command setStateCommand(DriveState state) {
@@ -594,5 +606,52 @@ public class Drive extends SubsystemBase {
 
   public void setState(DriveState state) {
     driveState = state;
+  }
+
+  private double characterizationStartingGyro = 0.0;
+  private double characterizationAccumRotation = 0.0;
+  private double characterizationStartAvgPosition = 0.0;
+
+  public Command wheelRadiusCharacterization() {
+    return new DeferredCommand(
+        () -> {
+          characterizationStartAvgPosition =
+              Arrays.stream(modules)
+                      .map(Module::getPositionRad)
+                      .map(Math::abs)
+                      .reduce(0.0, Double::sum)
+                  / 4;
+          characterizationAccumRotation = 0.0;
+          characterizationStartingGyro = gyroInputs.yawPosition.getRadians();
+
+          return new RunCommand(
+              () -> {
+                runVelocity(new ChassisSpeeds(0, 0, 0.5));
+
+                characterizationAccumRotation +=
+                    angleModulus(
+                        gyroInputs.yawPosition.getRadians() - characterizationStartingGyro);
+
+                var characterizationAvgPosition =
+                    Arrays.stream(modules)
+                                .map(Module::getPositionRad)
+                                .map(Math::abs)
+                                .reduce(0.0, Double::sum)
+                            / 4
+                        - characterizationStartAvgPosition;
+
+                Logger.recordOutput(
+                    "Drive/AvgWheelRadius",
+                    characterizationAccumRotation * TrackWidthX / 2 / characterizationAvgPosition);
+                Logger.recordOutput("Drive/AvgSwervePosition", characterizationAvgPosition);
+                Logger.recordOutput(
+                    "Drive/CharacterizationAccumRotation", characterizationAccumRotation);
+                Logger.recordOutput("Drive/StartSwervePosition", characterizationStartAvgPosition);
+
+                characterizationStartingGyro = gyroInputs.yawPosition.getRadians();
+              },
+              this);
+        },
+        Set.of(this));
   }
 }

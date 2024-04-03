@@ -65,7 +65,7 @@ public class PhotonVision implements AprilTagProvider {
     Logger.recordOutput("PhotonVision/" + camera.name() + "/LatestResult", inputs.latestResult);
     Logger.recordOutput("PhotonVision/" + camera.name() + "/isPresent", update.isPresent());
     Logger.recordOutput(
-        "PhotonVision" + camera.name() + "/Best",
+        "PhotonVision/" + camera.name() + "/Best",
         inputs.latestResult.getMultiTagResult().estimatedPose.best);
 
     if (update.isPresent()) {

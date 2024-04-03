@@ -36,11 +36,11 @@ public enum Camera {
       new Transform3d(
           new Translation3d(inchesToMeters(6.894), inchesToMeters(11.382), inchesToMeters(10.621)),
           new Rotation3d(0, degreesToRadians(-25), degreesToRadians(60))),
-          (state) ->
-                  switch (state) {
-                    case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
-                    case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(3, 3, 2);
-                  }),
+      (state) ->
+          switch (state) {
+            case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
+            case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(3, 3, 2);
+          }),
   FrontRightCamera(
       "Arducam_OV9281_USB_Camera",
       1280,
@@ -49,11 +49,11 @@ public enum Camera {
       new Transform3d(
           new Translation3d(inchesToMeters(6.894), inchesToMeters(-11.390), inchesToMeters(10.621)),
           new Rotation3d(0, degreesToRadians(-25), degreesToRadians(-60))),
-          (state) ->
-                  switch (state) {
-                    case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
-                    case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(3, 3, 2);
-                  });
+      (state) ->
+          switch (state) {
+            case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
+            case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(3, 3, 2);
+          });
   public final String name;
   public final Transform3d robotToCam;
   public final int width;
