@@ -158,8 +158,8 @@ public class Drive extends SubsystemBase {
     }
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+      Logger.recordOutput("Drive/SwerveStates/Setpoints", new SwerveModuleState[] {});
+      Logger.recordOutput("Drive/SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
 
     // Update odometry
@@ -198,7 +198,7 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putData("Field", smartDashboardField);
 
     Logger.recordOutput(
-        "Odometry/DistanceFromShooter",
+        "Drive/DistanceFromShooter",
         distanceFromPoint(
             FieldPoseUtils.flipTranslationIfRed(FieldConstants.SpeakerCloseSideCenter)));
   }
@@ -224,8 +224,8 @@ public class Drive extends SubsystemBase {
     }
 
     // Log setpoint states
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
+    Logger.recordOutput("Drive/SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("Drive/SwerveStates/SetpointsOptimized", optimizedSetpointStates);
   }
 
   public Twist2d getFieldVelocity() {
@@ -270,7 +270,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-  @AutoLogOutput(key = "SwerveStates/Measured")
+  @AutoLogOutput(key = "Drive/SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -289,7 +289,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the current odometry pose. */
-  @AutoLogOutput(key = "Odometry/Robot")
+  @AutoLogOutput(key = "Drive/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
