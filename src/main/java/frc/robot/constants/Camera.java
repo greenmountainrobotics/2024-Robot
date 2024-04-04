@@ -39,7 +39,7 @@ public enum Camera {
       (state) ->
           switch (state) {
             case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
-            case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(3, 3, 2);
+            case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
           }),
   FrontRightCamera(
       "Arducam_OV9281_USB_Camera",
@@ -52,7 +52,7 @@ public enum Camera {
       (state) ->
           switch (state) {
             case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
-            case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(3, 3, 2);
+            case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
           });
   public final String name;
   public final Transform3d robotToCam;
