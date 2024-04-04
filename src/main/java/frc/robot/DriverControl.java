@@ -22,6 +22,12 @@ public class DriverControl {
     var drive = robot.drive;
     var intake = robot.intake;
     var shooter = robot.shooter;
+    var climber = robot.climber;
+
+    // climb
+      climber.setDefaultCommand(new RunCommand(() -> {
+          climber.setVoltage(controller2.getLeftY() * 12);
+      }, climber));
 
     // intake
     controller2

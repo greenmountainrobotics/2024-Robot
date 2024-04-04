@@ -16,4 +16,9 @@ public class Climber extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
   }
+
+  public void setVoltage(double voltage) {
+    io.setLeftVoltage(voltage);
+    io.setRightVoltage(voltage);
+  }
 }
