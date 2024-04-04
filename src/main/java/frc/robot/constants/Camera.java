@@ -38,7 +38,7 @@ public enum Camera {
           new Rotation3d(0, degreesToRadians(-25), degreesToRadians(60))),
       (state) ->
           switch (state) {
-            case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
+            case NONE -> VecBuilder.fill(0.9, 0.9, Double.POSITIVE_INFINITY);
             case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(
                 Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
           }),
@@ -52,7 +52,7 @@ public enum Camera {
           new Rotation3d(0, degreesToRadians(-25), degreesToRadians(-60))),
       (state) ->
           switch (state) {
-            case NONE -> VecBuilder.fill(0.9, 0.9, 1.5);
+            case NONE -> VecBuilder.fill(0.9, 0.9, Double.POSITIVE_INFINITY);
             case ALIGNING_TO_SPEAKER, ALIGNING_TO_AMP -> VecBuilder.fill(
                 Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
           });
