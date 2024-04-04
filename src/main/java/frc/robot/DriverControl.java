@@ -28,7 +28,7 @@ public class DriverControl {
     climber.setDefaultCommand(
         new RunCommand(
             () -> {
-              climber.setVoltage(controller2.getLeftY() * 12, controller2.getRightY() * 12);
+              climber.setVoltage(controller2.getLeftY() * 12);
             },
             climber));
 

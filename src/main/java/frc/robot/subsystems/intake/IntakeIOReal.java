@@ -40,7 +40,6 @@ public class IntakeIOReal implements IntakeIO {
 
     rightExtensionMotor.setInverted(true);
     leftExtensionMotor.setInverted(true);
-    spinMotor.setInverted(true);
 
     articulationMotor.setNeutralMode(NeutralMode.Brake);
 
