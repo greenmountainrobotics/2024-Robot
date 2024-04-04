@@ -12,5 +12,6 @@ public interface ClimberIO {
   default void updateInputs(ClimberIOInputs inputs) {}
 
   default void setLeftVoltage(double voltage) {}
+
   default void setRightVoltage(double voltage) {}
 }

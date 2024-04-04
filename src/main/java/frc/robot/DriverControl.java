@@ -25,9 +25,12 @@ public class DriverControl {
     var climber = robot.climber;
 
     // climb
-      climber.setDefaultCommand(new RunCommand(() -> {
-          climber.setVoltage(controller2.getLeftY() * 12);
-      }, climber));
+    climber.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              climber.setVoltage(controller2.getLeftY() * 12);
+            },
+            climber));
 
     // intake
     controller2

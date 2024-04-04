@@ -4,12 +4,10 @@ import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.math.util.Units.rotationsToRadians;
 import static frc.robot.constants.IdConstants.CANId.*;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -23,7 +21,8 @@ public class IntakeIOReal implements IntakeIO {
   private final CANSparkMax leftExtensionMotor =
       new CANSparkMax(LeftIntakeExtensionMotorId, CANSparkMax.MotorType.kBrushless);
   private final VictorSPX articulationMotor = new VictorSPX(IntakeArticulationMotorId);
-  private final CANSparkMax spinMotor = new CANSparkMax(IntakeSpinMotorId, CANSparkMax.MotorType.kBrushed);
+  private final CANSparkMax spinMotor =
+      new CANSparkMax(IntakeSpinMotorId, CANSparkMax.MotorType.kBrushed);
   private final DutyCycleEncoder articulationEncoder;
 
   private final RelativeEncoder rightExtensionEncoder;
