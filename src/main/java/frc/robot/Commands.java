@@ -23,7 +23,7 @@ public class Commands {
                         < FieldConstants.SpeakerShootingDistance + 0.2),
             new InstantCommand(() -> {}),
             () -> align)
-        .andThen(shooter.setRPM(rpm * 2 / 3))
+        .andThen(shooter.setRPM(rpm * 5 / 6))
         .alongWith(
             new ConditionalCommand(
                 drive.alignToSpeaker(), new InstantCommand(() -> {}), () -> align))
