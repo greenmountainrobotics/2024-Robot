@@ -10,7 +10,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -125,7 +124,7 @@ public class Intake extends SubsystemBase {
     voltage = Math.abs(voltage) > 0.2 ? voltage : 0;
     io.extensionRunVoltage(voltage);
 
-    SmartDashboard.putBoolean("INTAKE", inputs.spinCurrentAmps > 6);
+    SmartDashboard.putBoolean("INTAKE", inputs.spinCurrentAmps > 5);
   }
 
   private Mechanism2d getMechanism(double extension, Rotation2d articulation) {
