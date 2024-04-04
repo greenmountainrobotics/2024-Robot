@@ -124,7 +124,7 @@ public class Intake extends SubsystemBase {
     voltage = Math.abs(voltage) > 0.2 ? voltage : 0;
     io.extensionRunVoltage(voltage);
 
-    SmartDashboard.putBoolean("INTAKE", inputs.spinCurrentAmps > 5);
+    SmartDashboard.putBoolean("INTAKE", noteIsIntaked());
   }
 
   private Mechanism2d getMechanism(double extension, Rotation2d articulation) {
@@ -259,5 +259,10 @@ public class Intake extends SubsystemBase {
   @AutoLogOutput
   public boolean isLimitSwitchPressed() {
     return inputs.limitSwitchPressed;
+  }
+
+  @AutoLogOutput
+  public boolean noteIsIntaked() {
+    return inputs.spinCurrentAmps > 5;
   }
 }

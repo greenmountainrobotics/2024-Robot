@@ -35,8 +35,12 @@ public class DriverControl {
     // intake
     controller2
         .leftTrigger()
-        .onTrue(intake.setShooter(-1).until(intake::isLimitSwitchPressed).andThen(intake.extend()))
-        .onFalse(intake.setShooter(0).andThen(intake.retract()));
+        .onTrue(intake.setShooter(-1).andThen(intake.extend()).alongWith(new RunCommand(() -> {
+            controller2.getHID().setRumble(GenericHID.RumbleType.kBothRumble, intake.noteIsIntaked() ? 1 : 0);
+        })))
+        .onFalse(intake.setShooter(0).andThen(intake.retract()).andThen(new InstantCommand(() -> {
+            controller2.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0);
+        })));
 
     // shoot
     controller2
