@@ -70,7 +70,7 @@ public class PhotonVision implements AprilTagProvider {
 
     if (update.isPresent()) {
       estimatedPose = update.get().estimatedPose;
-      if (estimatedPose.getZ() > 0.1) return;
+      // if (estimatedPose.getZ() > 0.1) return;
       poseConsumer.accept(estimatedPose.toPose2d(), update.get().timestampSeconds, camera.stddev);
 
       targetPoses =
