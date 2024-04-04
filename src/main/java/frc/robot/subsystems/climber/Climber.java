@@ -18,7 +18,11 @@ public class Climber extends SubsystemBase {
   }
 
   public void setVoltage(double voltage) {
-    io.setLeftVoltage(voltage);
-    io.setRightVoltage(voltage);
+    setVoltage(voltage, voltage);
+  }
+
+  public void setVoltage(double left, double right) {
+    io.setLeftVoltage(left);
+    io.setRightVoltage(right);
   }
 }

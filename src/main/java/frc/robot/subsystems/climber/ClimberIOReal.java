@@ -7,7 +7,9 @@ public class ClimberIOReal implements ClimberIO {
   private final VictorSP leftMotor = new VictorSP(IdConstants.PWMId.LeftClimberId);
   private final VictorSP rightMotor = new VictorSP(IdConstants.PWMId.RightClimberId);
 
-  public ClimberIOReal() {}
+  public ClimberIOReal() {
+      leftMotor.setInverted(true);
+  }
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
