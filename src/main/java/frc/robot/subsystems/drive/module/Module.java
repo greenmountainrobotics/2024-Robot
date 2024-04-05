@@ -137,7 +137,7 @@ public class Module {
     // Controllers run in "periodic" when the setpoint is not null
     var optimizedState = SwerveModuleState.optimize(state, getAngle());
 
-    if (optimizedState.speedMetersPerSecond > 0) {
+    if (optimizedState.speedMetersPerSecond < 0) {
       optimizedState = new SwerveModuleState(
               -state.speedMetersPerSecond,
               state.angle.plus(Rotation2d.fromRadians(Math.PI))
