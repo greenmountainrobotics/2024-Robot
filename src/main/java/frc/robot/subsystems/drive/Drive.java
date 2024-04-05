@@ -501,8 +501,13 @@ public class Drive extends SubsystemBase {
                                           Alliance.isRed()
                                               ? angle > Math.PI * 5 / 6
                                                   ? angle
-                                                  : angle < 0 ? Math.PI : Math.PI * 5 / 6
-                                              : Math.min(Math.max(angle, 0), Math.PI / 6))));
+                                                  : angle < Math.PI * -5 / 6
+                                                      ? angle
+                                                      : angle < 0
+                                                          ? Math.PI * -5 / 6
+                                                          : Math.PI * 5 / 6
+                                              : Math.min(
+                                                  Math.max(angle, -Math.PI / 6), Math.PI / 6))));
 
                   var targetPose =
                       new Pose2d(
