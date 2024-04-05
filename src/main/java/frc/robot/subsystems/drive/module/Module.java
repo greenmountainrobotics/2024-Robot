@@ -217,4 +217,8 @@ public class Module {
   public double getCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
   }
+
+  public double getDriveCurrentAmps() {
+    return inputs.driveCurrentAmps;
+  }
 }

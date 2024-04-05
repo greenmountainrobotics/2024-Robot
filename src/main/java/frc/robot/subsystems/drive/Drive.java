@@ -23,6 +23,7 @@ import static frc.robot.constants.TunableConstants.KpTranslation;
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
@@ -161,6 +162,11 @@ public class Drive extends SubsystemBase {
       Logger.recordOutput("Drive/SwerveStates/Setpoints", new SwerveModuleState[] {});
       Logger.recordOutput("Drive/SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
+
+/*    for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+      if (modules[moduleIndex].getDriveCurrentAmps() > 60
+          || modules[moduleIndex].getDriveCurrentAmps() == 0) return;
+    }*/
 
     // Update odometry
     double[] sampleTimestamps =
@@ -474,7 +480,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToSpeaker() {
-    return setStateCommand(DriveState.ALIGNING_TO_AMP)
+    return new InstantCommand(() -> setState(DriveState.ALIGNING_TO_SPEAKER))
         .andThen(
             new DeferredCommand(
                 () -> {
@@ -521,7 +527,7 @@ public class Drive extends SubsystemBase {
                   return runToPose(() -> targetPose);
                 },
                 Set.of(this)))
-        .andThen(setStateCommand(DriveState.NONE));
+        .finallyDo(() -> setState(DriveState.NONE));
   }
 
   public Command alignToNote(Translation2d noteTranslation) {
@@ -565,7 +571,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Command alignToAmp() {
-    return setStateCommand(DriveState.ALIGNING_TO_AMP)
+    return new InstantCommand(() -> setState(DriveState.ALIGNING_TO_AMP))
         .andThen(
             runToPose(
                 () ->
@@ -579,11 +585,11 @@ public class Drive extends SubsystemBase {
                 true,
                 KpTranslation * 4,
                 KpTheta))
-        .andThen(setStateCommand(DriveState.NONE));
+        .finallyDo(() -> setState(DriveState.NONE));
   }
 
   public Command alignToFrontOfAmp() {
-    return setStateCommand(DriveState.ALIGNING_TO_AMP)
+    return new InstantCommand(() -> setState(DriveState.ALIGNING_TO_AMP))
         .andThen(
             runToPose(
                 () ->
@@ -597,11 +603,7 @@ public class Drive extends SubsystemBase {
                                             DriveConstants.WidthWithBumpersX * 2 / 3, 0))
                                     .rotateBy(Rotation2d.fromDegrees(90))),
                             FieldConstants.AmpRotation))))
-        .andThen(setStateCommand(DriveState.NONE));
-  }
-
-  public Command setStateCommand(DriveState state) {
-    return new InstantCommand(() -> driveState = state);
+        .finallyDo(() -> setState(DriveState.NONE));
   }
 
   public void setState(DriveState state) {

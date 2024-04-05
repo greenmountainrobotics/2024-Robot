@@ -203,7 +203,7 @@ public class Robot extends LoggedRobot {
     switch (RunMode.getMode()) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        Logger.addDataReceiver(new WPILOGWriter("/U/logs", 0.02));
+        Logger.addDataReceiver(new WPILOGWriter("/U/logs", 0.005));
         Logger.addDataReceiver(new NT4Publisher());
         break;
 
@@ -217,7 +217,7 @@ public class Robot extends LoggedRobot {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
         Logger.setReplaySource(new WPILOGReader(logPath));
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"), 0.02));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"), 0.005));
         break;
     }
 
