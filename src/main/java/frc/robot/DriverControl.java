@@ -24,6 +24,8 @@ public class DriverControl {
     var shooter = robot.shooter;
     var climber = robot.climber;
 
+    new CommandXboxController(2).a().whileTrue(drive.alignToSpeaker());
+
     // climb
     climber.setDefaultCommand(
         new RunCommand(

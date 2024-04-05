@@ -14,7 +14,7 @@
 package frc.robot;
 
 public final class Config {
-  public static final boolean REPLAY = true;
+  public static final boolean REPLAY = false;
 
   /** simulate cameras in simulation */
   public static final boolean SIMULATE_CAMERAS = false;

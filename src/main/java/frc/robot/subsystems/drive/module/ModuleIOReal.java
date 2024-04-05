@@ -96,7 +96,7 @@ public class ModuleIOReal implements ModuleIO {
     turnAbsolutePosition = cancoder.getAbsolutePosition();
     BaseStatusSignal.setUpdateFrequencyForAll(50.0, turnAbsolutePosition);
 
-/*    driveSparkFlex.restoreFactoryDefaults();
+    /*    driveSparkFlex.restoreFactoryDefaults();
     turnSparkFlex.restoreFactoryDefaults();*/
 
     driveSparkFlex.setCANTimeout(250);
