@@ -85,12 +85,11 @@ public class Robot extends LoggedRobot {
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
-                    new GyroIOPigeon2(),
-                    new ModuleIOReal(0),
-                    new ModuleIOReal(1),
-                    new ModuleIOReal(2),
-                    new ModuleIO() {
-                    });
+                new GyroIOPigeon2(),
+                new ModuleIOReal(0),
+                new ModuleIOReal(1),
+                new ModuleIOReal(2),
+                new ModuleIOReal(3));
         aprilTagVision =
             new AprilTagVision(
                 new PhotonVision(new PhotonVisionIOReal(Camera.BackCamera)),
