@@ -8,7 +8,7 @@ public class ShooterConstants {
   public static double PivotHeight = Units.inchesToMeters(10.197);
   public static double PivotX = Units.inchesToMeters(0);
 
-  public static final double VelocityToleranceRPM = 100;
+  public static final double VelocityToleranceRPM = 150;
   public static final double ArticulationToleranceRad = 0.02;
 
   public static final double ShootingVelocityRPM = 6000;

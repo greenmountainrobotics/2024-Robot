@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -122,6 +123,8 @@ public class Intake extends SubsystemBase {
     var voltage = extensionPID.calculate(currentExtensionMeters);
     voltage = Math.abs(voltage) > 0.2 ? voltage : 0;
     io.extensionRunVoltage(voltage);
+
+    SmartDashboard.putBoolean("INTAKE", noteIsIntaked());
   }
 
   private Mechanism2d getMechanism(double extension, Rotation2d articulation) {
@@ -256,5 +259,10 @@ public class Intake extends SubsystemBase {
   @AutoLogOutput
   public boolean isLimitSwitchPressed() {
     return inputs.limitSwitchPressed;
+  }
+
+  @AutoLogOutput
+  public boolean noteIsIntaked() {
+    return inputs.spinCurrentAmps > 5;
   }
 }

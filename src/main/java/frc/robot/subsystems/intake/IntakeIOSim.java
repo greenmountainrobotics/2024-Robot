@@ -39,6 +39,7 @@ public class IntakeIOSim implements IntakeIO {
     inputs.articulationAppliedVolts = articulationMotorAppliedVolts;
 
     inputs.spinAppliedVolts = spinMotorAppliedVolts;
+    inputs.spinCurrentAmps = spinMotor.getCurrentDrawAmps();
   }
 
   @Override

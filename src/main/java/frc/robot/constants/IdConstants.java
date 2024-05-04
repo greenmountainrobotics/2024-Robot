@@ -34,6 +34,8 @@ public final class IdConstants {
 
   public static final class PWMId {
     public static final int LedsId = 0;
+    public static final int LeftClimberId = 8;
+    public static final int RightClimberId = 9;
   }
 
   public static final class DIOId {

@@ -27,6 +27,9 @@ import frc.robot.subsystems.apriltagvision.photonvision.PhotonVision;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOReal;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOReplay;
 import frc.robot.subsystems.apriltagvision.photonvision.PhotonVisionIOSim;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOReal;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.imu.GyroIO;
 import frc.robot.subsystems.drive.imu.GyroIOPigeon2;
@@ -67,6 +70,7 @@ public class Robot extends LoggedRobot {
   public Intake intake;
   public Shooter shooter;
   public Leds leds;
+  public Climber climber;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -94,6 +98,7 @@ public class Robot extends LoggedRobot {
         intake = new Intake(new IntakeIOReal());
         shooter = new Shooter(new ShooterIOReal());
         leds = new Leds(new CustomLeds(LedsId));
+        climber = new Climber(new ClimberIOReal());
         break;
 
       case SIM:
@@ -123,6 +128,7 @@ public class Robot extends LoggedRobot {
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         leds = new Leds(new AddressableLED(LedsId));
+        climber = new Climber(new ClimberIO() {});
         break;
 
       default:
@@ -142,6 +148,7 @@ public class Robot extends LoggedRobot {
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         leds = new Leds(new AddressableLED(LedsId));
+        climber = new Climber(new ClimberIO() {});
         break;
     }
 
@@ -196,7 +203,7 @@ public class Robot extends LoggedRobot {
     switch (RunMode.getMode()) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new WPILOGWriter("/U/logs", 0.005));
         Logger.addDataReceiver(new NT4Publisher());
         break;
 
@@ -210,7 +217,7 @@ public class Robot extends LoggedRobot {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
         Logger.setReplaySource(new WPILOGReader(logPath));
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"), 0.02));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"), 0.005));
         break;
     }
 

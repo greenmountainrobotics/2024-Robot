@@ -22,12 +22,43 @@ public class DriverControl {
     var drive = robot.drive;
     var intake = robot.intake;
     var shooter = robot.shooter;
+    var climber = robot.climber;
+
+    new CommandXboxController(2).a().whileTrue(drive.alignToSpeaker());
+
+    // climb
+    climber.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              climber.setVoltage(controller2.getLeftY() * 12, controller2.getRightY() * 12);
+            },
+            climber));
 
     // intake
     controller2
         .leftTrigger()
-        .onTrue(intake.setShooter(-1).until(intake::isLimitSwitchPressed).andThen(intake.extend()))
-        .onFalse(intake.setShooter(0).andThen(intake.retract()));
+        .onTrue(
+            intake
+                .setShooter(-1)
+                .andThen(intake.extend())
+                .alongWith(
+                    new RunCommand(
+                        () -> {
+                          controller2
+                              .getHID()
+                              .setRumble(
+                                  GenericHID.RumbleType.kBothRumble,
+                                  intake.noteIsIntaked() ? 1 : 0);
+                        })))
+        .onFalse(
+            intake
+                .setShooter(0)
+                .andThen(intake.retract())
+                .andThen(
+                    new InstantCommand(
+                        () -> {
+                          controller2.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0);
+                        })));
 
     // shoot
     controller2

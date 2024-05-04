@@ -66,7 +66,7 @@ public class Module {
     }
 
     turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
-    setBrakeMode(true);
+    setBrakeMode(false);
   }
 
   /**
@@ -216,5 +216,9 @@ public class Module {
   /** Returns the drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
+  }
+
+  public double getDriveCurrentAmps() {
+    return inputs.driveCurrentAmps;
   }
 }

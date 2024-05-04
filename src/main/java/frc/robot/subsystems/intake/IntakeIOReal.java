@@ -4,7 +4,6 @@ import static edu.wpi.first.math.MathUtil.angleModulus;
 import static edu.wpi.first.math.util.Units.rotationsToRadians;
 import static frc.robot.constants.IdConstants.CANId.*;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -22,7 +21,8 @@ public class IntakeIOReal implements IntakeIO {
   private final CANSparkMax leftExtensionMotor =
       new CANSparkMax(LeftIntakeExtensionMotorId, CANSparkMax.MotorType.kBrushless);
   private final VictorSPX articulationMotor = new VictorSPX(IntakeArticulationMotorId);
-  private final VictorSPX spinMotor = new VictorSPX(IntakeSpinMotorId);
+  private final CANSparkMax spinMotor =
+      new CANSparkMax(IntakeSpinMotorId, CANSparkMax.MotorType.kBrushed);
   private final DutyCycleEncoder articulationEncoder;
 
   private final RelativeEncoder rightExtensionEncoder;
@@ -40,10 +40,9 @@ public class IntakeIOReal implements IntakeIO {
 
     rightExtensionMotor.setInverted(true);
     leftExtensionMotor.setInverted(true);
-    spinMotor.setInverted(true);
+    spinMotor.setInverted(false);
 
     articulationMotor.setNeutralMode(NeutralMode.Brake);
-    spinMotor.setNeutralMode(NeutralMode.Brake);
 
     rightExtensionMotor.follow(leftExtensionMotor);
   }
@@ -72,7 +71,8 @@ public class IntakeIOReal implements IntakeIO {
                     .getRadians()));
     inputs.articulationAppliedVolts = articulationMotor.getMotorOutputVoltage();
 
-    inputs.spinAppliedVolts = spinMotor.getMotorOutputVoltage();
+    inputs.spinAppliedVolts = spinMotor.getAppliedOutput() * spinMotor.getBusVoltage();
+    inputs.spinCurrentAmps = spinMotor.getOutputCurrent();
 
     inputs.limitSwitchPressed = limitSwitch.get();
   }
@@ -90,6 +90,6 @@ public class IntakeIOReal implements IntakeIO {
 
   @Override
   public void spinRunVoltage(double voltage) {
-    spinMotor.set(ControlMode.PercentOutput, voltage / articulationMotor.getBusVoltage());
+    spinMotor.setVoltage(voltage);
   }
 }
