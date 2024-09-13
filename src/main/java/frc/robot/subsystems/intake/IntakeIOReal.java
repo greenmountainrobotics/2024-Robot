@@ -21,8 +21,7 @@ public class IntakeIOReal implements IntakeIO {
   private final CANSparkMax leftExtensionMotor =
       new CANSparkMax(LeftIntakeExtensionMotorId, CANSparkMax.MotorType.kBrushless);
   private final VictorSPX articulationMotor = new VictorSPX(IntakeArticulationMotorId);
-  private final CANSparkMax spinMotor =
-      new CANSparkMax(IntakeSpinMotorId, CANSparkMax.MotorType.kBrushed);
+  private final VictorSPX spinMotor = new VictorSPX(IntakeSpinMotorId);
   private final DutyCycleEncoder articulationEncoder;
 
   private final RelativeEncoder rightExtensionEncoder;
@@ -71,8 +70,8 @@ public class IntakeIOReal implements IntakeIO {
                     .getRadians()));
     inputs.articulationAppliedVolts = articulationMotor.getMotorOutputVoltage();
 
-    inputs.spinAppliedVolts = spinMotor.getAppliedOutput() * spinMotor.getBusVoltage();
-    inputs.spinCurrentAmps = spinMotor.getOutputCurrent();
+    inputs.spinAppliedVolts = spinMotor.getMotorOutputVoltage() * spinMotor.getBusVoltage();
+    inputs.spinCurrentAmps = spinMotor.getMotorOutputPercent();
 
     inputs.limitSwitchPressed = limitSwitch.get();
   }
@@ -90,6 +89,6 @@ public class IntakeIOReal implements IntakeIO {
 
   @Override
   public void spinRunVoltage(double voltage) {
-    spinMotor.setVoltage(voltage);
+    spinMotor.set(VictorSPXControlMode.PercentOutput, voltage);
   }
 }

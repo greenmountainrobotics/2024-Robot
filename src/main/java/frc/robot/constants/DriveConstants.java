@@ -12,10 +12,10 @@ public final class DriveConstants {
   public static final double DriveGearRatio = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
   public static final double TurnGearRatio = 150.0 / 7.0;
 
-  public static final double FrontLeftEncoderOffset = -4.5345926536;
-  public static final double FrontRightEncoderOffset = -2.326;
-  public static final double BackLeftEncoderOffset = -3.8085926536;
-  public static final double BackRightEncoderOffset = -0.907;
+  public static final double FrontLeftEncoderOffset = 0.022; // 1.718
+  public static final double FrontRightEncoderOffset = 0.018; // -2.331
+  public static final double BackLeftEncoderOffset = 0.019; // 2.477
+  public static final double BackRightEncoderOffset = -0.029; // -0.933
 
   public static final double DriveTolerance = 0.025;
   public static final double ThetaToleranceRad = 0.03;
